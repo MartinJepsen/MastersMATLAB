@@ -4,3 +4,4 @@
 *.asv
 .gitignore.bak
 /deprecated
+/simulation/SYSID
