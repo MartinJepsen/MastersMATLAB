@@ -15,6 +15,7 @@ cdis = zeros(numel(out_dof), 12);
 for ii=1:numel(out_dof);
     cdis(ii, out_dof(ii)) = 1;
 end
+
 %% Exact SS model
 % Exact, reference
 SS_exact = StateSpaceModel();
@@ -34,7 +35,6 @@ SS_exact_d.dt_from_FE(FE.Kg, FE.Cg, FE.Mg, dt);
 SS_exact_d.to_ct();
 SS_exact_d.transfer_matrix(s);
 
-
 %% Estimated SS models
 SS = StateSpaceModel();
 B2 = SS.set_io(in_dof, out_dof, 24);
@@ -45,8 +45,8 @@ SS.get_modal_parameters();
 SS.to_ct();
 SS.transfer_matrix(s);
 
-l1 = eig(SS.A);
-l2 = eig(SS_exact.A);
+export_gain_pars
+return
 
 % omega_est = SS.modal_parameters.omega;
 % omega_ref = SS_exact.modal_parameters.omega;

@@ -13,8 +13,6 @@ nsr = 0.05;
 blockrows = 60;
 dam = [14, 0.95];
 
-
-
 FE = FiniteElementModel('structures/paper_truss.xlsx');
 FE.assembly('bar', dam);
 FE.apply_bc([1, 2, 9, 10]);
@@ -38,3 +36,11 @@ SS_exact.get_modal_parameters();
 SS_exact.to_ct();
 Lambda = SS_exact.modal_parameters.Lambda;
 s = complex(real(Lambda(1)), 1.1*imag(Lambda(1)));         % pole
+SS_exact.transfer_matrix(s);
+
+% Exact, damaged
+SS_exact_d = StateSpaceModel();
+SS_exact_d.set_io(1:12, 1:12, 24);
+SS_exact_d.dt_from_FE(FE.Kg, FE.Cg, FE.Mg, dt);
+SS_exact_d.to_ct();
+SS_exact_d.transfer_matrix(s);
