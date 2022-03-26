@@ -1,6 +1,6 @@
 clc; clear; close all;
 
-load("optimised_DDLV/gain_pars")          % load system matrices
+load("gaindesign/gain_pars")          % load system matrices
 idx = setdiff(1:n_dof, bc);
 
 
@@ -73,12 +73,13 @@ function [J] = main_gain_design(X)
     
     % CL transfer matrices
     H_CL = (eye(size(H)) + H * b2*K*cdis) \ H;
-    G_CL_d = (eye(size(H_d)) + H_d * b2*K*cdis) \ H_d;
+    H_CL_d = (eye(size(H_d)) + H_d * b2*K*cdis) \ H_d;
     deltaH_CL = H_CL_d - H_CL;
 
     % Strain fields
-    [~, ~, V] = svd(dG);
+    [~, ~, V] = svd(deltaH);
     d_OL = [0; G*V(:, end)];
+    
     [~, ~, V] = svd(dG_CL);
     d_CL = [0; G_CL * V(:, end)]; 
     eps = zeros(n_dof, 1, 2);
