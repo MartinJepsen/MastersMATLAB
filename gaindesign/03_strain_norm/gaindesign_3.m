@@ -24,6 +24,10 @@ H_ref = (Mg*s^2 + Cg*s + Kg)^-1;
 H_ = zeros(n_dof, free_dof);
 H_(idx, :) = H_ref;
 
+% Apply normalisation of stiffness perturbation
+DeltaK = Kg_d - Kg;
+Kg_d(find(DeltaK ~= 0)) = Kg(find(DeltaK ~= 0)) + 1;
+
 %% Genetic algorithm
 run = 0;
 good = 0;
