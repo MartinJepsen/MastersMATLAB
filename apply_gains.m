@@ -1,6 +1,7 @@
 clear; clc; close all
 % Stand: 23_02_2022_1023
 set_up
+
 filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
 load("simulation/SYSID/estimated_H/"+filename)
 load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\optimised_DDLV\gain_pars.mat')

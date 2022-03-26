@@ -68,9 +68,8 @@ beep
 
 
 %%
-savenum = 1;
 K = gains{1,1};
-save(sprintf("gaindesign/03_strain_norm/gains_%d", savenum),"K", 'gains')
+save(sprintf("gaindesign/03_strain_norm/gains_%02d", damel),"K", 'gains')
 
 
 function [J] = main_gain_design(X)
