@@ -5,7 +5,9 @@ set_up
 filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
 load("simulation/SYSID/"+filename)
 load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\gain_pars.mat')
-load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\01_strain_cond\gains_3.mat')
+% load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\01_strain_cond\gains_3.mat')
+load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\03_strain_norm\gains_11.mat')
+
 H_ref = (Mg*s^2 + Cg*s + Kg)^-1;
 H_CL_ref = (Mg*s^2 + Cg + Kg + B2*K*cdis)^-1;
 
@@ -24,7 +26,7 @@ tot_runs = 0;
 
 for damel = dam(:, 1)
 
-    for gainset = 3
+    for gainset = 1
         K = gains{gainset}
         for run = 1:numel(H_est)
             tic

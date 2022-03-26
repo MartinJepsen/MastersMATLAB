@@ -1,5 +1,7 @@
 clc; clear; close all;
 
+set_up
+export_gain_pars
 load("gaindesign/gain_pars")          % load system matrices
 damel = dam(:, 1);
 
@@ -38,9 +40,9 @@ for run = 0:2
     np = r*m; % No. of parameters
     
     ObjectiveFunction = @main_gain_design;
-    options = optimoptions('ga', 'Generations', 100,...
+    options = optimoptions('ga', 'Generations', 1000,...
                             'PopulationSize', 100,...
-                            'FunctionTolerance',1e-8,...
+                            'FunctionTolerance',1e-10,...
                             'PlotFcn', @gaplotbestf);
     
     % [res, fval] = ga(ObjectiveFunction, nvars, [], [], [], [], lb, ub, [], options);
