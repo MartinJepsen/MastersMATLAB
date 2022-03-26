@@ -1,0 +1,7 @@
+/figures
+/MDU
+/testing
+*.asv
+.gitignore.bak
+/deprecated
+/simulation/SYSID
