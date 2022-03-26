@@ -9,7 +9,7 @@ load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\gain_pars.mat
 load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\03_strain_norm\gains_11.mat')
 
 H_ref = (Mg*s^2 + Cg*s + Kg)^-1;
-H_CL_ref = (Mg*s^2 + Cg + Kg + B2*K*cdis)^-1;
+H_CL_ref = (Mg*s^2 + Cg*s + Kg + B2*K*cdis)^-1;
 
 SS = StateSpaceModel();
 SS.set_io(in_dof, out_dof);
