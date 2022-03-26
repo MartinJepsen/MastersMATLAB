@@ -1,13 +1,28 @@
 clc; clear; close all;
 
 load("gaindesign/gain_pars")          % load system matrices
-idx = setdiff(1:n_dof, bc);
+damel = dam(:, 1);
 
-H = (Mg*s^2 + Cg*s + Kg)^-1;
+% reduced
+SS1 = StateSpaceModel();
+SS1.set_io(in_dof, out_dof);
+SS1.dt_from_FE(Kg, Cg, Mg, dt);
+SS1.to_ct();
+SS1.transfer_matrix(s);
+
+SS1_d = StateSpaceModel();
+SS1_d.set_io(in_dof, out_dof);
+SS1_d.dt_from_FE(Kg_d, Cg, Mg, dt);
+SS1_d.to_ct();
+SS1_d.transfer_matrix(s);
+
+H = SS1.H;
+H_d = SS1_d.H;
+
+% full
+H_ref = (Mg*s^2 + Cg*s + Kg)^-1;
 H_ = zeros(n_dof, free_dof);
-H_(idx, :) = H;
-
-H_d = (Mg*s^2 + Cg*s + Kg_d)^-1;
+H_(idx, :) = H_ref;
 
 %% Genetic algorithm
 run = 0;
@@ -19,9 +34,9 @@ for run = 0:2
     np = r*m; % No. of parameters
     
     ObjectiveFunction = @main_gain_design;
-    options = optimoptions('ga', 'Generations', 20000,...
+    options = optimoptions('ga', 'Generations', 100,...
                             'PopulationSize', 100,...
-                            'FunctionTolerance',1e-5,...
+                            'FunctionTolerance',1e-8,...
                             'PlotFcn', @gaplotbestf);
     
     % [res, fval] = ga(ObjectiveFunction, nvars, [], [], [], [], lb, ub, [], options);
@@ -49,32 +64,37 @@ beep
 
 
 %%
-savenum = 3;
+savenum = 1;
 K = gains{1,1};
-save(sprintf("optimised_DDLV/01_strain_cond/gains_%d", savenum),"K", 'gains')
+save(sprintf("gaindesign/03_strain_norm/gains_%d", savenum),"K", 'gains')
 
 
 function [J] = main_gain_design(X)
-
+    in_dof = evalin('base', 'in_dof');
+    out_dof = evalin('base', 'out_dof');
     free_dof = evalin('base', 'free_dof');
     n_dof = evalin('base', 'n_dof');
     m = evalin('base', 'm');
     r = evalin('base', 'r');
     B2 = evalin('base', 'B2');
+    cdis = evalin('base','cdis');
     B = evalin('base', 'B_strain');
     idx = evalin('base', 'idx');
+
+    H_ref = evalin('base', 'H_ref');
     H_ = evalin('base', 'H_');
     H = evalin('base', 'H');
     H_d = evalin('base', 'H_d');
-    cdis = evalin('base','cdis');
+
+    
     FE = evalin('base', 'FE');
     s = evalin('base', 's');
     Kg = evalin('base', 'Kg');
+    Kg_d = evalin('base', 'Kg_d');
     Cg = evalin('base', 'Cg');
     Mg = evalin('base', 'Mg');
-    in_dof = evalin('base', 'in_dof');
-    out_dof = evalin('base', 'out_dof');
-    
+    damel = evalin('base', 'damel');
+
     np = r*m;
     re = reshape(X(1:np), r, m);
     im = reshape(X(np+1:end), r, m);
@@ -84,7 +104,10 @@ function [J] = main_gain_design(X)
     DeltaH = H - H_d;
     [~, ~, V] = svd(DeltaH);
 
-    eps = B * H_ * B2 * V(:, end);
+    d = H_ref * B2 * V(:, end);
+    d_ = zeros(n_dof, 1);
+    d_(idx) = d;
+    eps = B * d_;
     eps = abs(eps) / max(abs(eps));
 
     % CL transfer matrices 
@@ -102,6 +125,6 @@ function [J] = main_gain_design(X)
     eps_CL = B * H_CL_ * B2 * V(:, end);
     eps_CL = abs(eps_CL) / max(abs(eps_CL));
 
-    J = norm(eps(setdiff(1:end, damel),1,1))/norm(eps(setdiff(1:end, damel),1,2));
+    J = norm(eps(setdiff(1:end, damel), 1)) / norm(eps_CL(setdiff(1:end, damel), 1));
 
 end
