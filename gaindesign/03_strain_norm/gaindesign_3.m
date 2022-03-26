@@ -3,53 +3,56 @@ clc; clear; close all;
 load("gaindesign/gain_pars")          % load system matrices
 idx = setdiff(1:n_dof, bc);
 
+H = (Mg*s^2 + Cg*s + Kg)^-1;
+H_ = zeros(n_dof, free_dof);
+H_(idx, :) = H;
 
-% 1) set up reference and undamaged SS models
-% 2) get transfer matrices
-
-H = SS_exact.H;
-H_d = SS_exact.H;
-
-
-% H_ = zeros(n_dof, free_dof);
-% H_(idx, :) = H;
+H_d = (Mg*s^2 + Cg*s + Kg_d)^-1;
 
 %% Genetic algorithm
 run = 0;
 good = 0;
-for run = 0;
-
-np = r*m; % No. of parameters
-
-ObjectiveFunction = @main_gain_design;
-options = optimoptions('ga', 'Generations', 5000,...
-                        'PopulationSize', 100,...
-                        'FunctionTolerance',1e-20,...
-                        'PlotFcn', @gaplotbestf);
-
-% [res, fval] = ga(ObjectiveFunction, nvars, [], [], [], [], lb, ub, [], options);
-[res, fval] = ga(ObjectiveFunction, np, [], [], [], [], [], [], [], options);
-
-K = reshape(res, r, m);
+tic
+for run = 0:2
+    seed = ceil(abs(randn * randn) * 10)
+    rng(seed);
+    np = r*m; % No. of parameters
+    
+    ObjectiveFunction = @main_gain_design;
+    options = optimoptions('ga', 'Generations', 20000,...
+                            'PopulationSize', 100,...
+                            'FunctionTolerance',1e-5,...
+                            'PlotFcn', @gaplotbestf);
+    
+    % [res, fval] = ga(ObjectiveFunction, nvars, [], [], [], [], lb, ub, [], options);
+    [res, fval] = ga(ObjectiveFunction, np*2, [], [], [], [], [], [], [], options);
+    
+    % K = reshape(res, r, m);  
+    
+        re = reshape(res(1:np), r, m);
+        im = reshape(res(np+1:end), r, m);
+        K = complex(re, im);
     
     results{run+1,1} = K;
     results{run+1,2} = fval;
 
 end
-
-
+[fvals, ind] = sort([results{:,2}], 'ascend');
+toc
 %% Sort results
-[sens_norms, ind] = sort([results{:,2}].^-1, 'descend'); % sort the inverse fitness function values (norm of sensitivity) in descending order
-
-for i = 1:numel(sens_norms)
-    gains{i,2} = sens_norms(i);
+for i = 1:numel(fvals)
+    gains{i,2} = fvals(i);
     gains(i,1) = results(ind(i),1);
 end
 
 beep
 
+
 %%
-save(sprintf("optimised_DDLV/03_strain_norm/unit_perturbations/gains_%d",damel),"gains")
+savenum = 3;
+K = gains{1,1};
+save(sprintf("optimised_DDLV/01_strain_cond/gains_%d", savenum),"K", 'gains')
+
 
 function [J] = main_gain_design(X)
 
@@ -60,36 +63,45 @@ function [J] = main_gain_design(X)
     B2 = evalin('base', 'B2');
     B = evalin('base', 'B_strain');
     idx = evalin('base', 'idx');
+    H_ = evalin('base', 'H_');
+    H = evalin('base', 'H');
     H_d = evalin('base', 'H_d');
-    H = evalin('base','H');
     cdis = evalin('base','cdis');
-    FE = evalin('base', 'FE')
+    FE = evalin('base', 'FE');
+    s = evalin('base', 's');
+    Kg = evalin('base', 'Kg');
+    Cg = evalin('base', 'Cg');
+    Mg = evalin('base', 'Mg');
+    in_dof = evalin('base', 'in_dof');
+    out_dof = evalin('base', 'out_dof');
     
-    K = reshape(X, r, m);              % gain matrix
-    
-    
-    % OL transfer matrices
-    deltaH = H_d - H;
-    
-    % CL transfer matrices
-    H_CL = (eye(size(H)) + H * b2*K*cdis) \ H;
-    H_CL_d = (eye(size(H_d)) + H_d * b2*K*cdis) \ H_d;
-    deltaH_CL = H_CL_d - H_CL;
+    np = r*m;
+    re = reshape(X(1:np), r, m);
+    im = reshape(X(np+1:end), r, m);
+    K = complex(re, im);
 
-    % Strain fields
-    [~, ~, V] = svd(deltaH);
-    d_OL = [0; G*V(:, end)];
+    % OLDDLV
+    DeltaH = H - H_d;
+    [~, ~, V] = svd(DeltaH);
+
+    eps = B * H_ * B2 * V(:, end);
+    eps = abs(eps) / max(abs(eps));
+
+    % CL transfer matrices 
+    H_CL_ref = (Mg*s^2 + Cg*s + Kg + (B2*K*cdis))^-1;   % full transfer matrix
+    H_CL = H_CL_ref(out_dof, in_dof);                   % reduced transfer matrix
+
+    H_CL_d = (Mg*s^2 + Cg*s + Kg_d + (B2*K*cdis))^-1;
+    H_CL_d = H_CL_d(out_dof, in_dof);
     
-    [~, ~, V] = svd(dG_CL);
-    d_CL = [0; G_CL * V(:, end)]; 
-    eps = zeros(n_dof, 1, 2);
-    for el = 1:n_dof
-        eps(el, 1, 1) = [1 -1] * d_OL(el:el+1);
-        eps(el, 1, 2) = [1 -1] * d_CL(el:el+1);
-    end
-    
-    eps = abs(eps) ./ max(abs(eps));
-    
-    % Variable to be minimised
+    % CLDDLV
+    DeltaH_CL = H_CL_d - H_CL;
+    [~, ~, V] = svd(DeltaH_CL);
+    H_CL_ = zeros(n_dof, free_dof);
+    H_CL_(idx, :) = H_CL_ref;
+    eps_CL = B * H_CL_ * B2 * V(:, end);
+    eps_CL = abs(eps_CL) / max(abs(eps_CL));
+
     J = norm(eps(setdiff(1:end, damel),1,1))/norm(eps(setdiff(1:end, damel),1,2));
+
 end

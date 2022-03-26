@@ -1,3 +1,5 @@
+set_up
+
 free_dof = size(FE.Kg,1);
 n_dof = FE.n_dof;
 m = numel(out_dof);
@@ -23,4 +25,4 @@ idx = setdiff(1:n_dof, bc);
 % varlist = who;
 save('gaindesign/gain_pars', 'Kg', 'Mg', 'Cg', 'Kg_d',...
     'free_dof', 'n_dof', 'm', 'r','out_dof', 'in_dof',...
-    's','z', 'B2', 'B_strain', 'bc', 'SS_exact', 'SS_exact_d', 'cdis', 'dt', 'u', 't','FE', 'idx')
+    's','z', 'B2', 'B_strain', 'bc', 'SS_exact', 'SS_exact_d', 'cdis', 'dt', 'u', 't','FE', 'idx', 'dam')
