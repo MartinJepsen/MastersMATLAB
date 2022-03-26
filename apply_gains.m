@@ -1,12 +1,14 @@
 clear; clc; close all
 % Stand: 23_02_2022_1023
 set_up
+export_gain_pars
 
 filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
 load("simulation/SYSID/"+filename)
-load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\gain_pars.mat')
-% load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\01_strain_cond\gains_3.mat')
-load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\03_strain_norm\gains_11.mat')
+% load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\gain_pars.mat')
+load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\01_strain_cond\gains_1.mat')
+
+% load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\03_strain_norm\gains_13.mat')
 
 H_ref = (Mg*s^2 + Cg*s + Kg)^-1;
 H_CL_ref = (Mg*s^2 + Cg*s + Kg + B2*K*cdis)^-1;
@@ -31,8 +33,8 @@ for damel = dam(:, 1)
         for run = 1:numel(H_est)
             tic
             % OL
-            H = H_est{run};
-            H_d = H_est_d{run};
+            H = H_est{run};         % estimated OL transfer matrix, undamaged
+            H_d = H_est_d{run};     % estimated OL transfer matrix, damaged
 
             DeltaH = H_d - H;
             [~, ~, V] = svd(DeltaH);
@@ -41,15 +43,13 @@ for damel = dam(:, 1)
             eps_OL = B_strain * d_OL;
             
             H_CL = (eye(size(H)) + H * K)^-1 * H;
-            H_CL_d = (eye(size(H_d))+H_d*K)^-1*H_d;
-            DeltaH_CL = H_CL_d-H_CL;                                % closed-loop transfer matrix change
+            H_CL_d = (eye(size(H_d)) + H_d * K)^-1 * H_d;
+            DeltaH_CL = H_CL_d - H_CL;                                % closed-loop transfer matrix change
             [~, ~, V] = svd(DeltaH_CL);
             d_CL = zeros(n_dof, 1);
             d_CL(idx) = H_CL_ref * B2 * V(:, end);
-            eps_CL = B_strain * d_CL;        % closed-loop displacement field
+            eps_CL = B_strain * d_CL;               % closed-loop strain field
             
-            
-
             strains(:, tot_runs+1, 1) = abs(eps_OL);
             strains(:, tot_runs+1, 2) = abs(eps_CL);
             tot_runs = tot_runs + 1;
@@ -68,7 +68,8 @@ for damel = dam(:, 1)
 %             xlabel("Element number", 'FontSize', 10)
 %             set(gca, 'XTickLabelRotation', 0);
 %             ylim([1e-2, 2])
-%             toc
+%             pause(0.5)
+            toc
         end
     end
 end

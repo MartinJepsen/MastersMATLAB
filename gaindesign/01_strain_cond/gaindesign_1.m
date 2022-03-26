@@ -1,6 +1,6 @@
 clc; clear; close all;
 
-load("optimised_DDLV/gain_pars")          % load system matrices
+load("gaindesign/gain_pars")          % load system matrices
 idx = setdiff(1:n_dof, bc);
 
 H = (Mg*s^2 + Cg*s + Kg)^-1;
@@ -47,9 +47,9 @@ beep
 
 
 %%
-savenum = 3;
+savenum = 1;
 K = gains{1,1};
-save(sprintf("optimised_DDLV/01_strain_cond/gains_%d", savenum),"K", 'gains')
+save(sprintf("gaindesign/01_strain_cond/gains_%d", savenum),"K", 'gains')
 
 
 function [J] = main_gain_design(X)

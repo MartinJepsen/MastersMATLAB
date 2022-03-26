@@ -42,7 +42,7 @@ for run = 0:2
     ObjectiveFunction = @main_gain_design;
     options = optimoptions('ga', 'Generations', 1000,...
                             'PopulationSize', 100,...
-                            'FunctionTolerance',1e-10,...
+                            'FunctionTolerance',1e-20,...
                             'PlotFcn', @gaplotbestf);
     
     % [res, fval] = ga(ObjectiveFunction, nvars, [], [], [], [], lb, ub, [], options);
@@ -66,13 +66,10 @@ for i = 1:numel(fvals)
     gains(i,1) = results(ind(i),1);
 end
 
-beep
-
-
 %%
 K = gains{1,1};
 save(sprintf("gaindesign/03_strain_norm/gains_%02d", damel),"K", 'gains')
-
+beep
 
 function [J] = main_gain_design(X)
     in_dof = evalin('base', 'in_dof');
@@ -91,7 +88,6 @@ function [J] = main_gain_design(X)
     H = evalin('base', 'H');
     H_d = evalin('base', 'H_d');
 
-    
     FE = evalin('base', 'FE');
     s = evalin('base', 's');
     Kg = evalin('base', 'Kg');

@@ -3,6 +3,4 @@
 /testing
 *.asv
 .gitignore.bak
-/simulation/SYSID/05_095_005.mat
-/simulation/SYSID/09_095_005.mat
-/simulation/SYSID/09_097_005.mat
+.gitignore
