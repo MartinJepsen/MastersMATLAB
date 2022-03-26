@@ -3,9 +3,9 @@ clear; clc; close all
 set_up
 
 filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
-load("simulation/SYSID/estimated_H/"+filename)
-load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\optimised_DDLV\gain_pars.mat')
-load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\optimised_DDLV\01_strain_cond\gains_3.mat')
+load("simulation/SYSID/"+filename)
+load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\gain_pars.mat')
+load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\01_strain_cond\gains_3.mat')
 H_ref = (Mg*s^2 + Cg*s + Kg)^-1;
 H_CL_ref = (Mg*s^2 + Cg + Kg + B2*K*cdis)^-1;
 
@@ -26,11 +26,11 @@ for damel = dam(:, 1)
 
     for gainset = 3
         K = gains{gainset}
-        for run = 1:numel(SS_est)
+        for run = 1:numel(H_est)
             tic
             % OL
-            H = SS_est{run}.H;
-            H_d = SS_est_d{run}.H;
+            H = H_est{run};
+            H_d = H_est_d{run};
 
             DeltaH = H_d - H;
             [~, ~, V] = svd(DeltaH);

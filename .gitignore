@@ -4,4 +4,7 @@
 *.asv
 .gitignore.bak
 /deprecated
-/simulation/SYSID
+/simulation/SYSID/14_095_005.mat
+/simulation/SYSID/05_095_005.mat
+/simulation/SYSID/09_095_005.mat
+/simulation/SYSID/09_097_005.mat
