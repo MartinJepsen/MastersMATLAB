@@ -15,7 +15,7 @@ dam = [14, 0.95];
 
 
 
-FE = FiniteElementModel('paper_truss.xlsx');
+FE = FiniteElementModel('structures/paper_truss.xlsx');
 FE.assembly('bar', dam);
 FE.apply_bc([1, 2, 9, 10]);
 FE.modal_damping(0.02);
