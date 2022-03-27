@@ -1,8 +1,6 @@
 clear
-% load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\optimised_DDLV\gain_pars.mat')
-% dt = t(2)-t(1);
 set_up;
-
+pause(0.5)
 omega_ref = SS_exact.modal_parameters.omega;
 zeta_ref = SS_exact.modal_parameters.zeta;
 
@@ -10,7 +8,7 @@ omega_dev = [];
 zeta_dev = [];
 
 
-for run = 1:50
+for run = 1:200
     run
     tic
     SS = StateSpaceModel();
@@ -44,6 +42,7 @@ for run = 1:50
     toc
 end
 
+%%
 filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
-save("simulation/SYSID/estimated_H/"+filename, 'H_est', 'H_est_d', 'lambda_est', 'omega_dev', 'zeta_dev')
+save("simulation/SYSID/"+filename, 'H_est', 'H_est_d', 'lambda_est', 'omega_dev', 'zeta_dev')
 beep
