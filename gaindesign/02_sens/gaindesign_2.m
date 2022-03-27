@@ -16,13 +16,13 @@ DeltaKg = DeltaKg(out_dof, in_dof);
 run = 0;
 good = 0;
 tic
-for run = 0:2
+for run = 0
     seed = ceil(abs(randn * randn) * 10)
     rng(seed);
     np = r*m; % No. of parameters
     
     ObjectiveFunction = @main_gain_design;
-    options = optimoptions('ga', 'Generations', 1000,...
+    options = optimoptions('ga', 'Generations', 5000,...
                             'PopulationSize', 100,...
                             'FunctionTolerance',1e-20,...
                             'PlotFcn', @gaplotbestf);
@@ -49,7 +49,7 @@ for i = 1:numel(fvals)
 end
 
 K = gains{1,1};
-save(sprintf("gaindesign/02_sens/gains_%02d", damel),"K", 'gains')
+save(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel),"K", 'gains')
 beep
 
 function [J] = main_gain_design(X)
@@ -78,7 +78,8 @@ function [J] = main_gain_design(X)
     % OL
     H = (Mg*s^2 + Cg*s + Kg)^-1;
     H = H(out_dof, in_dof);
-    
+    dH = -H * DeltaKg * H;
+
     % CL
     H_CL = (Mg*s^2 + Cg*s + Kg + B2*K*cdis)^-1;
     H_CL = H_CL(out_dof, in_dof);
@@ -86,9 +87,10 @@ function [J] = main_gain_design(X)
     
     % reject population member if it increases the transfer matrix condition number
     if cond(H_CL) > cond(H)
-        J = 1e12;
+        J = 1;
         return
     end
 
-    J = 1/norm(dH_CL);
+%     J = 1/norm(dH_CL);
+    J = norm(dH) / norm(dH_CL);
 end
