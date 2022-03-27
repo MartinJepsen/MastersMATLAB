@@ -1,29 +1,22 @@
 clear; clc; close all
-% Stand: 23_02_2022_1023
+
+%% Load relevant variables
 set_up
 export_gain_pars
 
 filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
 load("simulation/SYSID/"+filename)
-
 damel = dam(1,1);
-
 % load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\01_strain_cond\gains_1.mat')
-load(sprintf("gaindesign/02_sens/unconstrained/gains_%02d", damel))
-% load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\03_strain_norm\gains_13.mat')
+% load(sprintf("gaindesign/02_sens/unconstrained/gains_%02d", damel))
+load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
 
+%% Reference transfer matrices
 H_ref = (Mg*s^2 + Cg*s + Kg)^-1;
 H_CL_ref = (Mg*s^2 + Cg*s + Kg + B2*K*cdis)^-1;
 
-SS = StateSpaceModel();
-SS.set_io(in_dof, out_dof);
-SS.dt_from_FE(Kg, Cg, Mg, dt);
-SS_d = StateSpaceModel();
-SS_d.set_io(in_dof, out_dof);
-SS_d.dt_from_FE(Kg_d, Cg, Mg, dt);
-
+%% Obtain characteristic strains for every run
 tot_runs = 0;
-
 for damel = dam(:, 1)
 
     for gainset = 1
@@ -59,7 +52,7 @@ for damel = dam(:, 1)
     end
 end
 
-%% sucess rates
+%% Results post-processing
 n_el = 14;
 for i = 1:n_el
     success_rates(i, 1:2) = [sum(min_strain_OL ==i), sum(min_strain_CL ==i)]/tot_runs*100;
