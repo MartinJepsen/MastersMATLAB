@@ -1,4 +1,6 @@
 clc; clear; close all;
+set_up;
+export_gain_pars;
 
 load("gaindesign/gain_pars")          % load system matrices
 damel = dam(:, 1);
@@ -88,5 +90,5 @@ function [J] = main_gain_design(X)
         return
     end
 
-    J = 1/norm(H_CL);
+    J = 1/norm(dH_CL);
 end
