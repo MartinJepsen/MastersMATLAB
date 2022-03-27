@@ -18,7 +18,6 @@ H_CL_ref = (Mg*s^2 + Cg*s + Kg + B2*K*cdis)^-1;
 %% Obtain characteristic strains for every run
 tot_runs = 0;
 for damel = dam(:, 1)
-
     for gainset = 1
         K = gains{gainset}
         for run = 1:numel(H_est)

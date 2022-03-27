@@ -8,7 +8,7 @@ omega_dev = [];
 zeta_dev = [];
 
 
-for run = 1:200
+for run = 1:100
     run
     tic
     SS = StateSpaceModel();
