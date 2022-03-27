@@ -49,7 +49,7 @@ for i = 1:numel(fvals)
 end
 
 K = gains{1,1};
-save(sprintf("gaindesign/02_sens/unconstrained/gains_%02d", damel),"K", 'gains')
+save(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel),"K", 'gains')
 beep
 
 function [J] = main_gain_design(X)

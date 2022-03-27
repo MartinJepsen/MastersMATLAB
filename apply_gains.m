@@ -5,9 +5,11 @@ export_gain_pars
 
 filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
 load("simulation/SYSID/"+filename)
-% load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\gain_pars.mat')
-load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\01_strain_cond\gains_1.mat')
 
+damel = dam(1,1);
+
+% load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\01_strain_cond\gains_1.mat')
+load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
 % load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\03_strain_norm\gains_13.mat')
 
 H_ref = (Mg*s^2 + Cg*s + Kg)^-1;
