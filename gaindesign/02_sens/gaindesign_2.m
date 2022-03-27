@@ -49,7 +49,7 @@ for i = 1:numel(fvals)
 end
 
 K = gains{1,1};
-save(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel),"K", 'gains')
+save(sprintf("gaindesign/02_sens/unconstrained/gains_%02d", damel),"K", 'gains')
 beep
 
 function [J] = main_gain_design(X)
@@ -91,6 +91,5 @@ function [J] = main_gain_design(X)
         return
     end
 
-%     J = 1/norm(dH_CL);
     J = norm(dH) / norm(dH_CL);
 end
