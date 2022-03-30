@@ -72,8 +72,8 @@ classdef FiniteElementModel < handle
             for el = 1:n_el
                 
                 % element length and orientation
-                dx = coords(topology(el, 1), 1) - coords(topology(el, 2), 1);
-                dy = coords(topology(el, 1),2) - coords(topology(el, 2), 2);
+                dx = coords(topology(el, 2), 1) - coords(topology(el, 1), 1);
+                dy = coords(topology(el, 2), 2) - coords(topology(el, 1),2);
                 L = norm([dx dy]');
                 self.mesh.element_properties.L(el) = L;
                 c = dx/L;
@@ -85,14 +85,13 @@ classdef FiniteElementModel < handle
                         dof_node(node, :)=[node * 2 - 1, node * 2];
                     end
                     % Determines which DOF belong to which elements, for indexing purposes
-%                     dof_element = zeros(n_el,4);
                     dof_element(el, :) = [dof_node(topology(el,1),:), dof_node(topology(el,2),:)];
 
                     % Transformation matrix
                     T=[c s 0 0;
-                        -s c 0 0;
-                        0 0 c s;
-                        0 0 -s c];
+                      -s c 0 0;
+                       0 0 c s;
+                       0 0 -s c];
                     
                     A = self.mesh.element_properties.A(el);
                     E = self.mesh.element_properties.E(el);
@@ -302,8 +301,9 @@ classdef FiniteElementModel < handle
             for el = 1:n_el
                 c = rot(el, 1);
                 s = rot(el, 2);
+
                 idx = dof_element(el, :);
-                B(el, idx) = [c, s, -c, -s] / lengths(el);
+                B(el, idx) = [-c, -s, c, s] / lengths(el);
             end
 
             if exist('d', 'var') && ~isempty(d)
