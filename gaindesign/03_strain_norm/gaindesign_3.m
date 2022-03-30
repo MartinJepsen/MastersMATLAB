@@ -42,7 +42,9 @@ for run = 0:2
     ObjectiveFunction = @main_gain_design;
     options = optimoptions('ga', 'Generations', 1000,...
                             'PopulationSize', 100,...
-                            'FunctionTolerance',1e-20,...
+                            'FunctionTolerance',0,...
+                            'MaxStallGenerations', 1000,...
+                            'CrossoverFraction', 0.50,...
                             'PlotFcn', @gaplotbestf);
     
     % [res, fval] = ga(ObjectiveFunction, nvars, [], [], [], [], lb, ub, [], options);
@@ -125,7 +127,9 @@ function [J] = main_gain_design(X)
     H_CL_(idx, :) = H_CL_ref;
     eps_CL = B * H_CL_ * B2 * V(:, end);
     eps_CL = abs(eps_CL) / max(abs(eps_CL));
-
-    J = norm(eps(setdiff(1:end, damel), 1)) / norm(eps_CL(setdiff(1:end, damel), 1));
+    
+    dofs = [1:size(B,1)];
+    dofs(damel) = [];
+    J = norm(eps(dofs)) / norm(eps_CL(dofs));
 
 end

@@ -1,5 +1,7 @@
 clc; clear; close all;
-
+set_up
+export_gain_pars
+clear
 load("gaindesign/gain_pars")          % load system matrices
 idx = setdiff(1:n_dof, bc);
 
@@ -19,6 +21,7 @@ np = r*m; % No. of parameters
 ObjectiveFunction = @main_gain_design;
 options = optimoptions('ga', 'Generations', 20000,...
                         'PopulationSize', 100,...
+                        'CrossoverFraction', 0.6,...
                         'FunctionTolerance',1e-5,...
                         'PlotFcn', @gaplotbestf);
 

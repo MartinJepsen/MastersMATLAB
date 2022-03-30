@@ -11,7 +11,7 @@ t = 0:dt:(Nsamples * dt - dt);          % time sequence
 u = randn(numel(in_dof), numel(t));
 nsr = 0.05;
 blockrows = 60;
-dam = [2, 0.96];
+dam = [9, 0.97];
 
 FE = FiniteElementModel('structures/paper_truss.xlsx');
 FE.assembly('bar', dam);
