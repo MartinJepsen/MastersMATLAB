@@ -27,7 +27,6 @@ for run = 0
                             'FunctionTolerance',1e-20,...
                             'PlotFcn', @gaplotbestf);
     
-    % [res, fval] = ga(ObjectiveFunction, nvars, [], [], [], [], lb, ub, [], options);
     [res, fval] = ga(ObjectiveFunction, np*2, [], [], [], [], [], [], [], options);
        
     re = reshape(res(1:np), r, m);

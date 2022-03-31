@@ -52,9 +52,9 @@ for run = 0:2
     
     % K = reshape(res, r, m);  
     
-        re = reshape(res(1:np), r, m);
-        im = reshape(res(np+1:end), r, m);
-        K = complex(re, im);
+    re = reshape(res(1:np), r, m);
+    im = reshape(res(np+1:end), r, m);
+    K = complex(re, im);
     
     results{run+1,1} = K;
     results{run+1,2} = fval;
@@ -116,7 +116,6 @@ function [J] = main_gain_design(X)
     % CL transfer matrices 
     H_CL_ref = (Mg*s^2 + Cg*s + Kg + (B2*K*cdis))^-1;   % full transfer matrix
     H_CL = H_CL_ref(out_dof, in_dof);                   % reduced transfer matrix
-
     H_CL_d = (Mg*s^2 + Cg*s + Kg_d + (B2*K*cdis))^-1;
     H_CL_d = H_CL_d(out_dof, in_dof);
     
