@@ -280,7 +280,7 @@ classdef FiniteElementModel < handle
             ylabel('y')
         end
         
-        function eps = strains_from_disp(self, d)
+        function [eps, B] = strains_from_disp(self, d)
             % if d is emprt/undefined, only the strain mapping matrix is computed
             n_dof = self.n_dof;
             n_el = self.mesh.n_el;
@@ -307,7 +307,8 @@ classdef FiniteElementModel < handle
             end
 
             if exist('d', 'var') && ~isempty(d)
-                self.results.eps = B * d_;
+                eps = B * d_;
+                self.results.eps = eps;
                 self.results.d = d_;
             end
             self.B = B;
@@ -315,7 +316,6 @@ classdef FiniteElementModel < handle
         end
 
         function transfer_matrix(self, s)
-
             % Get s-value from self if not supplied
             if ~exist('s', 'var') && ~isempty(self.s)
                 s = self.s;
