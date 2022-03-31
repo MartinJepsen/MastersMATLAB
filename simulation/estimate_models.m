@@ -1,12 +1,11 @@
 clear
 set_up;
-pause(0.5)
+
 omega_ref = SS_exact.modal_parameters.omega;
 zeta_ref = SS_exact.modal_parameters.zeta;
 
 omega_dev = [];
 zeta_dev = [];
-
 
 for run = 1:100
     run
@@ -43,6 +42,6 @@ for run = 1:100
 end
 
 %%
-filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
-save("simulation/SYSID/"+filename, 'H_est', 'H_est_d', 'lambda_est', 'omega_dev', 'zeta_dev')
+filename = sprintf("simulation/SYSID/%02d_%03d_%03d",dam(1,1), dam(1,2)*100, nsr*100)
+save(filename, 'H_est', 'H_est_d', 'lambda_est', 'omega_dev', 'zeta_dev')
 beep
