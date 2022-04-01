@@ -1,16 +1,18 @@
 clear; clc; close all
 
 %% Load relevant variables
-set_up
-export_gain_pars
-
+% set_up
+% export_gain_pars
+dam =[1, 0.96]
+nsr = 0.05
 filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
 load("simulation/SYSID/"+filename)
 damel = dam(1,1);
-% load('gaindesign\01_strain_cond\gains_1.mat')
+load('gaindesign\01_strain_cond\gains_1.mat')
 % load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
-load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
+% load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
 
+cost_value = gains{1,2}
 %% Reference transfer matrices
 H_ref = inv(Mg*s^2 + Cg*s + Kg);
 H_CL_ref = inv(Mg*s^2 + Cg*s + Kg + B2*K*cdis);
@@ -21,7 +23,6 @@ for damel = dam(:, 1)
     for gainset = 1
         K = gains{gainset};
         for run = 1:numel(H_est)
-            tic
             % OL
             H = H_est{run};                                 % estimated OL transfer matrix, undamaged
             H_d = H_est_d{run};                             % estimated OL transfer matrix, damaged
@@ -52,7 +53,6 @@ for damel = dam(:, 1)
 %             eps_test_CL = abs(eps_CL) / max(abs(eps_CL));
 %             J = norm(eps_test_OL(dofs)) / norm(eps_test_CL(dofs))
 
-            toc
         end
     end
 end

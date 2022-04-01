@@ -1,7 +1,7 @@
 clc; clear; close all;
 
 set_up
-export_gain_pars
+
 load("gaindesign/gain_pars")          % load system matrices
 damel = dam(:, 1);
 
