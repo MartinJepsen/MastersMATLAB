@@ -1,7 +1,7 @@
 function y = noise(signal, nsr)
 %     Y = NOISE(SIGNAL, NSR)
-% time = clock;
-% rng(time(end)*100*rand);         % uses current time as random number seed
+time = clock;
+rng(time(end)*100*rand);         % uses current time as random number seed
 % rng(1);
 [n, N] = size(signal);
 

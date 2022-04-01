@@ -74,7 +74,7 @@ a.YLabel.Rotation = 0;
 
 
 %%
-% ylim([-45, 45])
+ylim([-45, 45])
 %  title('Pole map for exact and estimated models')
 
 legend([q(1), e(1)], {'Exact OL', 'Estimated OL'},'Location','south east')

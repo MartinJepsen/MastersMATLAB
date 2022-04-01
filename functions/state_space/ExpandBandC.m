@@ -20,6 +20,22 @@ r = size(Bc, 2);        % number of inputs
 m = size(Cc,1);
 r = size(Bc,2);
 
+
+% [Bexp, Cexp] = EXPANDBANDC(Ac, Bc, Cc, v1, v3, ord)
+% Expands the input and output matrices.
+% Arguments:
+% Ac: continuous-time state matrix
+% Bc: continuous-time input matrix
+% Cc: output matrix
+% v1: Rows in C of DOF that have an input
+% v3: Rows in B of DOF that have an output
+% ord:
+
+
+N = size(Ac, 1);        % system order
+m = size(Cc, 1);        % number of outputs
+r = size(Bc, 2);        % number of inputs
+
 t = m + r - numel(v3);       % ?
 
 if  isempty(ord) == 0 && numel(ord) - t ~= 0
@@ -35,14 +51,28 @@ Lambda = diag(Lambda);
 Lambda = Lambda(ind);
 Phi = Phi(:, ind);
 
+
+% for i = 1:size(Phi,1)
+%         if imag(Phi(i,1)) < 1e-10
+%             scale = complex( - real(Phi(i, :)) ./ imag(Phi(i, :)), 1);
+%         break
+%     end
+% end
+% 
+% Phi = Phi*diag(scale);
+% Phi(1:N/2,:) = real(Phi(1:N/2,:));
+
+
 % *********************************************************************** %
 Psi = (Cc*Phi);
 Gamma = (Phi\Bc);
 
 % Select the colocated Gamma
 GammaC = Gamma(:, v3);
+% GammaC = Gamma(v3, :);
 % Select the colocated Psi
 PsiC = Psi(v1,:);
+% PsiC = Psi(:,v1);
 % Compute the scaling constants (LS if there is more than one
 % collocation)
 
@@ -87,5 +117,4 @@ Bexp = Phi*diag(alpha)*Phi.'*Cexp.';
 if isempty(ord) == 0
     Cexp = Cexp(ord, :);
     Bexp = Bexp(:, ord); 
-end
 end

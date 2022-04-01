@@ -47,13 +47,13 @@ for k = 1:ii
     Yf((k-1)*l+1:k*l,:)=yk1(:,k:k+j-1);
 end
 
-% clearvars -except Up Uf Yp Yf ii s m l j
+clearvars -except Up Uf Yp Yf ii s m l j
 %% LQ Decomposition
 U = [Up;Uf];
 Y = [Yp;Yf];
 H = [U;Y]';
 % clearvars -except Up Uf Yp Yf ii s m l j
-% clearvars -except H ii s m l j
+clearvars -except H ii s m l j
 QueAre = qr(H);
 
 L = triu(QueAre)';
@@ -94,7 +94,7 @@ ss=diag(S);
 % 
 % ns=input('Provide system order via command window. Press Ctrl+C to cancel.');
 % close
-ns = 24;
+ns = 12;
 %% Retrieve the system matrices
 U2 = U1(:,1:ns);
 S1 = S(1:ns,1:ns);
@@ -116,10 +116,6 @@ Xip=pinv(gammaip1)*Oip;
 Left=[Xip ; L((2*m+l)*ii+1:(2*m+l)*ii+l,:)];
 Right=[Xi ; L(m*ii+1:m*(ii+1),:)]; 
 sol=Left/Right;
-
-if any(isnan(sol))
-    warning('WARNING: (n4sid_) NaN found in solution. Check inputs and results.')
-end
 
 A =sol(1:ns,1:ns);
 B =sol(1:ns,ns+1:ns+m);
