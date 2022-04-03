@@ -1,7 +1,7 @@
 clc; clear; close all;
 
 set_up
-export_gain_pars
+
 load("gaindesign/gain_pars")          % load system matrices
 damel = dam(:, 1);
 
@@ -40,9 +40,11 @@ for run = 0:2
     np = r*m; % No. of parameters
     
     ObjectiveFunction = @main_gain_design;
-    options = optimoptions('ga', 'Generations', 1000,...
+    options = optimoptions('ga', 'Generations', 300,...
                             'PopulationSize', 100,...
-                            'FunctionTolerance',1e-20,...
+                            'FunctionTolerance',0,...
+                            'MaxStallGenerations', 1000,...
+                            'CrossoverFraction', 0.50,...
                             'PlotFcn', @gaplotbestf);
     
     % [res, fval] = ga(ObjectiveFunction, nvars, [], [], [], [], lb, ub, [], options);
@@ -50,9 +52,9 @@ for run = 0:2
     
     % K = reshape(res, r, m);  
     
-        re = reshape(res(1:np), r, m);
-        im = reshape(res(np+1:end), r, m);
-        K = complex(re, im);
+    re = reshape(res(1:np), r, m);
+    im = reshape(res(np+1:end), r, m);
+    K = complex(re, im);
     
     results{run+1,1} = K;
     results{run+1,2} = fval;
@@ -114,7 +116,6 @@ function [J] = main_gain_design(X)
     % CL transfer matrices 
     H_CL_ref = (Mg*s^2 + Cg*s + Kg + (B2*K*cdis))^-1;   % full transfer matrix
     H_CL = H_CL_ref(out_dof, in_dof);                   % reduced transfer matrix
-
     H_CL_d = (Mg*s^2 + Cg*s + Kg_d + (B2*K*cdis))^-1;
     H_CL_d = H_CL_d(out_dof, in_dof);
     
@@ -125,7 +126,9 @@ function [J] = main_gain_design(X)
     H_CL_(idx, :) = H_CL_ref;
     eps_CL = B * H_CL_ * B2 * V(:, end);
     eps_CL = abs(eps_CL) / max(abs(eps_CL));
-
-    J = norm(eps(setdiff(1:end, damel), 1)) / norm(eps_CL(setdiff(1:end, damel), 1));
+    
+    dofs = [1:size(B,1)];
+    dofs(damel) = [];
+    J = norm(eps(dofs)) / norm(eps_CL(dofs));
 
 end

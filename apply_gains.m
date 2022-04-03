@@ -1,27 +1,28 @@
 clear; clc; close all
 
 %% Load relevant variables
-set_up
-export_gain_pars
-
+% set_up
+% export_gain_pars
+dam =[1, 0.96]
+nsr = 0.05
 filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
 load("simulation/SYSID/"+filename)
 damel = dam(1,1);
-% load('D:\OneDrive - Aalborg Universitet\Speciale\MatLab\gaindesign\01_strain_cond\gains_1.mat')
-% load(sprintf("gaindesign/02_sens/unconstrained/gains_%02d", damel))
-load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
+load('gaindesign\01_strain_cond\gains_1.mat')
+% load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
+% load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
 
+cost_value = gains{1,2}
 %% Reference transfer matrices
-H_ref = (Mg*s^2 + Cg*s + Kg)^-1;
-H_CL_ref = (Mg*s^2 + Cg*s + Kg + B2*K*cdis)^-1;
+H_ref = inv(Mg*s^2 + Cg*s + Kg);
+H_CL_ref = inv(Mg*s^2 + Cg*s + Kg + B2*K*cdis);
 
 %% Obtain characteristic strains for every run
 tot_runs = 0;
 for damel = dam(:, 1)
     for gainset = 1
-        K = gains{gainset}
+        K = gains{gainset};
         for run = 1:numel(H_est)
-            tic
             % OL
             H = H_est{run};                                 % estimated OL transfer matrix, undamaged
             H_d = H_est_d{run};                             % estimated OL transfer matrix, damaged
@@ -46,7 +47,12 @@ for damel = dam(:, 1)
             min_strain_OL(tot_runs, 1) = find(eps_OL == min(eps_OL));   % index of smallest OL strain
             min_strain_CL(tot_runs, 1) = find(eps_CL == min(eps_CL));   % index of smallest CL strain
 
-            toc
+%             dofs = [1:size(B_strain,1)];
+%             dofs(damel) = [];
+%             eps_test_OL = abs(eps_OL) / max(abs(eps_OL));
+%             eps_test_CL = abs(eps_CL) / max(abs(eps_CL));
+%             J = norm(eps_test_OL(dofs)) / norm(eps_test_CL(dofs))
+
         end
     end
 end
