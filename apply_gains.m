@@ -2,13 +2,9 @@ clear; clc; close all
 
 %% Load relevant variables
 dam =[1, 0.96]
+nsr = 0.05;
 set_up
 
-<<<<<<< HEAD
-nsr = 0.05;
-=======
-nsr = 0.05
->>>>>>> 3535b4fadcee69e9a7be5aac6cb558046ba8bd1d
 filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
 load("simulation/SYSID/"+filename)
 damel = dam(1,1);
