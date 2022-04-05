@@ -1,16 +1,14 @@
 clear; clc; close all
 
 %% Load relevant variables
-dam =[1, 0.96]
-nsr = 0.05;
 set_up
 
 filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
 load("simulation/SYSID/"+filename)
 damel = dam(1,1);
-load('gaindesign\01_strain_cond\gains_1.mat')
+% load('gaindesign\01_strain_cond\gains_1.mat')
 % load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
-% load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
+load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
 
 cost_value = gains{1,2}
 %% Reference transfer matrices
@@ -76,7 +74,7 @@ locatability = 1 ./ [m_norm(damel,1) / m_sorted(1, 1), m_norm(damel,2) / m_sorte
 close all
 f2 = figure;
 hold on
-f2.Position(4) = 5;
+% f2.Position(4) = 5;
 
 x = [1:n_el];  % positions of the bars
 b1 = bar(x, m_norm(:, 1), 'k');
