@@ -16,6 +16,10 @@ blockrows = 60;
 
 nsr = 0.05;
 dam = [2, 0.95];
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 
 FE = FiniteElementModel('structures/paper_truss.xlsx');
 FE.assembly('bar', dam);

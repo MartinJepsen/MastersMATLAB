@@ -9,7 +9,7 @@ addpath(genpath(pwd));
 %% set figure defaults
 
 set(groot, "defaultFigureUnits", "centimeters")
-set(groot, "defaultFigurePosition", [10, 10, 12.2, 6.5])
+set(groot, "defaultFigurePosition", [10, 10, 18, 8])
 % set(groot, "defaultFigureFontSize", 12)
 
 set(groot, "defaultAxesTickLabelInterpreter", "Latex")
