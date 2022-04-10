@@ -331,5 +331,70 @@ classdef FiniteElementModel < handle
                 disp('ERROR (transfer_matrix): Missing s value parameter.')
             end
         end
+
+        function plotdisp(self, d)
+
+            n_dof = self.n_dof;
+            if exist('d', 'var') && ~isempty(d)
+                % add zero displacements at constrained DOF
+                if numel(d) ~= self.n_dof
+                    bc = self.mesh.bc_dof;
+                    d_ = zeros(n_dof,1);
+                    d_(setdiff(1:n_dof, bc)) = d;
+                end
+            else
+                try
+                    d_ = self.results.d;
+                catch
+                    error('No displacement vector found')
+                end
+            end
+
+            topology = self.mesh.topology;
+            coords = self.mesh.coordinates;
+
+            for i = 1:size(topology,1)
+                % makes x-y coordinates for the end and start node of the ith element as    
+                lines(i,:) = [coords(topology(i,1),:) coords(topology(i,2),:)];
+            end
+
+            def_shape = lines;
+
+            for i=1:size(topology, 1)
+                % DOF numbers of the start node of the i'th element
+                ind1 = [(topology(i,1)*2-1):(topology(i,1)*2)];
+                % DOF numbers of the end node of the i'th element
+                ind2 = [(topology(i,2)*2-1):(topology(i,2)*2)];
+                % Line start and end points in format [x1 y1 z1 x2 y2 z2]
+                d_def(i,:)=[[d_(ind1)]', [d_(ind2)]'];
+            end
+
+            def_shape = lines + d_def;
+
+            figure
+            hold on
+            axis equal
+            grid on
+            for i = 1:size(topology, 1)
+                % Average coordinates for placing element numbers
+                avcoord(i,:) = [mean(lines(i, [1, 3])), mean(lines(i, [2,4]))];
+                
+                % Plots the lines and nodes
+                plot(lines(i, [1, 3]), lines(i, [2, 4]), '.-k', 'MarkerSize', 50)
+                plot(def_shape(i, [1, 3]), def_shape(i, [2, 4]), '.-r', 'MarkerSize', 25)
+                %% Element and node numbering
+                % Plots nodal numbers for all starting nodes
+                text(lines(i, 1), lines(i, 3), num2str(topology(i, 1)),'color','white',...
+                    'HorizontalAlignment','center')
+                % Plots nodal numbers for all ending nodes
+                text(lines(i, 2), lines(i, 4), num2str(topology(i, 2)),'color','white',...
+                    'HorizontalAlignment','center')
+                % Plots element numbers
+                text(avcoord(i,1),avcoord(i,2),num2str(i),'color','black','backgroundcolor','white')
+                xlabel('x')
+                ylabel('y')
+                zlabel('z')
+            end
+        end
     end
 end
