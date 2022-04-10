@@ -10,16 +10,19 @@ damel = dam(1,1);
 % load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
 load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
 
+
 cost_value = gains{1,2}
 %% Reference transfer matrices
 H_ref = inv(Mg*s^2 + Cg*s + Kg);
-H_CL_ref = inv(Mg*s^2 + Cg*s + Kg + B2*K*cdis);
 
 %% Obtain characteristic strains for every run
 tot_runs = 0;
 for damel = dam(:, 1)
     for gainset = 1
-        K = gains{gainset};
+%         K = gains{gainset};
+        K = randn(8)*1e8;
+        
+        H_CL_ref = inv(Mg*s^2 + Cg*s + Kg + B2*K*cdis);
         for run = 1:numel(H_est)
             % OL
             H = H_est{run};                                 % estimated OL transfer matrix, undamaged

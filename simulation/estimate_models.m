@@ -43,5 +43,5 @@ end
 
 %%
 filename = sprintf("simulation/SYSID/%02d_%03d_%03d",dam(1,1), dam(1,2)*100, nsr*100)
-save(filename, 'H_est', 'H_est_d', 'lambda_est', 'omega_dev', 'zeta_dev')
+% save(filename, 'H_est', 'H_est_d', 'lambda_est', 'omega_dev', 'zeta_dev')
 beep
