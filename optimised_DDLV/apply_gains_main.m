@@ -1,14 +1,13 @@
 clear; clc; close all
 % Stand: 23_02_2022_1023
 tot_runs = 0;
-n_dof = 6;
 
-results_number = 1;
+results_number = 0;
 
-for damel = 6
-    load("simulation/system_matrices/09500/model_" + num2str(damel))
+for damel = 2
+    load('testing/legacy_test/gain_pars.mat');
 
-    for gainset = 1
+    for gainset = 2
         load("optimised_DDLV/01_strain_cond/unconstrained/gains_" + num2str(gainset))
 %         load("optimised_DDLV/02_sens/unit_perturbations/gains_" + num2str(gainset))  
 %         load("optimised_DDLV/03_strain_norm/unit_perturbations/gains_" + num2str(gainset))  
@@ -16,7 +15,6 @@ for damel = 6
         norm_K = gains{1,2};
 
         for s_val = 1
-            s = [complex(real(Lambda(s_val)), 1.1*imag(Lambda(s_val)))];
             G_ref = (Mg*s^2+Cg*s+Kg)^-1;
             for run = 0:99
                 
@@ -27,17 +25,6 @@ for damel = 6
     
                 in_dof = model.in_dof; r =  numel(in_dof);
                 out_dof = model.out_dof; m = numel(out_dof);
-                
-                b2 = zeros(n_dof, r);
-                for ii=1:r
-                    b2(in_dof(ii), ii) = 1;
-                end
-                
-                cdis = zeros(m, n_dof);
-                for ii=1:m
-                    cdis(ii, out_dof(ii)) = 1;
-                end
-    
         
                 % Estimated, undamaged open-loop state space model
                 [A, B] = dt2ct(model.sys_u.A, model.sys_u.B, model.dt);
@@ -52,11 +39,11 @@ for damel = 6
                 [~, ~, V] = svd(DeltaG_est);
                 F = zeros(n_dof, 1);
                 v = V(:, end);
-                F(in_dof) = v;
-                d_OL_est = [0; G_ref * F];
-        
+                d_OL_est = zeros(n_dof, 1);
+                d_OL_est(idx) = G_ref * B2 * v;
+
                 % Closed-loop transfer matrices
-                G_CL_ref = (Mg*s^2 + Cg*s + Kg + b2*K*cdis)^-1;
+                G_CL_ref = (Mg*s^2 + Cg*s + Kg + B2*K*cdis)^-1;
                 G_CL_est = (eye(size(G_est))+G_est*K)^-1*G_est;
                 G_CL_est_d = (eye(size(G_est_d))+G_est_d*K)^-1*G_est_d;
                 DeltaG_CL = G_CL_est_d-G_CL_est;                                % closed-loop transfer matrix change
@@ -66,13 +53,11 @@ for damel = 6
         
                 F = zeros(n_dof,1);
                 v = V(:, end);
-                F(in_dof) = v;
-                d_CL_est = [0; G_CL_ref*F];        % closed-loop displacement field
+                d_CL_est = zeros(n_dof, 1);
+                d_CL_est(idx) = G_CL_ref * B2 * v;
         
-                for el = 1:n_dof
-                    eps_OL(el,:) = [1 -1]*d_OL_est(el:el+1);
-                    eps_CL(el,:) = [1 -1]*d_CL_est(el:el+1);
-                end
+                eps_OL = B_strain*d_OL_est;
+                eps_CL = B_strain*d_CL_est;
         
 %                 eps_OL = abs(eps_OL)./max(abs(eps_OL));
 %                 eps_CL = abs(eps_CL)./max(abs(eps_CL));
@@ -102,7 +87,7 @@ s_s = std(s_norm,0,2);         % standard deviation of un-normalised strain arra
 % cov = s_s ./ max(m);            % normalise standard deviation by largest mean value
 m_norm = mean(s_norm,2);        % mean of rows normalised by largest mean (the strain field to be plotted)
 
-[m_sorted, idx] = sort(m_norm(setdiff([1:n_dof],damel),1,:));
+[m_sorted, idx] = sort(m_norm(setdiff([1:free_dof],damel),1,:));
 locatability = 1 ./ [m_norm(damel,1) / m_sorted(1, 1), m_norm(damel,2) / m_sorted(1, 2)]
 
 % Plot results
@@ -112,11 +97,11 @@ f2 = figure;
 hold on
 f2.Position(4) = 5;
 
-x = [1:6];  % positions of the bars
+x = [1:size(B_strain,1)];  % positions of the bars
 b1 = bar(x, m_norm(:, 1), 'k');
-b2 = bar(x+n_dof, m_norm(:,2), 'w');
+B2 = bar(x+x(end), m_norm(:,2), 'w');
 
-for i = 1:2*n_dof
+for i = 1:2*x(end)
     end_pos = [m_norm(i), m_norm(i)]; % y-values of whiskers
 
     % 4) coefficients of variation (standard deviations normalised by largest normalised means)

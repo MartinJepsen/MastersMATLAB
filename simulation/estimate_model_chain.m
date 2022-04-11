@@ -35,8 +35,6 @@ fn = (1/dt)/2;                      % Nyquist frequency
 
 %% Input/output controls
 freedof = size(Kg,1);
-in_dof = [1, 3, 5];
-out_dof = [1, 3, 5];
 
 z0 = zeros(2*freedof,1);                  % initial conditions
 rng(1);
