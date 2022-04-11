@@ -13,8 +13,9 @@ mkdir(savedir);
 addpath(savedir);
 
 %% Load systems
-for damel = 1:6
-load("simulation/system_matrices/08500/model_" + num2str(damel))
+
+load('testing/legacy_test/gain_pars.mat')
+damel = dam(1);
 
 resultdir = savedir + sprintf("/%02d",[damel]);
 mkdir(resultdir)
@@ -26,18 +27,18 @@ addpath(resultdir)
 omegas = sqrt(eig(Kg,Mg));
 fmax = max(omegas)/(2*pi);          % highest frequency in the response
 tmax = min(omegas/(2*pi))^-1;       % longest period in the response
-dt = 0.02;                          % time increment size
+dt = 0.0001;                          % time increment size
 Nsamples = 50000;                   %
 t = 0:dt:(Nsamples*dt-dt);                       % time sequence
 % t = t(1:2^(nextpow2(numel(t))-1));  % Trim sample length to numel(t) = 2^n where n is an integer.
 fn = (1/dt)/2;                      % Nyquist frequency
 
 %% Input/output controls
-n_dof = size(Kg,1);
+freedof = size(Kg,1);
 in_dof = [1, 3, 5];
 out_dof = [1, 3, 5];
 
-z0 = zeros(2*n_dof,1);                  % initial conditions
+z0 = zeros(2*freedof,1);                  % initial conditions
 rng(1);
 u_raw = randn(numel(in_dof),numel(t));  % unfiltered input
 
@@ -52,7 +53,7 @@ filtering = false;
 
 %% Simulation of time response
 % modelorder = 2*size(Kg,1);
-modelorder = 40;
+modelorder = 60;
 nsr = 0.05;
 
 [d, ~, ~, sys_ex_u] = SS_timeseries(Kg, Cg, Mg, z0, u_raw, t, in_dof);
@@ -80,7 +81,7 @@ d_noise_d = noise(d_d, nsr);
 u_noise = noise(u_raw, nsr);
 
 %% Estimate models
-
+i
 
 % with noise, damaged
 [A, B, C, D] = n4sid_(d_noise_d, u_noise, modelorder);
@@ -116,6 +117,6 @@ resultfile = resultdir + sprintf("/run_%03d",[i]);
 save(resultfile, "model");
 
 end
-end
+
 toc
 beep
