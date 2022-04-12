@@ -58,5 +58,5 @@ B = B - circshift(B,1,2);
 FE.B = B;
 FE.mesh.bc_dof = 1;
 
-clearvars -except FE free_dof
+clearvars -except FE free_dof dam
 

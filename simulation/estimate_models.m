@@ -13,7 +13,7 @@ for run = 1:100
     SS = StateSpaceModel();
     SS.set_io(in_dof, out_dof);
     SS.dt_from_FE(Kg, Cg, Mg, dt);
-    [u, y] = SS.time_response(u, t, nsr, true);
+    [u, y] = SS.time_response(u, t, nsr, false);
     SS.estimate(u, y, blockrows);
     SS.get_modal_parameters();
     SS.to_ct();
@@ -21,7 +21,7 @@ for run = 1:100
     SS_d = StateSpaceModel();
     SS_d.set_io(in_dof, out_dof);
     SS_d.dt_from_FE(Kg_d, Cg, Mg, dt)
-    [u, y] = SS_d.time_response(u, t, nsr, true);
+    [u, y] = SS_d.time_response(u, t, nsr, false);
     SS_d.estimate(u, y, blockrows);
     SS_d.to_ct();
 
