@@ -97,7 +97,7 @@ classdef StateSpaceModel < handle
             self.B2 = SS.B2;
         end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function [A, B, C, D] = estimate(self, y, u, blockrows)
+        function [A, B, C, D] = estimate(self, u, y, blockrows)
             self.A = [];
             self.B = [];
             self.C = [];
@@ -120,7 +120,7 @@ classdef StateSpaceModel < handle
             self.D = D;
         end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function [y, u] = time_response(self, u, t, nsr, store)
+        function [u, y] = time_response(self, u, t, nsr, store)
             A = self.A;
             B = self.B;
             C = self.C;
