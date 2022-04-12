@@ -1,0 +1,7 @@
+*.asv
+.gitignore.bak
+.gitignore
+/MDU
+/testing
+/deprecated
+/figures
