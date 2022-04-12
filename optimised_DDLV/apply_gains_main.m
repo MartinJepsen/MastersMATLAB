@@ -2,10 +2,10 @@ clear; clc; close all
 % Stand: 23_02_2022_1023
 tot_runs = 0;
 
-results_number = 0;
-
-for damel = 2
-    load('testing/legacy_test/gain_pars.mat');
+results_number = 2;
+load('testing/legacy_test/gain_pars.mat');
+for damel = dam(1)
+    
 
     for gainset = 2
         load("optimised_DDLV/01_strain_cond/unconstrained/gains_" + num2str(gainset))
