@@ -1,4 +1,3 @@
-clear
 set_up;
 
 omega_ref = SS_exact.modal_parameters.omega;

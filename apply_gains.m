@@ -1,16 +1,15 @@
-clear; clc; close all
+clc; close all
 
 %% Load relevant variables
 set_up
 % 
-% filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
-% load("simulation/SYSID/"+filename)
+filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
+load("simulation/SYSID/"+filename)
 
-load('simulation/SYSID/02_095_005_2')
 damel = dam(1,1);
 % load('gaindesign\01_strain_cond\gains_1.mat')
-% load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
-load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
+load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
+% load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
 
 cost_value = gains{1,2}
 %% Reference transfer matrices
@@ -64,7 +63,7 @@ for damel = dam(:, 1)
 end
 
 %% Results post-processing
-n_el = 14;
+n_el = FE.mesh.n_el;
 for i = 1:n_el
     success_rates(i, 1:2) = [sum(min_strain_OL == i), sum(min_strain_CL == i)]/tot_runs*100;
 end
