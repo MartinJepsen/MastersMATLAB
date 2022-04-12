@@ -3,20 +3,20 @@ clear; clc; close all
 tot_runs = 0;
 n_dof = 6;
 
-results_number = 1;
+results_number = 2;
 
-for damel = 6
-    load("simulation/system_matrices/09500/model_" + num2str(damel))
+for damel = 3
+    load("simulation/system_matrices/08500/model_" + num2str(damel))
 
     for gainset = 1
-        load("optimised_DDLV/01_strain_cond/unconstrained/gains_" + num2str(gainset))
+        load("optimised_DDLV/01_strain_cond/unit_perturbations/gains_" + num2str(gainset))
 %         load("optimised_DDLV/02_sens/unit_perturbations/gains_" + num2str(gainset))  
 %         load("optimised_DDLV/03_strain_norm/unit_perturbations/gains_" + num2str(gainset))  
         K = gains{1,1};
         norm_K = gains{1,2};
 
         for s_val = 1
-            s = [complex(real(Lambda(s_val)), 1.1*imag(Lambda(s_val)))];
+            s = complex(real(Lambda(s_val)), 0.1 + imag(Lambda(s_val)));
             G_ref = (Mg*s^2+Cg*s+Kg)^-1;
             for run = 0:99
                 

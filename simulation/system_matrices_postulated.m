@@ -7,11 +7,9 @@ m = [0.48, 0.27, 0.0700, 0.0700, 0.090, 0.150];
 
 n_dof = numel(m);
 
-
 dam = 0.85;
 
-% save_dir = "D:\\OneDrive - Aalborg Universitet\\Speciale\\MatLab\\simulation\\system_matrices\\unit_perturbation";
-save_dir = sprintf("D:/OneDrive - Aalborg Universitet/Speciale/MatLab/simulation/system_matrices/%05d", dam*10000)
+save_dir = sprintf("/simulation/system_matrices/%05d", dam*10000)
 if exist(fullfile(save_dir), 'dir') ~= 7
     mkdir(save_dir);
     addpath(save_dir);
