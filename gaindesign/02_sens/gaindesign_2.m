@@ -1,6 +1,5 @@
-clc; clear; close all;
-set_up;
-export_gain_pars;
+% set_up;
+
 
 load("gaindesign/gain_pars")          % load system matrices
 damel = dam(:, 1);
@@ -16,7 +15,7 @@ DeltaKg = DeltaKg(out_dof, in_dof);
 run = 0;
 good = 0;
 tic
-for run = 0
+for run = 1:5
     seed = ceil(abs(randn * randn) * 10)
     rng(seed);
     np = r*m; % No. of parameters
@@ -86,7 +85,7 @@ function [J] = main_gain_design(X)
     
     % reject population member if it increases the transfer matrix condition number
     if cond(H_CL) > cond(H)
-        J = 1;
+        J = 1e40;
         return
     end
 

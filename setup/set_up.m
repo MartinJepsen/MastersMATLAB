@@ -1,10 +1,10 @@
-clear
-
 rng(1)
 
-dam = [1, 0.85];
+% dam = [1, 0.85];
 
 chain_system
+
+clearvars -except FE free_dof dam damages i
 
 in_dof = [1, 3, 5];
 out_dof = in_dof;
