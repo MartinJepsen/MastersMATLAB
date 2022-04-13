@@ -1,5 +1,6 @@
 clc; close all
-
+clear
+dam = [6, 0.85];
 %% Load relevant variables
 set_up
 % 
@@ -8,8 +9,8 @@ load("simulation/SYSID/"+filename)
 
 damel = dam(1,1);
 % load('gaindesign\01_strain_cond\gains_1.mat')
-load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
-% load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
+% load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
+load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
 
 cost_value = gains{1,2}
 %% Reference transfer matrices
@@ -75,8 +76,8 @@ s_s = std(s_norm,0,2);          % standard deviation of un-normalised strain arr
 m_norm = mean(s_norm,2);        % mean of rows normalised by largest mean (the strain field to be plotted)
 
 [m_sorted, idx] = sort(m_norm(setdiff([1:n_el],damel),1,:));
-locatability = 1 ./ [m_norm(damel,1) / m_sorted(1, 1), m_norm(damel,2) / m_sorted(1, 2)]
-
+% locatability = 1 ./ [m_norm(damel,1) / m_sorted(1, 1), m_norm(damel,2) / m_sorted(1, 2)]
+return
 % Plot results
 close all
 f2 = figure;

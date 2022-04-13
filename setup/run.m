@@ -10,3 +10,8 @@ for ijk = 1:size(damages, 1)
     gaindesign_3
     
 end
+
+%% Run single setup
+dam = damages(1, :);
+set_up
+apply_gains
