@@ -4,15 +4,20 @@ dam = [6, 0.85];
 %% Load relevant variables
 set_up
 % 
-filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
+filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100);
 load("simulation/SYSID/"+filename)
 
 damel = dam(1,1);
 % load('gaindesign\01_strain_cond\gains_1.mat')
 % load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
-load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
+% load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
 
-cost_value = gains{1,2}
+% load(sprintf('testing/legacy_test/gains_old/01/gains_%d.mat', 1))
+% load(sprintf('testing/legacy_test/gains_old/02/gains_%d.mat', damel))
+load(sprintf('testing/legacy_test/gains_old/03/gains_%d.mat', damel))
+
+K = gains{1,1}
+% cost_value = gains{1,2}
 %% Reference transfer matrices
 H_ref = inv(Mg*s^2 + Cg*s + Kg);
 
