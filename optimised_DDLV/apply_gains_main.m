@@ -5,13 +5,17 @@ n_dof = 6;
 
 results_number = 2;
 
-for damel = 3
+for damel = 6
     load("simulation/system_matrices/08500/model_" + num2str(damel))
 
     for gainset = 1
-        load("optimised_DDLV/01_strain_cond/unit_perturbations/gains_" + num2str(gainset))
+%         load("optimised_DDLV/01_strain_cond/unit_perturbations/gains_" + num2str(gainset))    
 %         load("optimised_DDLV/02_sens/unit_perturbations/gains_" + num2str(gainset))  
-%         load("optimised_DDLV/03_strain_norm/unit_perturbations/gains_" + num2str(gainset))  
+%         load("optimised_DDLV/03_strain_norm/unit_perturbations/gains_" + num2str(gainset))
+
+% load('testing\legacy_test\gains\01_strain_cond\gains_1.mat')
+% load(sprintf('testing/legacy_test/gains/02_sens/constrained/gains_%02d.mat', damel))
+load(sprintf('testing/legacy_test/gains/03_strain_norm/gains_%02d.mat', damel))
         K = gains{1,1};
         norm_K = gains{1,2};
 
@@ -103,6 +107,7 @@ s_s = std(s_norm,0,2);         % standard deviation of un-normalised strain arra
 m_norm = mean(s_norm,2);        % mean of rows normalised by largest mean (the strain field to be plotted)
 
 [m_sorted, idx] = sort(m_norm(setdiff([1:n_dof],damel),1,:));
+return
 locatability = 1 ./ [m_norm(damel,1) / m_sorted(1, 1), m_norm(damel,2) / m_sorted(1, 2)]
 
 % Plot results
