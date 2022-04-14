@@ -72,11 +72,9 @@ function [J] = main_gain_design(X)
     idx = evalin('base', 'idx');
 
     H_ref = evalin('base', 'H_ref');
-    H_ = evalin('base', 'H_');
     H = evalin('base', 'H');
     H_d = evalin('base', 'H_d');
 
-    FE = evalin('base', 'FE');
     s = evalin('base', 's');
     Kg = evalin('base', 'Kg');
     Kg_d = evalin('base', 'Kg_d');
