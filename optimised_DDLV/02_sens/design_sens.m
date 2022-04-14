@@ -1,13 +1,20 @@
 clc; clear; close all;
 
-damel = 6;
+damel = 5;
+load(sprintf("simulation/system_matrices/unit_perturbation/model_%d", damel))
 
-%% Exact system
 n_dof = 6;
 out_dof = [1, 3, 5];
 m = numel(out_dof);
 in_dof = [1, 3, 5];
 r = numel(in_dof);
+
+s = complex(real(Lambda(1)), 0.1 + imag(Lambda(1)));         % pole
+dKg = Kg_d - Kg;
+dKg = dKg(out_dof, in_dof);
+G = inv(Mg * s^2 + Cg * s + Kg);        % OL transfer matrix
+G = G(out_dof, in_dof);
+
 
 %% Genetic algorithm
 run = 0;
@@ -25,7 +32,11 @@ for run = 0:5
     nvars = numel(lb);
     ObjectiveFunction = @main_gain_design;
 
-    options = optimoptions('ga', 'Generations', 1000, 'PopulationSize', 100, 'ConstraintTolerance', 1e-20);
+    options = optimoptions('ga',...
+                           'Generations', 1000,...
+                           'PopulationSize', 100,...
+                           'PlotFcn', @gaplotbestf);
+
     [res, fval] = ga(ObjectiveFunction, nvars, [], [], [], [], [], [], [], options);
     
     results{run+1,1} = reshape(res, r, m);
@@ -49,23 +60,18 @@ save(sprintf("optimised_DDLV/02_sens/unit_perturbations/gains_%d",damel),"gains"
 
 function [J] = main_gain_design(X)
 
-    load("simulation/system_matrices/unit_perturbation/model_6")          % load system matrices
-
     in_dof = [1, 3, 5];                                         % input DOF
     out_dof = [1, 3, 5];                                        % output DOF
     m = numel(out_dof);
     r = numel(in_dof);
 
     K = reshape(X, r, m);                                       % gain matrix
-    s = complex(real(Lambda(1)), 1.1*imag(Lambda(1)));         % pole
+    s = evalin('base', 's');
     
     % Obtain closed-loop stiffness (damaged and undamaged)
-    dKg = Kg_d - Kg;
-    dKg = dKg(out_dof, in_dof);
-
-    G = inv(Mg * s^2 + Cg * s + Kg);        % OL transfer matrix
-    G = G(out_dof, in_dof);
-
+    G = evalin('base', 'G');
+    dKg = evalin('base', 'dKg');
+    
     G_CL = (eye(size(G))+G*K)\G;            % CL transfer matrix
     dG = -G_CL * dKg * G_CL;                % Change in OL transfer matrix
 
