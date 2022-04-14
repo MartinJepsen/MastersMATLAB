@@ -1,6 +1,6 @@
 rng(1)
 
-% dam = [1, 0.85];
+dam = [5, 0.85];
 
 chain_system
 
