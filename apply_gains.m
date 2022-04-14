@@ -8,9 +8,9 @@ set_up
 
 load('simulation/SYSID/02_095_005')
 damel = dam(1,1);
-load('gaindesign\01_strain_cond\gains_1.mat')
+% load('gaindesign\01_strain_cond\gains_1.mat')
 % load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
-% load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
+load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
 
 cost_value = gains{1,2}
 %% Reference transfer matrices

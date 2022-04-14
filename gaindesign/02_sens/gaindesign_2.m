@@ -9,6 +9,7 @@ H = SS_exact.H;
 DeltaKg = Kg_d - Kg;
 DeltaKg(DeltaKg ~= 0) = DeltaKg(DeltaKg ~= 0) ./ abs(DeltaKg(DeltaKg ~= 0));
 Kg_d = DeltaKg - Kg;
+DeltaKg = DeltaKg(out_dof, in_dof);
 
 %% Genetic algorithm
 run = 0;
