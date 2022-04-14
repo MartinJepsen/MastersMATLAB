@@ -9,7 +9,7 @@ H_(idx, :) = H;
 run = 0;
 good = 0;
 tic
-for run = 0:2
+for run = 0:5
     seed = ceil(abs(randn * randn) * 10)
     rng(seed);
     np = r*m; % No. of parameters
@@ -78,8 +78,6 @@ function [J] = main_gain_design(X)
 
     E =  B * H_ * B2;
     E_CL = B * H_CL_ * B2;
-%     E =  B * H_;
-%     E_CL = B * H_CL_;
     
     J = cond(E_CL) / cond(E);
 

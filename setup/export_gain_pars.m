@@ -9,8 +9,8 @@ Cg = FE.Cg;
 Mg = FE.Mg;
 Kg_d = FE.Kg_d;
 Lambda = SS_exact.modal_parameters.Lambda;
-s = complex(real(Lambda(1)), 1.1*imag(Lambda(1)));         % pole
-z = exp(s);
+s = complex(real(Lambda(1)), 0.1 + imag(Lambda(1)));         % pole
+
 B2 = StateSpaceModel().set_io(in_dof, out_dof, 24);
 B_strain = FE.B;
 bc = FE.mesh.bc_dof;

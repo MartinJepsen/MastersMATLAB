@@ -35,6 +35,6 @@ for run = 1:100
 end
 
 %%
-filename = sprintf("simulation/SYSID/%02d_%03d_%03d",dam(1,1), dam(1,2)*100, nsr*100)
+filename = sprintf("simulation/SYSID/%02d_%03d_%03d", dam(1,1), dam(1,2)*100, nsr*100)
 save(filename, 'SS_est', 'SS_est_d', 'lambda_est', 'omega_dev', 'zeta_dev')
 beep
