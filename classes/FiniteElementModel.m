@@ -14,8 +14,12 @@ classdef FiniteElementModel < handle
     end
     
     methods
-        function self = FiniteElementModel(meshpath)
-            % FiniteElementModel(meshpath)
+        function self = FiniteElementModel()
+     
+        end
+        
+        function from_xlsx(self, meshpath)
+                        % FiniteElementModel(meshpath)
             %   * meshpath (str/char): path to .xlsx file containing mesh and element data
             %   * .xlsx file must have two sheets; 'coords' and 'elements'
             %   * 'coords' contains n_node rows with the columns containing x and y coordinates of each node
