@@ -1,6 +1,6 @@
 clc; clear; close all;
 
-damel = 5;
+damel = 6;
 load(sprintf("simulation/system_matrices/unit_perturbation/model_%d", damel))
 
 n_dof = 6;
@@ -71,15 +71,16 @@ function [J] = main_gain_design(X)
     % Obtain closed-loop stiffness (damaged and undamaged)
     G = evalin('base', 'G');
     dKg = evalin('base', 'dKg');
+    dG = - G * dKg * G;
     
     G_CL = (eye(size(G))+G*K)\G;            % CL transfer matrix
-    dG = -G_CL * dKg * G_CL;                % Change in OL transfer matrix
+    dG_CL = -G_CL * dKg * G_CL;                % Change in OL transfer matrix
 
     if cond(G_CL) > cond(G)
-        J = 1e40;
+        J = 1;
         return
     end
 
     % Variable to be minimised
-    J = 1/norm(dG);
+    J = norm(dG) / norm(dG_CL);
 end

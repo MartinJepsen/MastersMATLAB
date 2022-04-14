@@ -5,7 +5,7 @@ n_dof = 6;
 
 results_number = 2;
 
-for damel = 1
+for damel = 6
     load("simulation/system_matrices/08500/model_" + num2str(damel))
 
     for gainset = 1
