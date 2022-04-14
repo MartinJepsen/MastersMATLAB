@@ -1,6 +1,5 @@
 clc; clear; close all;
 set_up;
-export_gain_pars;
 
 load("gaindesign/gain_pars")          % load system matrices
 damel = dam(:, 1);
@@ -8,9 +7,8 @@ H = SS_exact.H;
 
 % Apply normalisation of stiffness perturbation
 DeltaKg = Kg_d - Kg;
-Kg_d(find(DeltaKg ~= 0)) = Kg(find(DeltaKg ~= 0)) + 1;
-DeltaKg = Kg_d - Kg;
-DeltaKg = DeltaKg(out_dof, in_dof);
+DeltaKg(DeltaKg ~= 0) = DeltaKg(DeltaKg ~= 0) ./ abs(DeltaKg(DeltaKg ~= 0));
+Kg_d = DeltaKg - Kg;
 
 %% Genetic algorithm
 run = 0;
