@@ -97,11 +97,6 @@ function [J] = main_gain_design(X)
     E_CL = B*G_CL*b2;
     
     % reject members of the population that violate the nullity constraint
-    if nullity_DG_CL ~= nullity_DG
-        J = 1e40;
-        disp("Rank changed, population member rejected")
-        return
-    end
 
     J = cond(E_CL) / cond(E);
 end
