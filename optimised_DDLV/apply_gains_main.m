@@ -5,17 +5,17 @@ n_dof = 6;
 
 results_number = 2;
 
-for damel = 6
+for damel = 1
     load("simulation/system_matrices/08500/model_" + num2str(damel))
 
     for gainset = 1
-%         load("optimised_DDLV/01_strain_cond/unit_perturbations/gains_" + num2str(gainset))    
+        load("optimised_DDLV/01_strain_cond/reduced/gains_1")    
 %         load("optimised_DDLV/02_sens/unit_perturbations/gains_" + num2str(gainset))  
 %         load("optimised_DDLV/03_strain_norm/unit_perturbations/gains_" + num2str(gainset))
 
 % load('testing\legacy_test\gains\01_strain_cond\gains_1.mat')
 % load(sprintf('testing/legacy_test/gains/02_sens/constrained/gains_%02d.mat', damel))
-load(sprintf('testing/legacy_test/gains/03_strain_norm/gains_%02d.mat', damel))
+% load(sprintf('testing/legacy_test/gains/03_strain_norm/gains_%02d.mat', damel))
         K = gains{1,1};
         norm_K = gains{1,2};
 
