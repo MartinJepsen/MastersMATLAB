@@ -3,7 +3,6 @@ set_up;
 
 load("gaindesign/gain_pars")          % load system matrices
 damel = dam(:, 1);
-H = SS_exact.H;
 
 % Apply normalisation of stiffness perturbation
 DeltaKg = Kg_d - Kg;
@@ -54,12 +53,9 @@ function [J] = main_gain_design(X)
 
     in_dof = evalin('base', 'in_dof');
     out_dof = evalin('base', 'out_dof');
-    free_dof = evalin('base', 'free_dof');
-    n_dof = evalin('base', 'n_dof');
     m = evalin('base', 'm');
     r = evalin('base', 'r');
     B2 = evalin('base', 'B2');
-    H = evalin('base','H');
     cdis = evalin('base','cdis');
     DeltaKg = evalin('base','DeltaKg');
     s = evalin('base', 's');
