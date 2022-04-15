@@ -1,9 +1,4 @@
-rng(1)
-dam = [2, 0.95];
-
-
 in_dof = [1, 2, 5, 6, 7, 8, 11, 12];
-% in_dof = 1:12;
 out_dof = in_dof;
 dt = 0.0001;                        % time increment size
 Nsamples = 50000;

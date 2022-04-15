@@ -1,4 +1,3 @@
-clear
 set_up;
 
 omega_ref = SS_exact.modal_parameters.omega;
@@ -7,7 +6,7 @@ zeta_ref = SS_exact.modal_parameters.zeta;
 omega_dev = [];
 zeta_dev = [];
 
-for run = 1:100
+for run = 1
     run
     tic
     SS = StateSpaceModel();
