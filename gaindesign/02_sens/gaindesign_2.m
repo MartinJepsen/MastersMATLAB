@@ -1,4 +1,3 @@
-clc; clear; close all;
 set_up;
 
 load("gaindesign/gain_pars")          % load system matrices

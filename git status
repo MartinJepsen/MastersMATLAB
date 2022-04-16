@@ -1,0 +1,433 @@
+[33mcommit 2f1d6e419f618b3203ad7c8c6410a2bd7274f5f1[m[33m ([m[1;36mHEAD -> [m[1;32mtesting[m[33m, [m[1;31morigin/testing[m[33m)[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Fri Apr 15 16:57:37 2022 +0200
+
+    automate estimation
+
+[33mcommit 2c1685d75d461934ce4cfebfb86b76641e359035[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Thu Apr 14 16:59:17 2022 +0200
+
+    cleanup procedure 3
+
+[33mcommit 4a8e6a614a8e46a7ba16a4585adc6414d055ed81[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Thu Apr 14 16:57:05 2022 +0200
+
+    cleanup procedure 2
+
+[33mcommit 295d81fd55677640cf4628e9ed94092bfb2e892c[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Thu Apr 14 16:55:19 2022 +0200
+
+    corrected OL transfer matrix of damaged system in procedure 3
+
+[33mcommit 18010519a8d29ebd9aea50e371b1bca4997b060f[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Thu Apr 14 16:32:12 2022 +0200
+
+    correct normalisation of DeltaKg
+
+[33mcommit c0a0dc25e7409525a36bc5ebfdf4d11e410d9b32[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Thu Apr 14 16:21:00 2022 +0200
+
+    results for element 2
+
+[33mcommit f5f6828f2d0b641eda5060fa107c46077e726622[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Thu Apr 14 13:54:25 2022 +0200
+
+    save StateSpaceModels and not transfer matrices
+    
+    cherry-picked from cddaf8a5fa1da68fed096d68d0c73a19ea1da06f
+
+[33mcommit dfc5097895eafa4d3db9d2131d571e50eae516e9[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Thu Apr 14 13:49:01 2022 +0200
+
+    clean up scheme 1
+    
+    cherry-picked from ac421f054eb4445112e0c18bea01a7ac42009bcf
+
+[33mcommit a734f8cdec5b15f86336da19b4f0bbe1a65952a0[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Tue Apr 12 20:18:20 2022 +0200
+
+    take noise-corrupted sequences as output
+
+[33mcommit 70a62aa6ac3d2c533b782f5ee2548a4e0bbae332[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Thu Apr 14 13:34:18 2022 +0200
+
+    add from_xlsx method to FiniteElementModel
+    
+    cherry-picked from 3bd278031e791d5f44d3c943c924edfb8c6dc96c
+
+[33mcommit b94e3f14db8243f7495b25b211036871b64bc4ec[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Tue Apr 12 18:01:20 2022 +0200
+
+    update .gitignore
+
+[33mcommit b23bff4ce138e283aa38af6232c75b85761c0615[m[33m ([m[1;31morigin/master[m[33m)[m
+Merge: 89e2b45 b678e51
+Author: MJ <71010087+MartinJepsen@users.noreply.github.com>
+Date:   Tue Apr 12 17:08:06 2022 +0200
+
+    Merge pull request #12 from MartinJepsen/testing
+    
+    Testing
+
+[33mcommit b678e51481408135ab6a2632a183e99474a7d189[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Tue Apr 12 16:25:29 2022 +0200
+
+    save StateSpaceModels and not transfer matrices
+
+[33mcommit 7b9e5a383b7dc5b921ad72097ddfe4328c4b27aa[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Mon Apr 11 15:32:32 2022 +0200
+
+    ensure match between gain_pars and set_up
+
+[33mcommit c527f0ae6af2fea54a5adef97db52afb795d9606[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Sun Apr 10 19:29:20 2022 +0200
+
+    small changes
+
+[33mcommit a01df8ed5cfab01057b8bce7b3c5367f3f0576fd[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Sun Apr 10 19:28:34 2022 +0200
+
+    add method for plotting static deformations
+
+[33mcommit 533d4a176648dff8e8cc573a367e7894a491873f[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Tue Apr 5 13:46:27 2022 +0200
+
+    minor cleanup
+
+[33mcommit 7c0d417e729af32e9812537d311e29c142666352[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Tue Apr 5 08:58:22 2022 +0200
+
+    remove .gitignore
+
+[33mcommit 9380b311bb3333431f0881451c8b5e010e9a23ad[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Tue Apr 5 08:14:12 2022 +0200
+
+    add output signal energy
+
+[33mcommit b50a649004fadbd5574e925b4c23bd22dd4b023b[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Tue Apr 5 08:05:51 2022 +0200
+
+    bigger strain figure
+
+[33mcommit 2d791f1f33b44ac092893dd443cd6000ea7df91e[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Mon Apr 4 08:54:02 2022 +0200
+
+    fix bug 2
+
+[33mcommit 859e1abcd87d4b9cbaf7037cbec3114fa0c2e8a7[m
+Merge: a6f7503 3535b4f
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Mon Apr 4 08:52:33 2022 +0200
+
+    resolve conflict
+
+[33mcommit a6f7503e8442ffe4ace7d8e7080ba62b905457d4[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Mon Apr 4 08:50:36 2022 +0200
+
+    bug fix
+
+[33mcommit 3535b4fadcee69e9a7be5aac6cb558046ba8bd1d[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Mon Apr 4 08:50:36 2022 +0200
+
+    bug fix
+
+[33mcommit 6caf657f9cc7d7baa55976693973258d2058a269[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Mon Apr 4 08:50:08 2022 +0200
+
+    run set_up when applying gains
+
+[33mcommit 89e2b45b30d498c9c01dc66243274c9332944c8d[m[33m ([m[1;32mmaster[m[33m)[m
+Merge: 2430e2a 318ece4
+Author: MJ <71010087+MartinJepsen@users.noreply.github.com>
+Date:   Sun Apr 3 18:22:38 2022 +0200
+
+    Merge pull request #10 from MartinJepsen/testing
+    
+    Regular merge 03-04-2022
+
+[33mcommit 318ece40356cf381937b77f76074d0c3508fffd9[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Fri Apr 1 21:28:12 2022 +0200
+
+    add gains for damage in el 2, setup for exporting results
+
+[33mcommit aa3cbd5b6016387a9b81b56b71dc4fe40f00ffa0[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Fri Apr 1 13:35:09 2022 +0200
+
+    add gains for procedure 3, reduce number of generations to 300
+
+[33mcommit 9817b81cab3ebee29fc23289f633ce34fc6f2c3a[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Thu Mar 31 12:44:52 2022 +0200
+
+    add startup.m
+
+[33mcommit 6f32258eb862dc02350f100b3acee85e08addc6d[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Thu Mar 31 12:44:36 2022 +0200
+
+    add new gains
+
+[33mcommit ca4465587c8d857975dd0aa4ec29763d83dbfeba[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Thu Mar 31 12:43:05 2022 +0200
+
+    minor cleanup
+
+[33mcommit 35d003a844b0ee51b74f95a9f6269b9947b71d94[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Thu Mar 31 12:42:19 2022 +0200
+
+    add strains and strain matrix as outputs
+
+[33mcommit 35b671e38df6c0d20aead5bca0b428dbc9f13d94[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Wed Mar 30 15:14:24 2022 +0200
+
+    update GA parameters for better cost function value
+
+[33mcommit 2430e2a9b6c4e46b7a75f30284176922716d3e05[m
+Merge: 249f943 b7545f6
+Author: MJ <71010087+MartinJepsen@users.noreply.github.com>
+Date:   Wed Mar 30 14:09:07 2022 +0200
+
+    Merge pull request #9 from MartinJepsen/testing
+    
+    fix wrong element angle calculations
+
+[33mcommit b7545f60ef35c60d007e35b422fb00588401d95a[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Wed Mar 30 14:05:45 2022 +0200
+
+    fix wrong element angle calculations
+
+[33mcommit 249f9433b130de7f20444f354cbfa2aec4a03643[m
+Author: MJ <71010087+MartinJepsen@users.noreply.github.com>
+Date:   Sun Mar 27 16:59:41 2022 +0200
+
+    Development (#8)
+    
+    * better comments in apply_gains.m
+    
+    * add results for damage in element 1
+    
+    * Update .gitignore
+    
+    * script cleanup
+    
+    * small update
+
+[33mcommit 37bc878ccd2ceafa34f279d5e9352dfe1e904412[m
+Merge: 7c0787d bce1123
+Author: MJ <71010087+MartinJepsen@users.noreply.github.com>
+Date:   Sun Mar 27 12:47:43 2022 +0200
+
+    Merge pull request #7 from MartinJepsen/development
+    
+    Development
+
+[33mcommit bce11231026bc5f1118847074bd8a6fc6c9d2475[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Sun Mar 27 12:37:30 2022 +0200
+
+    minor changes
+
+[33mcommit 789ba84b5c86ce894d0431c026f5abe07713257f[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Sun Mar 27 12:30:03 2022 +0200
+
+    added gains for unconstrained procedure 2
+
+[33mcommit 37a1bcdfd042a4b247b0ee99f5bf886d68e82d44[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Sun Mar 27 12:14:30 2022 +0200
+
+    changed gaindesign 2 folder structure and reformulated objective function in terms of ratio between norms of OL and CL sensitivity
+
+[33mcommit 2ed16321031c7d657a2276d207f4ccf32d8c4718[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Sun Mar 27 12:00:01 2022 +0200
+
+    #6 fixed mistake where norm of transfer matrix was maximised
+
+[33mcommit e9f25c32523f9693969a25fb6a54f8f3ad8f1dc4[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Sun Mar 27 11:56:01 2022 +0200
+
+    removed old gain design procedure 2
+
+[33mcommit 47710b44bf7ae3db260c35368917e239c1d14f26[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Sun Mar 27 11:53:48 2022 +0200
+
+    #6 implemented gain design procedure 2
+
+[33mcommit 3e0e71e5d2cce80c9aca91aea8bc89ddd7e86e7c[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Sat Mar 26 22:12:46 2022 +0100
+
+    add results and gains
+
+[33mcommit 58ab4e1f692f1e8c7d736b269704c1f61d6f3860[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Sat Mar 26 19:09:54 2022 +0100
+
+    damage in element 14 results
+
+[33mcommit d18d383eae469b0efcb83c50378ad91a7ee521a8[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Sat Mar 26 18:58:56 2022 +0100
+
+    missing s-value in transfer matrix formulation
+
+[33mcommit e567dc12abc319c4e836c907a3a5c0bcc722f903[m
+Author: MartinJepsen <mjeps17@student.aau.dk>
+Date:   Sat Mar 26 18:02:29 2022 +0100
+
+    edited load and save paths
+
+[33mcommit 7c0787dc928811502199e24decbe47ea41f7a426[m
+Author: MJ <mjeps17@student.aau.dk>
+Date:   Sat Mar 26 17:32:59 2022 +0100
+
+    #3 save only transfer matrices instead of full StateSpaceModel objects
+
+[33mcommit 9da24add4d58b6c48096b2f66ed4283c68433f96[m
+Merge: 8a25214 a62432e
+Author: MJ <71010087+MartinJepsen@users.noreply.github.com>
+Date:   Sat Mar 26 17:10:12 2022 +0100
+
+    Merge pull request #5 from MartinJepsen/gaindesign_03
+    
+    name .mat file with gains according to damage location
+
+[33mcommit a62432e6ae92712887cd178ae40a591cc3250663[m
+Author: MJ <mjeps17@student.aau.dk>
+Date:   Sat Mar 26 17:09:18 2022 +0100
+
+    name .mat file with gains according to damage location
+
+[33mcommit 8a25214b74e744c3b3e8dbc2f3be7a81a7973c64[m
+Merge: 83693f1 c34ff6d
+Author: MJ <71010087+MartinJepsen@users.noreply.github.com>
+Date:   Sat Mar 26 17:08:10 2022 +0100
+
+    Merge pull request #4 from MartinJepsen/gaindesign_03
+    
+    Gaindesign 03
+
+[33mcommit c34ff6d78fae1167bbd7078aa6ed58dbbd2a5e96[m
+Author: MJ <mjeps17@student.aau.dk>
+Date:   Sat Mar 26 17:04:03 2022 +0100
+
+    #2 added normalisation of stiffness perturbation
+
+[33mcommit ffcd3fc592c4abd616298085666c57eacfdf3ff8[m
+Author: MJ <mjeps17@student.aau.dk>
+Date:   Sat Mar 26 16:57:49 2022 +0100
+
+    implemented gain design procedure 3
+
+[33mcommit b1f2d208e52aadf173f61631aa02c94ee2cf69a9[m
+Author: MJ <mjeps17@student.aau.dk>
+Date:   Sat Mar 26 16:35:31 2022 +0100
+
+    added formulation of exact FE and SS models to set_up
+
+[33mcommit 84e0a1858455b2dddc00465869700ebd50e9660e[m
+Author: MJ <mjeps17@student.aau.dk>
+Date:   Sat Mar 26 16:23:23 2022 +0100
+
+    renamed gaindesign 3 file
+
+[33mcommit 83693f1ffdb8e9d34ebe84481372cebf24adb30f[m
+Merge: fbb8c03 b912427
+Author: MJ <71010087+MartinJepsen@users.noreply.github.com>
+Date:   Sat Mar 26 16:12:52 2022 +0100
+
+    Merge pull request #1 from MartinJepsen/development
+    
+    Development
+
+[33mcommit b91242721d2781320b1a63710be5429e698a5483[m
+Author: MJ <mjeps17@student.aau.dk>
+Date:   Sat Mar 26 16:11:21 2022 +0100
+
+    renamed optimised_DDLV to gaindesign
+
+[33mcommit 0536093362133608b3bc6040bbd91dbca3abc446[m
+Author: MJ <mjeps17@student.aau.dk>
+Date:   Sat Mar 26 16:09:32 2022 +0100
+
+    deleted more unecessary files
+
+[33mcommit 0deae21a2885b30bde4c3a533580b319dff1ebfb[m
+Author: MJ <mjeps17@student.aau.dk>
+Date:   Sat Mar 26 16:06:22 2022 +0100
+
+    simulation folder cleanup
+
+[33mcommit 80d0291c1066f6c443c3998b52842869bd5c0c0e[m
+Author: MJ <mjeps17@student.aau.dk>
+Date:   Sat Mar 26 16:05:20 2022 +0100
+
+    Remove unecessary files
+
+[33mcommit b22afdb6530014eda59de6430db10ed6b2be9557[m
+Author: MJ <mjeps17@student.aau.dk>
+Date:   Sat Mar 26 16:01:12 2022 +0100
+
+    main folder cleanup 1
+
+[33mcommit b8014a4ddb08dafa808eb3169e4e14c697b25800[m
+Author: MJ <mjeps17@student.aau.dk>
+Date:   Sat Mar 26 15:52:47 2022 +0100
+
+    added more files
+
+[33mcommit ef359ff1563ba57cb8e5a4b8f66c6878bd69962b[m
+Author: MJ <mjeps17@student.aau.dk>
+Date:   Sat Mar 26 15:50:47 2022 +0100
+
+    added .gitignore
+
+[33mcommit fd7d99f51f549bc85ef6574ab937274f3a962233[m
+Author: MJ <mjeps17@student.aau.dk>
+Date:   Sat Mar 26 15:39:24 2022 +0100
+
+    added structures folder
+
+[33mcommit 1590f522b8484d379a57b5ae54df408838eb3533[m
+Author: MJ <mjeps17@student.aau.dk>
+Date:   Sat Mar 26 15:38:44 2022 +0100
+
+    added .gitignore
+
+[33mcommit fbb8c03e5d379c064386d0f51dd3075d87866050[m
+Author: MJ <mjeps17@student.aau.dk>
+Date:   Sat Mar 26 15:14:13 2022 +0100
+
+    Initial repo commiti

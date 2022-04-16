@@ -4,7 +4,9 @@ rng(1)
 damages(:, 2) = 0.95;
 
 
-for i = 1:numel(damages)
-    dam = damages(i, :);
-    estimate_models
+for foo = 1:size(damages, 1)
+    dam = damages(foo, :);
+%     estimate_models
+gaindesign_2
+gaindesign_3
 end

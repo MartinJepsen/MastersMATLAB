@@ -8,7 +8,6 @@ blockrows = 60;
 
 nsr = 0.05;
 
-
 FE = FiniteElementModel();
 FE.from_xlsx('structures/paper_truss.xlsx')
 FE.assembly('bar', dam);
@@ -43,5 +42,3 @@ SS_exact_d.to_ct();
 SS_exact_d.transfer_matrix(s);
 
 export_gain_pars
-% i = i+1;
-% end
