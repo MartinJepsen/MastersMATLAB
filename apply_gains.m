@@ -1,15 +1,15 @@
 clear; clc; close all
 
 %% Load relevant variables
-dam = [3, 0.95]
+dam = [5, 0.95]
 set_up
 % 
 filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
 load("simulation/SYSID/"+filename)
 
 damel = dam(1,1);
-load('gaindesign\01_strain_cond\gains_1.mat')
-% load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
+% load('gaindesign\01_strain_cond\gains_1.mat')
+load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
 % load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
 
 cost_value = gains{1,2}

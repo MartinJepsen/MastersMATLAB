@@ -20,8 +20,9 @@ for run = 0
     
     ObjectiveFunction = @main_gain_design;
     options = optimoptions('ga', 'Generations', 5000,...
-                            'PopulationSize', 100,...
-                            'FunctionTolerance',1e-20,...
+                            'PopulationSize', 200,...
+                            'FunctionTolerance',1e20,...
+                            'MaxStallGenerations', 200,...
                             'PlotFcn', @gaplotbestf);
     
     [res, fval] = ga(ObjectiveFunction, np*2, [], [], [], [], [], [], [], options);
@@ -80,7 +81,7 @@ function [J] = main_gain_design(X)
     
     % reject population member if it increases the transfer matrix condition number
     if cond(H_CL) > cond(H)
-        J = 1;
+        J = 1e10;
         return
     end
 
