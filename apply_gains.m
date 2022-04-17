@@ -1,7 +1,7 @@
 clear; clc; close all
 
 %% Load relevant variables
-dam = [14, 0.95]
+dam = [9, 0.80]
 set_up
 % 
 filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
@@ -12,7 +12,7 @@ load('gaindesign\01_strain_cond\gains_1.mat')
 % load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
 % load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
 
-cost_value = gains{1,2}
+% cost_value = gains{1,2}
 %% Reference transfer matrices
 H_ref = inv(Mg*s^2 + Cg*s + Kg);
 
@@ -69,6 +69,7 @@ for i = 1:n_el
     success_rates(i, 1:2) = [sum(min_strain_OL == i), sum(min_strain_CL == i)]/tot_runs*100;
 end
 success_rates = array2table([[1:n_el]', round(success_rates)], 'VariableNames', {'element_number', 'detection_rate_OL', 'detection_rate_CL'})
+
 
 m = mean(strains,2);            % mean of each characteristic strain
 s_norm = strains ./ max(m);     % normalise rows by largest mean value
