@@ -6,8 +6,6 @@ t = 0:dt:(Nsamples * dt - dt);          % time sequence
 u = randn(numel(in_dof), numel(t));
 blockrows = 60;
 
-nsr = 0.05;
-
 FE = FiniteElementModel();
 FE.from_xlsx('structures/paper_truss.xlsx')
 FE.assembly('bar', dam);
