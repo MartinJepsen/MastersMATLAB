@@ -1,15 +1,12 @@
-clc; clear; close all;
 set_up;
-export_gain_pars;
 
 load("gaindesign/gain_pars")          % load system matrices
 damel = dam(:, 1);
-H = SS_exact.H;
 
 % Apply normalisation of stiffness perturbation
 DeltaKg = Kg_d - Kg;
-Kg_d(find(DeltaKg ~= 0)) = Kg(find(DeltaKg ~= 0)) + 1;
-DeltaKg = Kg_d - Kg;
+DeltaKg(DeltaKg ~= 0) = DeltaKg(DeltaKg ~= 0) ./ abs(DeltaKg(DeltaKg ~= 0));
+Kg_d = DeltaKg - Kg;
 DeltaKg = DeltaKg(out_dof, in_dof);
 
 %% Genetic algorithm
@@ -23,8 +20,9 @@ for run = 0
     
     ObjectiveFunction = @main_gain_design;
     options = optimoptions('ga', 'Generations', 5000,...
-                            'PopulationSize', 100,...
-                            'FunctionTolerance',1e-20,...
+                            'PopulationSize', 200,...
+                            'FunctionTolerance',1e20,...
+                            'MaxStallGenerations', 200,...
                             'PlotFcn', @gaplotbestf);
     
     [res, fval] = ga(ObjectiveFunction, np*2, [], [], [], [], [], [], [], options);
@@ -55,12 +53,9 @@ function [J] = main_gain_design(X)
 
     in_dof = evalin('base', 'in_dof');
     out_dof = evalin('base', 'out_dof');
-    free_dof = evalin('base', 'free_dof');
-    n_dof = evalin('base', 'n_dof');
     m = evalin('base', 'm');
     r = evalin('base', 'r');
     B2 = evalin('base', 'B2');
-    H = evalin('base','H');
     cdis = evalin('base','cdis');
     DeltaKg = evalin('base','DeltaKg');
     s = evalin('base', 's');
@@ -86,7 +81,7 @@ function [J] = main_gain_design(X)
     
     % reject population member if it increases the transfer matrix condition number
     if cond(H_CL) > cond(H)
-        J = 1;
+        J = 1e10;
         return
     end
 

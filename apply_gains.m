@@ -1,18 +1,21 @@
 clear; clc; close all
 
 %% Load relevant variables
-set_up
+nsr = 0.05;
+
+for damel = 1:14
+    dam = [damel, 0.8]
+    set_up
 % 
-% filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
-% load("simulation/SYSID/"+filename)
+filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
+load("simulation/SYSID/"+filename)
 
-load('simulation/SYSID/02_095_005_2')
 damel = dam(1,1);
-% load('gaindesign\01_strain_cond\gains_1.mat')
+load('gaindesign\01_strain_cond\gains_1.mat')
 % load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
-load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
+% load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
 
-cost_value = gains{1,2}
+% cost_value = gains{1,2}
 %% Reference transfer matrices
 H_ref = inv(Mg*s^2 + Cg*s + Kg);
 
@@ -65,11 +68,14 @@ end
 
 %% Results post-processing
 n_el = 14;
+clearvars success_rates
 for i = 1:n_el
     success_rates(i, 1:2) = [sum(min_strain_OL == i), sum(min_strain_CL == i)]/tot_runs*100;
 end
 success_rates = array2table([[1:n_el]', round(success_rates)], 'VariableNames', {'element_number', 'detection_rate_OL', 'detection_rate_CL'})
 
+% tot_success_rates(damel, :) = success_rates(damel, :)
+% end
 m = mean(strains,2);            % mean of each characteristic strain
 s_norm = strains ./ max(m);     % normalise rows by largest mean value
 s_s = std(s_norm,0,2);          % standard deviation of un-normalised strain array
@@ -122,3 +128,5 @@ ylabel("Normalized characteristic strain", 'FontSize', fs_small)
 yticks([1e-3, 1e-2, 1e-1, 1e0])
 
 % exportgraphics(f2, sprintf('figures/sens_strains_%d.pdf', damel), 'Resolution', 200)
+title(sprintf('Damaged element: %d', damel))
+end

@@ -1,12 +1,4 @@
-% time = clock;
-% rng(time(end)*100*rand);         % uses current time as random number seed
-% dams = [96, 95, 97, 95, 97, 97, 95] / 100
-% i = 1;
-% for damel = [1,2,9,11,12,13,14]
-
-rng(1)
 in_dof = [1, 2, 5, 6, 7, 8, 11, 12];
-% in_dof = 1:12;
 out_dof = in_dof;
 dt = 0.0001;                        % time increment size
 Nsamples = 50000;
@@ -14,10 +6,8 @@ t = 0:dt:(Nsamples * dt - dt);          % time sequence
 u = randn(numel(in_dof), numel(t));
 blockrows = 60;
 
-nsr = 0.05;
-dam = [2, 0.95];
-
-FE = FiniteElementModel('structures/paper_truss.xlsx');
+FE = FiniteElementModel();
+FE.from_xlsx('structures/paper_truss.xlsx')
 FE.assembly('bar', dam);
 FE.apply_bc([1, 2, 9, 10]);
 FE.modal_damping(0.02);
@@ -50,5 +40,3 @@ SS_exact_d.to_ct();
 SS_exact_d.transfer_matrix(s);
 
 export_gain_pars
-% i = i+1;
-% end

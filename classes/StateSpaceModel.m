@@ -120,7 +120,7 @@ classdef StateSpaceModel < handle
             self.D = D;
         end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function [u, y] = time_response(self, u, t, nsr, store)
+        function [u_n, y_n] = time_response(self, u, t, nsr, store)
             A = self.A;
             B = self.B;
             C = self.C;
