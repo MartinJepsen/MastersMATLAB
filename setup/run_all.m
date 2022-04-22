@@ -1,5 +1,5 @@
 clear
-damages = [1, 2, 4, 6, 8, 10, 11, 12, 13, 14]';
+damages = [1:3]';
 rng(1)
 damages(:, 2) = 0.80;
 nsr = 0.05;
