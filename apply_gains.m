@@ -3,12 +3,12 @@ clear; clc; close all
 %% Load relevant variables
 nsr = 0.05;
 
-for damel = 1:14
-    dam = [damel, 0.8]
+for damel = 3
+    dam = [damel, 0.8];
     set_up
 % 
 filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
-load("simulation/SYSID/"+filename)
+load("simulation/SYSID/model_error/"+filename)
 
 damel = dam(1,1);
 load('gaindesign\01_strain_cond\gains_1.mat')

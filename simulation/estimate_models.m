@@ -17,9 +17,8 @@ Cg_e = FE_e.Cg;
 Mg_e = FE_e.Mg;
 Kg_de = FE_e.Kg_d;
 
-
+tic
 parfor run = 1:100
-    tic
     SS = StateSpaceModel();
     SS.set_io(in_dof, out_dof);
     SS.dt_from_FE(Kg_e, Cg_e, Mg_e, dt);
@@ -41,12 +40,9 @@ parfor run = 1:100
 
     SS_est{run} = SS;
     SS_est_d{run} = SS_d;
-
-    times(run, 1) = toc;
-    disp(sprintf("Run %d finished in %0.2f s", run, toc))
 end
 
-disp(sprintf("Finished estimation in %0.2f s", sum(times)))
+disp(sprintf("Finished estimation in %0.2f s", toc))
 %%
 filename = sprintf("simulation/SYSID/model_error/%02d_%03d_%03d", dam(1,1), dam(1,2)*100, nsr*100)
 save(filename, 'SS_est', 'SS_est_d', 'lambda_est', 'omega_dev', 'zeta_dev')
