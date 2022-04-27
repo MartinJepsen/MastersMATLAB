@@ -81,7 +81,7 @@ function [J] = main_gain_design(X)
     
     % reject population member if it increases the transfer matrix condition number
     if cond(H_CL) > cond(H)
-        J = 1e10;
+        J = 1;
         return
     end
 

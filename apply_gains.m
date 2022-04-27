@@ -3,7 +3,7 @@ clear; clc; close all
 %% Load relevant variables
 nsr = 0.05;
 
-for damel = 3
+for damel = 1:14
     dam = [damel, 0.8];
     set_up
 % 
@@ -11,8 +11,8 @@ filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100)
 load("simulation/SYSID/model_error/"+filename)
 
 damel = dam(1,1);
-load('gaindesign\01_strain_cond\gains_1.mat')
-% load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
+% load('gaindesign\01_strain_cond\gains_1.mat')
+load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
 % load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
 
 % cost_value = gains{1,2}
@@ -72,7 +72,9 @@ clearvars success_rates
 for i = 1:n_el
     success_rates(i, 1:2) = [sum(min_strain_OL == i), sum(min_strain_CL == i)]/tot_runs*100;
 end
-success_rates = array2table([[1:n_el]', round(success_rates)], 'VariableNames', {'element_number', 'detection_rate_OL', 'detection_rate_CL'})
+success_rates = array2table([[1:n_el]', round(success_rates)], 'VariableNames', {'element_number', 'detection_rate_OL', 'detection_rate_CL'});
+
+results(damel, :) = success_rates(damel, :)
 
 % tot_success_rates(damel, :) = success_rates(damel, :)
 % end
@@ -82,13 +84,13 @@ s_s = std(s_norm,0,2);          % standard deviation of un-normalised strain arr
 m_norm = mean(s_norm,2);        % mean of rows normalised by largest mean (the strain field to be plotted)
 
 [m_sorted, idx] = sort(m_norm(setdiff([1:n_el],damel),1,:));
-locatability = 1 ./ [m_norm(damel,1) / m_sorted(1, 1), m_norm(damel,2) / m_sorted(1, 2)]
+locatability = 1 ./ [m_norm(damel,1) / m_sorted(1, 1), m_norm(damel,2) / m_sorted(1, 2)];
 
 % Plot results
 close all
 f2 = figure;
 hold on
-% f2.Position(4) = 5;
+f2.Position([3,4]) = [12, 5.5];
 
 x = [1:n_el];  % positions of the bars
 b1 = bar(x, m_norm(:, 1), 'k');
@@ -107,7 +109,7 @@ percentile = 16;
 l = legend('OL', 'CL', 'Coeff. of variation', 'location', 'south west');
 
 fs_big = 10;
-fs_small = 9;
+fs_small = 7;
 a2 = gca;
 grid on
 a2.MinorGridLineStyle = '-';
@@ -126,7 +128,7 @@ set(gca, 'YScale', 'log')
 ylim([1e-3, 2.1])
 ylabel("Normalized characteristic strain", 'FontSize', fs_small)
 yticks([1e-3, 1e-2, 1e-1, 1e0])
-
+a2.FontSize = 7;
 % exportgraphics(f2, sprintf('figures/sens_strains_%d.pdf', damel), 'Resolution', 200)
-title(sprintf('Damaged element: %d', damel))
+% title(sprintf('Damaged element: %d', damel))
 end
