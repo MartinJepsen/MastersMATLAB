@@ -1,12 +1,9 @@
-free_dof = size(FE.Kg,1);
+free_dof = size(FE.Kg, 1);
 n_dof = FE.n_dof;
 m = numel(out_dof);
 r = numel(in_dof);
-Kg = FE.Kg;
-Cg = FE.Cg;
-Mg = FE.Mg;
-Kg_d = FE.Kg_d;
-Lambda = SS_exact.modal_parameters.Lambda;
+n_el = size(FE.mesh.topology, 1);
+
 s = complex(real(Lambda(1)), 0.1 + imag(Lambda(1)));         % pole
 
 B2 = StateSpaceModel().set_io(in_dof, out_dof, 24);
@@ -21,5 +18,6 @@ end
 idx = setdiff(1:n_dof, bc);
 
 save('gaindesign/gain_pars', 'Kg', 'Mg', 'Cg', 'Kg_d',...
-    'free_dof', 'n_dof', 'm', 'r','out_dof', 'in_dof',...
-    's', 'B2', 'B_strain', 'bc', 'SS_exact', 'SS_exact_d', 'cdis', 'dt', 'u', 't','FE', 'idx', 'dam')
+    'free_dof', 'n_dof', 'n_el', 'm', 'r','out_dof', 'in_dof',...
+    's', 'B2', 'B_strain', 'bc', 'cdis', 'dt', 'u', 't',...
+    'FE', 'idx', 'dam')
