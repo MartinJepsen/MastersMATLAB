@@ -30,5 +30,6 @@ SS_exact_d = StateSpaceModel();
 SS_exact_d.set_io(1:12, 1:12, 24);
 SS_exact_d.dt_from_FE(FE.Kg, FE.Cg, FE.Mg, dt);
 SS_exact_d.to_ct();
+Lambda_d = SS_exact_d.modal_parameters.Lambda;
 
 export_gain_pars
