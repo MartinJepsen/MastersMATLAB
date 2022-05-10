@@ -18,7 +18,7 @@ for run = 0
     options = optimoptions('ga', 'Generations', 20000,...
                             'PopulationSize', 100,...
                             'CrossoverFraction', 0.6,...
-                            'FunctionTolerance',1e-5,...
+                            'FunctionTolerance',1e-7,...
                             'PlotFcn', @gaplotbestf);
     
     np = r*m; % No. of entries in gain matrix
@@ -43,13 +43,15 @@ end
 beep
 
 %% Store results
-savenum = 1;
+savenum = 3;
 K = gains{1,1};
 save(sprintf("gaindesign/01_strain_cond/gains_%d", savenum),"K", 'gains')
 
 
 function [J] = main_gain_design(X)
     % Load pre-defined variables from base workspace
+    n_dof = evalin('base', 'n_dof');
+    free_dof = evalin('base', 'free_dof');
     m = evalin('base', 'm');
     r = evalin('base', 'r');
     B2 = evalin('base', 'B2');

@@ -13,7 +13,7 @@ DeltaKg = Kg_d - Kg;
 DeltaKg(DeltaKg ~= 0) = DeltaKg(DeltaKg ~= 0) ./ abs(DeltaKg(DeltaKg ~= 0));
 Kg_d = DeltaKg - Kg;
 
-H_d = (Mg*s^2 + Cg*s + Kg_d)^-1;
+H_d = (Mg*s^2 + Cg_d*s + Kg_d)^-1;
 H_d = H_d(out_dof, in_dof);
 
 %% Genetic algorithm
@@ -77,6 +77,7 @@ function [J] = main_gain_design(X)
     Kg = evalin('base', 'Kg');
     Kg_d = evalin('base', 'Kg_d');
     Cg = evalin('base', 'Cg');
+    Cg_d = evalin('base', 'Cg_d')
     Mg = evalin('base', 'Mg');
     damel = evalin('base', 'damel');
 
@@ -97,7 +98,7 @@ function [J] = main_gain_design(X)
     % CL transfer matrices 
     H_CL_ref = (Mg*s^2 + Cg*s + Kg + (B2*K*cdis))^-1;   % full transfer matrix
     H_CL = H_CL_ref(out_dof, in_dof);                   % reduced transfer matrix
-    H_CL_d = (Mg*s^2 + Cg*s + Kg_d + (B2*K*cdis))^-1;
+    H_CL_d = (Mg*s^2 + Cg_d*s + Kg_d + (B2*K*cdis))^-1;
     H_CL_d = H_CL_d(out_dof, in_dof);
     
     % CLDDLV

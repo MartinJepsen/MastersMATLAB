@@ -16,19 +16,26 @@ for damel = 1:14
     %% load gains
     load('gaindesign\01_strain_cond\gains_1.mat')
 %     load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
-    % load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
+%     load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
     
     H_ref = (Mg*s^2 + Cg*s + Kg)^-1;                % reference OL transfer matrix
     H_CL_ref = (Mg*s^2 + Cg*s + Kg + B2*K*cdis)^-1; % reference CL transfer matrix
+    A_CL_ex = SS_exact.A + SS_exact.B * B2 * K * cdis * SS_exact.C;
+    Lambda_CL_ex = eig(A_CL_ex);                    % exact CL poles
+
     %% Obtain characteristic strains for every run
     tot_runs = 0;
-    
+
     for run = 1:numel(SS_est)
         % OL
         SS = SS_est{run};
         H = SS.transfer_matrix(s); 
         SS_d = SS_est_d{run};
         H_d = SS_d.transfer_matrix(s);
+        
+        l_CL_est = eig(SS.A + SS.B*K*SS.C);
+        [~, sorting] = sort(abs(l_CL_est), 'ascend')
+        Lambda_CL_est(:, run) = l_CL_est(sorting);          % estimated CL poles
 
         DeltaH = H_d - H;                               % damage-induced transfer matrix shift (estimated)
         [~, ~, V] = svd(DeltaH);                        % DDLVs

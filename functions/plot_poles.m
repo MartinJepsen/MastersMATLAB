@@ -7,16 +7,15 @@ function plot_poles(Lambda_ref, Lambda_ex)
 % Lambda_ex: column vector containing poles  (sorted by eigenfrequency)
 
 f = figure;
-f.Position(4) = 6;
+f.Position([3, 4]) = [8.5, 5];
 hold on; grid on
-% fs = 12;
 
 roots = [Lambda_ref];
 n = numel(roots);
 
 for i = 1:2:n   
   q(i) = plot( [real(roots(i)) real(roots(i+1))],[imag(roots(i)) imag(roots(i+1))],...
-      'k.-','LineWidth',1,'MarkerSize',15,'LineStyle',':') ;
+      'k.-','LineWidth',1,'MarkerSize',15,'LineStyle','none') ;
 end
 
 roots = [Lambda_ex];
@@ -45,36 +44,28 @@ for j = 1:size(roots,2)
     end
 end
 
-set(gca, 'XAxisLocation','origin')
-set(gca, 'YAxisLocation','origin')
-% set(gca, 'FontSize',10)
+% set(gca, 'XAxisLocation','origin')
+% set(gca, 'YAxisLocation','origin')
 set(gca, 'FontName','Palatino Linotype')
 
 a = gca;
-a.Position(1) = 0.07
-% a.XScale = 'log';
 a.XLabel.Interpreter = 'Latex';
-a.XLabel.String = 'Re($s$)';
-% a.XLabel.FontSize = 10;
-a.XLabel.HorizontalAlignment = 'left';
-a.XLabel.VerticalAlignment = 'middle';
-a.XLabel.Position = [-0.05*a.XLim(1), 0, 0];
+a.XLabel.String = '$\Re(s)$';
+% a.XLabel.HorizontalAlignment = 'left';
+% a.XLabel.VerticalAlignment = 'middle';
+% a.XLabel.Position = [1.05*a.XLim(2), 0, 0];
 a.XLabel.Color = 'k';
-% a.XLim(2) = -0.1*a.XLim(1);
 
 a.YLabel.Interpreter = 'Latex';
-a.YLabel.String = 'Im($s$)';
-% a.YLabel.FontSize = 10;
-a.YLabel.HorizontalAlignment = 'center';
-a.YLabel.VerticalAlignment = 'bottom';
-% a.YLabel.Position = [0.075*a.XLim(1), 0.9*a.YLim(2), 0];
-a.YLabel.Position = [0, 1.08*a.YLim(2), 0]
+a.YLabel.String = '$\Im(s)$';
+% a.YLabel.HorizontalAlignment = 'center';
+% a.YLabel.VerticalAlignment = 'bottom';
+% a.YLabel.Position = [2, 0.95*a.YLim(2), 0];
 a.YLabel.Color = 'k';
 a.YLabel.Rotation = 0;
 
-
+xline(0)
+yline(0)
 %%
-% ylim([-45, 45])
-%  title('Pole map for exact and estimated models')
 
-legend([q(1), e(1)], {'Exact OL', 'Estimated OL'},'Location','south east')
+legend([q(1), e(1)], {'Exact CL', 'Estimated CL'},'Location','south east')
