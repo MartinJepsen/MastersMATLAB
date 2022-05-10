@@ -1,4 +1,3 @@
-clc; clear; close all;
 set_up
 
 H = (Mg*s^2 + Cg*s + Kg)^-1;
@@ -44,7 +43,7 @@ beep
 
 
 %%
-savenum = 1;
+savenum = 2
 K = gains{1,1};
 save(sprintf("gaindesign/01_strain_cond/gains_%d", savenum),"K", 'gains')
 
@@ -80,5 +79,6 @@ function [J] = main_gain_design(X)
     E_CL = B * H_CL_ * B2;
     
     J = cond(E_CL) / cond(E);
+    J = abs(1.5 - J);
 
 end
