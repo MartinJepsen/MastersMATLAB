@@ -2,7 +2,6 @@ clear; clc; close all
 
 %% Load relevant variables
 nsr = 0.05;
-load(sprintf("simulation/SYSID/model_error/00_00_%03d", nsr*100))
 
 for damel = 1:14
     dam = [damel, 0.8];
@@ -10,12 +9,12 @@ for damel = 1:14
     
     %% load simulation results
     filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100);
-    disp('Loading ' + filename)
+    disp("Loading" + filename)
     load("simulation/SYSID/model_error/"+filename)
     
     %% load gains
-    % load('gaindesign\01_strain_cond\gains_1.mat')
-    load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
+    load('gaindesign\01_strain_cond\gains_1.mat')
+%     load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
     % load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
     
     H_ref = (Mg*s^2 + Cg*s + Kg)^-1;                % reference OL transfer matrix
