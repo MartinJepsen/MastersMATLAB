@@ -23,14 +23,13 @@ tic
 
 
 parfor run = 1:100
-% check if simulations of undamaged config exist:
+    % check if simulations of undamaged config exist:
     if ~exist("simulation/SYSID/undamaged.mat", "file")
         SS = StateSpaceModel();
         SS.set_io(in_dof, out_dof);
         SS.dt_from_FE(Kg_e, Cg_e, Mg_e, dt);
         [u_n, y] = SS.time_response(u, t, nsr, false);
         SS.estimate(u_n, y, blockrows);
-        SS.get_modal_parameters();
         SS.to_ct();
         SS_est{run} = SS;
     end
@@ -40,6 +39,7 @@ parfor run = 1:100
     SS_d.dt_from_FE(Kg_de, Cg_e, Mg_e, dt)
     [u_n, y] = SS_d.time_response(u, t, nsr, false);
     SS_d.estimate(u_n, y, blockrows);
+    SS_d.get_modal_parameters()
     SS_d.to_ct();
     SS_est_d{run} = SS_d;
 
