@@ -5,6 +5,7 @@ classdef FiniteElementModel < handle
         Kg
         Kg_d
         Cg
+        Cg_d
         Mg
         B                   % strain mapping matrix
         H
@@ -74,7 +75,6 @@ classdef FiniteElementModel < handle
             
             % loop over elements
             for el = 1:n_el
-                
                 % element length and orientation
                 dx = coords(topology(el, 2), 1) - coords(topology(el, 1), 1);
                 dy = coords(topology(el, 2), 2) - coords(topology(el, 1),2);
@@ -226,7 +226,16 @@ classdef FiniteElementModel < handle
             Phi = Phi * diag(1./m_n);
             C_tilde = diag(2 * zeta * omega);
             self.Cg = inv(Phi)' * C_tilde * inv(Phi);
-            
+
+            if isprop(self, 'Kg_d') && ~isempty(self.Kg)
+                [Phi, Lambda] = eig(self.Kg_d, self.Mg);
+                omega = sqrt(diag(Lambda));
+                m_n = sqrt(diag(Phi' * self.Mg * Phi)); % mass-normalised eigenvectors
+                Phi = Phi * diag(1./m_n);
+                C_tilde = diag(2 * zeta * omega);
+                self.Cg_d = inv(Phi)' * C_tilde * inv(Phi);
+            end
+
             zetas = diag(C_tilde) ./ (2 * omega);
             self.modal_parameters.zeta = zetas;
             self.modal_parameters.Phi = Phi;

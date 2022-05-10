@@ -13,15 +13,12 @@ FE_e.apply_bc([1, 2, 9, 10]);
 FE_e.modal_damping(0.02);
 
 Kg_e = FE_e.Kg;
-Cg_e = FE_e.Cg;
-Mg_e = FE_e.Mg;
 Kg_de = FE_e.Kg_d;
+Cg_e = FE_e.Cg;
+Cg_de = FE_e.Cg_d;
+Mg_e = FE_e.Mg;
 
 tic
-
-
-
-
 parfor run = 1:100
     % check if simulations of undamaged config exist:
     if ~exist("simulation/SYSID/undamaged.mat", "file")
@@ -36,7 +33,7 @@ parfor run = 1:100
 
     SS_d = StateSpaceModel();
     SS_d.set_io(in_dof, out_dof);
-    SS_d.dt_from_FE(Kg_de, Cg_e, Mg_e, dt)
+    SS_d.dt_from_FE(Kg_de, Cg_de, Mg_e, dt)
     [u_n, y] = SS_d.time_response(u, t, nsr, false);
     SS_d.estimate(u_n, y, blockrows);
     SS_d.get_modal_parameters()

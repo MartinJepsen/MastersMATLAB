@@ -16,6 +16,7 @@ FE.strains_from_disp([])
 Kg = FE.Kg;
 Kg_d = FE.Kg_d;
 Cg = FE.Cg;
+Cg_d = FE.Cg_d;
 Mg = FE.Mg;
 
 SS_exact = StateSpaceModel();
