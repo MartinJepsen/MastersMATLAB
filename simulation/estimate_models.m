@@ -17,11 +17,12 @@ Kg_de = FE_e.Kg_d;
 Cg_e = FE_e.Cg;
 Cg_de = FE_e.Cg_d;
 Mg_e = FE_e.Mg;
-
+filename_u = sprintf("simulation/SYSID/model_error/00_000_%03d.mat", nsr*100);
 tic
 parfor run = 1:100
     % check if simulations of undamaged config exist:
-    if ~exist("simulation/SYSID/undamaged.mat", "file")
+    if ~exist(filename_u, "file") == 2
+        disp('Generating reference model')
         SS = StateSpaceModel();
         SS.set_io(in_dof, out_dof);
         SS.dt_from_FE(Kg_e, Cg_e, Mg_e, dt);
@@ -50,7 +51,10 @@ disp(sprintf("Finished estimation in %0.2f s", toc))
 filename = sprintf("simulation/SYSID/model_error/%02d_%03d_%03d", dam(1,1), dam(1,2)*100, nsr*100)
 save(filename, 'SS_est_d', 'lambda_est', 'omega_dev', 'zeta_dev')
 
-if ~exist("simulation/SYSID/undamaged.mat", "file")
-    save(sprintf("simulation/SYSID/model_error/00_00_%03d", nsr*100), 'SS_est')
+try
+    save(filename_u, 'SS_est')
+catch
+    disp('Reference models already exist')
 end
+
 beep

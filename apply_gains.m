@@ -2,7 +2,7 @@ clear; clc; close all
 
 %% Load relevant variables
 nsr = 0.05;
-load(sprintf("simulation/SYSID/model_error/00_00_%03d", nsr*100))
+load(sprintf("simulation/SYSID/model_error/00_000_%03d", nsr*100))
 
 for damel = 1:14
     dam = [damel, 0.8];
