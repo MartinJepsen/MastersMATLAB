@@ -1,7 +1,7 @@
 clear
-damages = [1:14]';
+damages = [14]';
 rng(1)
-damages(:, 2) = 0.80;
+damages(:, 2) = 0.95;
 nsr = 0.05;
 for foo = 1:size(damages, 1)
     dam = damages(foo, :);

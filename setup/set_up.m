@@ -25,6 +25,7 @@ SS_exact.dt_from_FE(Kg, Cg, Mg, dt);
 SS_exact.get_modal_parameters();
 SS_exact.to_ct();
 Lambda = SS_exact.modal_parameters.Lambda;
+s = complex(real(Lambda(1)), 0.1 + imag(Lambda(1)));         % pole
 
 % Exact, damaged
 SS_exact_d = StateSpaceModel();

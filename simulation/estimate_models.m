@@ -1,4 +1,5 @@
 set_up;
+clearvars s
 
 omega_ref = SS_exact_d.modal_parameters.omega;
 zeta_ref = SS_exact_d.modal_parameters.zeta;

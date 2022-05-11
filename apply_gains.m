@@ -4,8 +4,8 @@ clear; clc; close all
 nsr = 0.05;
 load(sprintf("simulation/SYSID/model_error/00_000_%03d", nsr*100))
 
-for damel = 1:14
-    dam = [damel, 0.8];
+for damel = [1, 5, 14]
+    dam = [damel, 0.95];
     set_up
     
     %% load simulation results
@@ -14,7 +14,7 @@ for damel = 1:14
     load("simulation/SYSID/model_error/"+filename)
     
     %% load gains
-    load('gaindesign\01_strain_cond\gains_1.mat')
+    load('gaindesign\01_strain_cond\gains_4.mat')
 %     load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
 %     load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
     

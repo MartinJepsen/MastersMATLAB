@@ -13,13 +13,12 @@ for run = 0
     seed = ceil(abs(randn * randn) * 10) 
     rng(seed);
 
-    
     ObjectiveFunction = @main_gain_design;
     options = optimoptions('ga', 'Generations', 20000,...
                             'PopulationSize', 100,...
                             'CrossoverFraction', 0.6,...
-                            'FunctionTolerance',1e-7,...
-                            'PlotFcn', @gaplotbestf);
+                            'FunctionTolerance',1e-6,...
+                            'PlotFcn', {@gaplotbestf});
     
     np = r*m; % No. of entries in gain matrix
     [res, fval] = ga(ObjectiveFunction, np*2, [], [], [], [], [], [], [], options);
@@ -43,10 +42,9 @@ end
 beep
 
 %% Store results
-savenum = 3;
+savenum = 4;
 K = gains{1,1};
-save(sprintf("gaindesign/01_strain_cond/gains_%d", savenum),"K", 'gains')
-
+save(sprintf("gaindesign/01_strain_cond/gains_%d", savenum),"K", "gains", "s")
 
 function [J] = main_gain_design(X)
     % Load pre-defined variables from base workspace

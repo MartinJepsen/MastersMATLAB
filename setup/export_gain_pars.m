@@ -4,8 +4,6 @@ m = numel(out_dof);
 r = numel(in_dof);
 n_el = size(FE.mesh.topology, 1);
 
-s = complex(real(Lambda(1)), 0.1 + imag(Lambda(1)));         % pole
-
 B2 = StateSpaceModel().set_io(in_dof, out_dof, 24);
 B_strain = FE.B;
 bc = FE.mesh.bc_dof;
