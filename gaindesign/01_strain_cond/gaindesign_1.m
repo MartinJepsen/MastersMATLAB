@@ -42,7 +42,7 @@ end
 beep
 
 %% Store results
-savenum = 4;
+savenum = 15;
 K = gains{1,1};
 save(sprintf("gaindesign/01_strain_cond/gains_%d", savenum),"K", "gains", "s")
 
