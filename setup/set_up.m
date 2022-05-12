@@ -6,6 +6,7 @@ t = 0:dt:(Nsamples * dt - dt);          % time sequence
 u = randn(numel(in_dof), numel(t));
 blockrows = 60;
 
+dam = [1,1]
 FE = FiniteElementModel();
 FE.from_xlsx('structures/paper_truss.xlsx')
 FE.assembly('bar', dam);
@@ -25,8 +26,6 @@ SS_exact.dt_from_FE(Kg, Cg, Mg, dt);
 SS_exact.get_modal_parameters();
 SS_exact.to_ct();
 Lambda = SS_exact.modal_parameters.Lambda;
-% s = complex(real(Lambda(1)), s_fac * imag(Lambda(1)));         % pole
-s = 0;
 
 % Exact, damaged
 SS_exact_d = StateSpaceModel();

@@ -1,4 +1,6 @@
 set_up
+s = complex(real(Lambda(3)), s_fac * imag(Lambda(3)));         % pole
+
 
 H = (Mg*s^2 + Cg*s + Kg)^-1;
 H_ = zeros(n_dof, free_dof);
@@ -42,9 +44,8 @@ end
 beep
 
 %% Store results
-savenum = 112;
 K = gains{1,1};
-save(sprintf("gaindesign/01_strain_cond/gains_%04d", s_fac*100),"K", "gains", "s")
+save(sprintf("gaindesign/01_strain_cond/pole_3/gains_%0.3f.mat", s_fac),"K", "gains", "s")
 
 function [J] = main_gain_design(X)
     % Load pre-defined variables from base workspace

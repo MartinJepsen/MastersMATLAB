@@ -4,7 +4,7 @@ rng(1)
 damages(:, 2) = 0.95;
 nsr = 0.05;
 
-s_factors = sort([1:0.05:1.5, 1.001, 1.002, 1.003], 'ascend');
+s_factors = sort([1:0.05:1.4, 1.001, 1.002, 1.003], 'ascend');
 dam = damages(1, :);
 
 for foo = 1:numel(s_factors)
