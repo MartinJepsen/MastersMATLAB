@@ -2,16 +2,17 @@ clear; clc; close all
 
 %% Load relevant variables
 nsr = 0.05;
-load(sprintf("simulation/SYSID/model_error/00_000_%03d", nsr*100))
+base_dir = "simulation/SYSID/model_error_005";
+load(sprintf("%s/00_000_%03d", base_dir, nsr*100))
 
-for damel = 1:14
+for damel = [1, 2, 5, 10, 14]
     dam = [damel, 0.8];
     set_up
     
     %% load simulation results
-    filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100);
+    filename = sprintf('%02d_%03d_%03d', dam(1,1), dam(1,2)*100, nsr*100);
     disp("Loading" + filename)
-    load("simulation/SYSID/model_error/"+filename)
+    load(fullfile(base_dir, filename))
     
     %% load gains
     load('gaindesign\01_strain_cond\gains_1.mat')
@@ -34,7 +35,7 @@ for damel = 1:14
         H_d = SS_d.transfer_matrix(s);
         
         l_CL_est = eig(SS.A + SS.B*K*SS.C);
-        [~, sorting] = sort(abs(l_CL_est), 'ascend')
+        [~, sorting] = sort(abs(l_CL_est), 'ascend');
         Lambda_CL_est(:, run) = l_CL_est(sorting);          % estimated CL poles
 
         DeltaH = H_d - H;                               % damage-induced transfer matrix shift (estimated)

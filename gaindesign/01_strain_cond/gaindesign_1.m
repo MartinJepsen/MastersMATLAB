@@ -1,9 +1,9 @@
 set_up
 
+s = complex(real(Lambda(1)), imag(1.12*Lambda(1)));
 H = (Mg*s^2 + Cg*s + Kg)^-1;
 H_ = zeros(n_dof, free_dof);
 H_(idx, :) = H;
-
 %% Genetic algorithm
 run = 0;
 good = 0;
@@ -43,9 +43,9 @@ end
 beep
 
 %% Store results
-savenum = 3;
+savenum = 1;
 K = gains{1,1};
-save(sprintf("gaindesign/01_strain_cond/gains_%d", savenum),"K", 'gains')
+save(sprintf("gaindesign/01_strain_cond/gains_%d", savenum),"K", "gains", "s")
 
 
 function [J] = main_gain_design(X)
