@@ -50,7 +50,7 @@ end
 fprintf("Finished all runs in %0.2f s", toc(t_0))
 
 %%
-filename = sprintf("simulation/SYSID/model_error/%02d_%03d_%03d", dam(1,1), dam(1,2)*100, nsr*100)
+filename = sprintf("simulation/SYSID/model_error_005/%02d_%03d_%03d", dam(1,1), dam(1,2)*100, nsr*100)
 save(filename, 'SS_est_d', 'lambda_est_d', 'FE_e')
 
 try
