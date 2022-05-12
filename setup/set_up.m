@@ -1,10 +1,14 @@
 in_dof = [1, 2, 5, 6, 7, 8, 11, 12];
 out_dof = in_dof;
-dt = 0.0001;                        % time increment size
+dt = 0.0001;                            % time increment size
 Nsamples = 50000;
 t = 0:dt:(Nsamples * dt - dt);          % time sequence
 u = randn(numel(in_dof), numel(t));
 blockrows = 60;
+
+if ~exist('dam', 'var')
+    dam = [1,1];
+end
 
 FE = FiniteElementModel();
 FE.from_xlsx('structures/paper_truss.xlsx')
