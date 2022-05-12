@@ -7,6 +7,7 @@ u = randn(numel(in_dof), numel(t));
 blockrows = 60;
 
 if ~exist('dam', 'var')
+    disp('No damage defined. Setting damaged configuration equal to the reference.')
     dam = [1,1];
 end
 
