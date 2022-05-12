@@ -70,16 +70,14 @@ for damel = 1:14
     for i = 1:n_el
         success_rates(i, 1:2) = [sum(min_strain_OL == i), sum(min_strain_CL == i)]/tot_runs*100;
     end
-    success_rates = array2table([[1:n_el]', round(success_rates)], 'VariableNames', {'element_number', 'detection_rate_OL', 'detection_rate_CL'});  
-    results(damel, :) = success_rates(damel, :)
+    success_rates = array2table([[1:n_el]', round(success_rates)], 'VariableNames',...
+                    {'element_number', 'detection_rate_OL', 'detection_rate_CL'});  
+    results(damel, :) = success_rates(damel, :);
 
     m = mean(strains,2);            % mean of each characteristic strain
     s_norm = strains ./ max(m);     % normalise rows by largest mean value
     s_s = std(s_norm,0,2);          % standard deviation of un-normalised strain array
     m_norm = mean(s_norm,2);        % mean of rows normalised by largest mean (the strain field to be plotted)
-    
-    [m_sorted, idx] = sort(m_norm(setdiff([1:n_el],damel),1,:));
-    locatability = 1 ./ [m_norm(damel,1) / m_sorted(1, 1), m_norm(damel,2) / m_sorted(1, 2)];
     
     % Plot results
     close all
@@ -124,6 +122,6 @@ for damel = 1:14
     ylabel("Normalized characteristic strain", 'FontSize', fs_small)
     yticks([1e-3, 1e-2, 1e-1, 1e0])
     a2.FontSize = 7;
-    % exportgraphics(f2, sprintf('figures/sens_strains_%d.pdf', damel), 'Resolution', 200)
-    % title(sprintf('Damaged element: %d', damel))
 end
+
+results
