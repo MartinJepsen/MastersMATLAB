@@ -4,6 +4,21 @@ s = complex(real(Lambda(1)), imag(1.12*Lambda(1)));
 H = (Mg*s^2 + Cg*s + Kg)^-1;
 H_ = zeros(n_dof, free_dof);
 H_(idx, :) = H;
+
+vars.n_dof = n_dof;
+vars.free_dof = free_dof;
+vars.m = m;
+vars.r = r;
+vars.B2 = B2;
+vars.B = B_strain;
+vars.idx  = idx ;
+vars.H_ = H_;
+vars.cdis = cdis;
+vars.s = s;
+vars.Kg = Kg;
+vars.Cg = Cg;
+vars.Mg = Mg;
+
 %% Genetic algorithm
 run = 0;
 good = 0;
@@ -18,8 +33,7 @@ for run = 0
     options = optimoptions('ga', 'Generations', 20000,...
                             'PopulationSize', 100,...
                             'CrossoverFraction', 0.6,...
-                            'FunctionTolerance',1e-7,...
-                            'PlotFcn', @gaplotbestf);
+                            'FunctionTolerance',1e-7);
     
     np = r*m; % No. of entries in gain matrix
     [res, fval] = ga(ObjectiveFunction, np*2, [], [], [], [], [], [], [], options);
@@ -47,22 +61,22 @@ savenum = 1;
 K = gains{1,1};
 save(sprintf("gaindesign/01_strain_cond/gains_%d", savenum),"K", "gains", "s")
 
-
 function [J] = main_gain_design(X)
     % Load pre-defined variables from base workspace
-    n_dof = evalin('base', 'n_dof');
-    free_dof = evalin('base', 'free_dof');
-    m = evalin('base', 'm');
-    r = evalin('base', 'r');
-    B2 = evalin('base', 'B2');
-    B = evalin('base', 'B_strain');
-    idx = evalin('base', 'idx');
-    H_ = evalin('base', 'H_');
-    cdis = evalin('base','cdis');
-    s = evalin('base', 's');
-    Kg = evalin('base', 'Kg');
-    Cg = evalin('base', 'Cg');
-    Mg = evalin('base', 'Mg');
+    vars = evalin('base', 'vars');
+    n_dof = vars.n_dof;
+    free_dof = vars.free_dof;
+    m = vars.m;
+    r = vars.r;
+    B2 = vars.B2;
+    B = vars.B;
+    idx  = vars.idx ;
+    H_ = vars.H_;
+    cdis = vars.cdis;
+    s = vars.s;
+    Kg = vars.Kg;
+    Cg = vars.Cg;
+    Mg = vars.Mg;
     
     % Reshape the function argument into a complex-valued r x m matrix.
     np = r*m;
