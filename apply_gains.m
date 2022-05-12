@@ -4,17 +4,17 @@ clear; clc; close all
 nsr = 0.05;
 load(sprintf("simulation/SYSID/model_error/00_000_%03d", nsr*100))
 
-for damel = [1:6, 14]
-    dam = [damel, 0.95];
+for damel = [1:14]
+    dam = [damel, 0.80];
     set_up
     
     %% load simulation results
     filename = sprintf('%02d_%03d_%03d',dam(1,1), dam(1,2)*100, nsr*100);
-    disp("Loading" + filename)
+    disp("Loading " + filename)
     load("simulation/SYSID/model_error/"+filename)
     
     %% load gains
-    load('gaindesign\01_strain_cond\gains_15.mat')
+    load('gaindesign\01_strain_cond\gains_1003.mat')
 %     load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
 %     load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
     
@@ -34,7 +34,7 @@ for damel = [1:6, 14]
         H_d = SS_d.transfer_matrix(s);
         
         l_CL_est = eig(SS.A + SS.B*K*SS.C);
-        [~, sorting] = sort(abs(l_CL_est), 'ascend')
+        [~, sorting] = sort(abs(l_CL_est), 'ascend');
         Lambda_CL_est(:, run) = l_CL_est(sorting);          % estimated CL poles
 
         DeltaH = H_d - H;                               % damage-induced transfer matrix shift (estimated)
@@ -71,8 +71,14 @@ for damel = [1:6, 14]
         success_rates(i, 1:2) = [sum(min_strain_OL == i), sum(min_strain_CL == i)]/tot_runs*100;
     end
     success_rates = array2table([[1:n_el]', round(success_rates)], 'VariableNames', {'element_number', 'detection_rate_OL', 'detection_rate_CL'});  
-    results(damel, :) = success_rates(damel, :)
+    results(damel, :) = success_rates(damel, :);
+end
 
+    results(:,2)
+    results(:,3)
+
+
+    return
     m = mean(strains,2);            % mean of each characteristic strain
     s_norm = strains ./ max(m);     % normalise rows by largest mean value
     s_s = std(s_norm,0,2);          % standard deviation of un-normalised strain array
@@ -126,4 +132,3 @@ for damel = [1:6, 14]
     a2.FontSize = 7;
     % exportgraphics(f2, sprintf('figures/sens_strains_%d.pdf', damel), 'Resolution', 200)
     % title(sprintf('Damaged element: %d', damel))
-end

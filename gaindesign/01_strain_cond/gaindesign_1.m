@@ -42,9 +42,9 @@ end
 beep
 
 %% Store results
-savenum = 15;
+savenum = 112;
 K = gains{1,1};
-save(sprintf("gaindesign/01_strain_cond/gains_%d", savenum),"K", "gains", "s")
+save(sprintf("gaindesign/01_strain_cond/gains_%04d", s_fac*100),"K", "gains", "s")
 
 function [J] = main_gain_design(X)
     % Load pre-defined variables from base workspace

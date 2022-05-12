@@ -36,7 +36,7 @@ n = size(roots,1);
 %% Plots individually
 for j = 1:size(roots,2)
     for i = 1:n       
-        e(i) = plot(real(roots(i,j)), imag(roots(i,j)),'r.','MarkerSize',5);
+        e(i) = plot(real(roots(i,j)), imag(roots(i,j)),'r.','MarkerSize',12);
         string = strjoin({'\lambda_',num2str(i)});
     %     string = strjoin({'\lambda_{',num2str((i-1)/2+1)},'}');
 %         text(real(roots(i,j)), imag(roots(i,j)),string,'Interpreter','tex','FontSize',fs,'FontName','palatino linotype')
