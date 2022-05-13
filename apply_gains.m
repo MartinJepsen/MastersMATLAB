@@ -2,16 +2,16 @@ clear; clc; close all
 
 %% Load relevant variables
 nsr = 0.05;
-base_dir = "simulation/SYSID/model_error_005";
+base_dir = "simulation/SYSID/model_error_002";
 load(sprintf("%s/00_000_%03d", base_dir, nsr*100))
 
-for damel = [1, 2, 5, 10, 14]
+for damel = [1:14]
     dam = [damel, 0.8];
     set_up
     
     %% load simulation results
     filename = sprintf('%02d_%03d_%03d', dam(1,1), dam(1,2)*100, nsr*100);
-    disp("Loading" + filename)
+    disp("Loading " + filename)
     load(fullfile(base_dir, filename))
     
     %% load gains
