@@ -27,7 +27,7 @@ parfor run = 1:100
         disp('Generating reference model\n')
         SS = StateSpaceModel();
         SS.set_io(in_dof, out_dof);
-        SS.dt_from_FE(Kg_e, Cg_e, Mg_e, dt);
+        SS.dt_from_FE(Kg_e, Cg_e, Mg_e, dt, "acc");
         [u_n, y] = SS.time_response(u, t, nsr, false);
         SS.estimate(u_n, y, blockrows);
         SS.get_modal_parameters();
@@ -38,7 +38,7 @@ parfor run = 1:100
 
     SS_d = StateSpaceModel();
     SS_d.set_io(in_dof, out_dof);
-    SS_d.dt_from_FE(Kg_de, Cg_de, Mg_e, dt)
+    SS_d.dt_from_FE(Kg_de, Cg_de, Mg_e, dt, "acc")
     [u_n, y] = SS_d.time_response(u, t, nsr, false);
     SS_d.estimate(u_n, y, blockrows);
     SS_d.get_modal_parameters()

@@ -33,16 +33,26 @@ Cg_d = FE.Cg_d;
 Mg = FE.Mg;
 
 SS_exact = StateSpaceModel();
+<<<<<<< HEAD
 SS_exact.set_io(1:12, 1:12, 24);
 SS_exact.dt_from_FE(Kg, Cg, Mg, dt);
+=======
+SS_exact.set_io(1:n_dof, 1:n_dof, 2 * n_dof);
+SS_exact.dt_from_FE(Kg, Cg, Mg, dt, "acc");
+>>>>>>> fb20e35 (implement acceleration and velocity output)
 SS_exact.get_modal_parameters();
 SS_exact.to_ct();
 Lambda = SS_exact.modal_parameters.Lambda;
 
 % Exact, damaged
 SS_exact_d = StateSpaceModel();
+<<<<<<< HEAD
 SS_exact_d.set_io(1:12, 1:12, 24);
 SS_exact_d.dt_from_FE(FE.Kg_d, FE.Cg_d, FE.Mg, dt);
+=======
+SS_exact_d.set_io(1:n_dof, 1:n_dof, 2 * n_dof);
+SS_exact_d.dt_from_FE(Kg_d, Cg_d, Mg, dt, "acc");
+>>>>>>> fb20e35 (implement acceleration and velocity output)
 SS_exact_d.get_modal_parameters();
 SS_exact_d.to_ct();
 Lambda_d = SS_exact_d.modal_parameters.Lambda;
