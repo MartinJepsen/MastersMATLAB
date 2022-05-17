@@ -25,44 +25,43 @@ for damel = [1:14]
     Lambda_CL_ex = eig(A_CL_ex);                    % exact CL poles
 
     %% Obtain characteristic strains for every run
-    tot_runs = 0;
+    tot_runs = 1;
 
-    for run = 1:numel(SS_est)
+    for run_u = 1:numel(SS_est)
         % OL
-        SS = SS_est{run};
-        H = SS.transfer_matrix(s); 
-        SS_d = SS_est_d{run};
-        H_d = SS_d.transfer_matrix(s);
-        
-        l_CL_est = eig(SS.A + SS.B*K*SS.C);
-        [~, sorting] = sort(abs(l_CL_est), 'ascend');
-        Lambda_CL_est(:, run) = l_CL_est(sorting);          % estimated CL poles
+        SS = SS_est{run_u};
+        H = SS.transfer_matrix(s);
 
-        DeltaH = H_d - H;                               % damage-induced transfer matrix shift (estimated)
-        [~, ~, V] = svd(DeltaH);                        % DDLVs
-        d_OL = zeros(n_dof, 1);
-        d_OL(idx) = H_ref * B2 * V(:, end);             % full OL displacement vector
-        eps_OL = B_strain * d_OL;                       % full OL strain vector
+        for run_d = 1:numel(SS_est_d)
+            SS_d = SS_est_d{run_d};
+            H_d = SS_d.transfer_matrix(s);
+
+            DeltaH = H_d - H;                               % damage-induced transfer matrix shift (estimated)
+            [~, ~, V] = svd(DeltaH);                        % DDLVs
+            d_OL = zeros(n_dof, 1);
+            d_OL(idx) = H_ref * B2 * V(:, end);             % full OL displacement vector
+            eps_OL = B_strain * d_OL;                       % full OL strain vector
         
-        % CL
-        H_CL = (eye(size(H)) + H * K)^-1 * H;           % estimated CL transfer matrix, reference
-        H_CL_d = (eye(size(H_d)) + H_d * K)^-1 * H_d;   % estimated CL transfer matrix, damaged
-        DeltaH_CL = H_CL_d - H_CL;                      % CL damage-induced transfer matrix change
-        [~, ~, V] = svd(DeltaH_CL);                     % CLDDLVs
-        d_CL = zeros(n_dof, 1);
-        d_CL(idx) = H_CL_ref * B2 * V(:, end);          % CL displacement vector
-        eps_CL = B_strain * d_CL;                       % cCL strain vector
+            % CL
+            H_CL = (eye(size(H)) + H * K)^-1 * H;           % estimated CL transfer matrix, reference
+            H_CL_d = (eye(size(H_d)) + H_d * K)^-1 * H_d;   % estimated CL transfer matrix, damaged
+            DeltaH_CL = H_CL_d - H_CL;                      % CL damage-induced transfer matrix change
+            [~, ~, V] = svd(DeltaH_CL);                     % CLDDLVs
+            d_CL = zeros(n_dof, 1);
+            d_CL(idx) = H_CL_ref * B2 * V(:, end);          % CL displacement vector
+            eps_CL = B_strain * d_CL;                       % cCL strain vector
         
-        % Compute strains
-        strains(:, tot_runs+1, 1) = abs(eps_OL);        % array of characteristic OL strain vectors
-        strains(:, tot_runs+1, 2) = abs(eps_CL);        % array of characteristic CL strain vectors
-        tot_runs = tot_runs + 1;
-        
-        eps_norm_OL = abs(eps_OL) / max(abs(eps_OL));
-        eps_norm_CL = abs(eps_CL) / max(abs(eps_CL));
-        
-        min_strain_OL(tot_runs, 1) = find(eps_norm_OL == min(eps_norm_OL));   % index of smallest OL strain
-        min_strain_CL(tot_runs, 1) = find(eps_norm_CL == min(eps_norm_CL));   % index of smallest CL strain
+            % Compute strains
+            strains(:, tot_runs, 1) = abs(eps_OL);        % array of characteristic OL strain vectors
+            strains(:, tot_runs, 2) = abs(eps_CL);        % array of characteristic CL strain vectors
+
+            eps_norm_OL = abs(eps_OL) / max(abs(eps_OL));
+            eps_norm_CL = abs(eps_CL) / max(abs(eps_CL));
+            
+            min_strain_OL(tot_runs, 1) = find(eps_norm_OL == min(eps_norm_OL));   % index of smallest OL strain
+            min_strain_CL(tot_runs, 1) = find(eps_norm_CL == min(eps_norm_CL));   % index of smallest CL strain
+            tot_runs = tot_runs + 1;
+        end
     end
 
     %% Results post-processing
@@ -72,7 +71,7 @@ for damel = [1:14]
         success_rates(i, 1:2) = [sum(min_strain_OL == i), sum(min_strain_CL == i)]/tot_runs*100;
     end
     success_rates = array2table([[1:n_el]', round(success_rates)], 'VariableNames',...
-                    {'element_number', 'detection_rate_OL', 'detection_rate_CL'});  
+                    {'el', 'OL', 'CL'});  
     results(damel, :) = success_rates(damel, :);
 
     m = mean(strains,2);            % mean of each characteristic strain
@@ -81,10 +80,8 @@ for damel = [1:14]
     m_norm = mean(s_norm,2);        % mean of rows normalised by largest mean (the strain field to be plotted)
     
     % Plot results
-    close all
     f2 = figure;
     hold on
-    f2.Position([3,4]) = [12, 5.5];
     
     x = [1:n_el];  % positions of the bars
     b1 = bar(x, m_norm(:, 1), 'k');
@@ -102,27 +99,22 @@ for damel = [1:14]
     percentile = 16;
     l = legend('OL', 'CL', 'Coeff. of variation', 'location', 'south west');
     
-    fs_big = 10;
-    fs_small = 7;
+   
     a2 = gca;
     grid on
-    a2.MinorGridLineStyle = '-';
-    a2.GridColor = 'k';
-    a2.GridAlpha = 1;
     a2.XGrid = 'off';
     
     % x axis
     xticks([1:2*n_el])
     xticklabels([string([1:n_el, 1:n_el])])
-    xlabel("Element number", 'FontSize', fs_small)
+    xlabel("Element number")
     a2.XTickLabelRotation = 0;
     
     % y axis
     set(gca, 'YScale', 'log')
     ylim([1e-3, 2.1])
-    ylabel("Normalized characteristic strain", 'FontSize', fs_small)
+    ylabel("Normalized characteristic strain")
     yticks([1e-3, 1e-2, 1e-1, 1e0])
-    a2.FontSize = 7;
 end
 
 results
