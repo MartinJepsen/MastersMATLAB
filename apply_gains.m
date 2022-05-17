@@ -33,11 +33,11 @@ for damel = [1:14]
     for run_u = 1:numel(SS_est)
         % OL
         SS = SS_est{run_u};
-        H = SS.transfer_matrix(s);
+        H = 1/(s^2) * SS.transfer_matrix(s);
 
         for run_d = 1:numel(SS_est_d)
             SS_d = SS_est_d{run_d};
-            H_d = SS_d.transfer_matrix(s);
+            H_d = 1/(s^2) * SS_d.transfer_matrix(s);
 
             DeltaH = H_d - H;                               % damage-induced transfer matrix shift (estimated)
             [~, ~, V] = svd(DeltaH);                        % DDLVs
