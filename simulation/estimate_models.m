@@ -7,7 +7,7 @@ zeta_dev = [];
 
 FE_e = FiniteElementModel();
 FE_e.from_xlsx('structures/paper_truss.xlsx')
-FE_e.mesh.element_properties.E = FE.mesh.element_properties.E .* unifrnd(0.95, 1.05, [n_el, 1]);
+FE_e.mesh.element_properties.E = FE.mesh.element_properties.E .* unifrnd(1-err, 1+err, [n_el, 1]);
 FE_e.assembly('bar', dam);
 FE_e.apply_bc([1, 2, 9, 10]);
 FE_e.modal_damping(0.02);
