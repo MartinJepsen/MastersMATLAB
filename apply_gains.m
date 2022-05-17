@@ -2,11 +2,14 @@ clear; clc; close all
 
 %% Load relevant variables
 nsr = 0.05;
-base_dir = "simulation/SYSID/model_error_002";
+err = 0.05;
+dam_ = 0.80;
+
+base_dir = sprintf("simulation/SYSID/model_error_%03d", err*100);
 load(sprintf("%s/00_000_%03d", base_dir, nsr*100))
 
 for damel = [1:14]
-    dam = [damel, 0.8];
+    dam = [damel, dam_];
     set_up
     
     %% load simulation results
@@ -15,7 +18,7 @@ for damel = [1:14]
     load(fullfile(base_dir, filename))
     
     %% load gains
-    load('gaindesign\01_strain_cond\gains_1.mat')
+    load('gaindesign\01_strain_cond\gains_2_1.120.mat')
 %     load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
 %     load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
     
