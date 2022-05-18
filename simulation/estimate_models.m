@@ -17,13 +17,16 @@ Kg_de = FE_e.Kg_d;
 Cg_e = FE_e.Cg;
 Cg_de = FE_e.Cg_d;
 Mg_e = FE_e.Mg;
-filename_u = sprintf("simulation/SYSID/model_error_005/00_000_%03d.mat", nsr*100);
+
+base_dir = sprintf("simulation/SYSID/model_error_%03d", err*100);
+
+filename_u = sprintf("00_000_%03d.mat", nsr*100);
 
 t_0 = tic;
 parfor run = 1:100
     t_0_run = tic;
     % check if simulations of undamaged config exist:
-    if exist(filename_u, "file") == 0
+    if exist(fullfile(base_dir, filename_u), "file") == 0
         disp('Generating reference model\n')
         SS = StateSpaceModel();
         SS.set_io(in_dof, out_dof);
@@ -50,11 +53,12 @@ end
 fprintf("Finished all runs in %0.2f s", toc(t_0))
 
 %%
-filename = sprintf("simulation/SYSID/model_error_005/%02d_%03d_%03d", dam(1,1), dam(1,2)*100, nsr*100)
-save(filename, 'SS_est_d', 'lambda_est_d', 'FE_e')
+filename = sprintf("%02d_%03d_%03d", dam(1,1), dam(1,2)*100, nsr*100)
+
+save(fullfile(base_dir, filename), 'SS_est_d', 'lambda_est_d', 'FE_e')
 
 try
-    save(filename_u, 'SS_est', 'lambda_est')
+    save(fullfile(base_dir, filename_u), 'SS_est', 'lambda_est')
 catch
     disp('Reference models already exist')
 end

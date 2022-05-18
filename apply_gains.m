@@ -1,14 +1,14 @@
-clear; clc; close all
+clear; close all
 
 %% Load relevant variables
 nsr = 0.05;
-err = 0.05;
+err = 0.0;
 dam_ = 0.80;
 
 base_dir = sprintf("simulation/SYSID/model_error_%03d", err*100);
 load(sprintf("%s/00_000_%03d", base_dir, nsr*100))
 
-for damel = [1:14]
+for damel = [2]
     dam = [damel, dam_];
     set_up
     
@@ -73,9 +73,9 @@ for damel = [1:14]
     n_el = 14;
     clearvars success_rates
     for i = 1:n_el
-        success_rates(i, 1:2) = [sum(min_strain_OL == i), sum(min_strain_CL == i)]/tot_runs*100;
+        success_rates(i, 1:2) = [sum(min_strain_OL == i), sum(min_strain_CL == i)];
     end
-    success_rates = array2table([[1:n_el]', round(success_rates)], 'VariableNames',...
+    success_rates = array2table([[1:n_el]', round(success_rates/size(min_strain_OL, 1)*100)], 'VariableNames',...
                     {'el', 'OL', 'CL'});  
     results(damel, :) = success_rates(damel, :);
 
