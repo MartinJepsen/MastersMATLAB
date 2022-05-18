@@ -18,7 +18,12 @@ Cg_e = FE_e.Cg;
 Cg_de = FE_e.Cg_d;
 Mg_e = FE_e.Mg;
 
-base_dir = sprintf("simulation/SYSID/model_error_%03d", err*100);
+base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
+
+if ~isfolder(base_dir)
+    mkdir(base_dir)
+    addpath(base_dir)
+end
 
 filename_u = sprintf("00_000_%03d.mat", nsr*100);
 
@@ -30,7 +35,7 @@ parfor run = 1:100
         disp('Generating reference model\n')
         SS = StateSpaceModel();
         SS.set_io(in_dof, out_dof);
-        SS.dt_from_FE(Kg_e, Cg_e, Mg_e, dt, "acc");
+        SS.dt_from_FE(Kg_e, Cg_e, Mg_e, dt, sensor);
         [u_n, y] = SS.time_response(u, t, nsr, false);
         SS.estimate(u_n, y, blockrows);
         SS.get_modal_parameters();
@@ -41,7 +46,7 @@ parfor run = 1:100
 
     SS_d = StateSpaceModel();
     SS_d.set_io(in_dof, out_dof);
-    SS_d.dt_from_FE(Kg_de, Cg_de, Mg_e, dt, "acc")
+    SS_d.dt_from_FE(Kg_de, Cg_de, Mg_e, dt, sensor)
     [u_n, y] = SS_d.time_response(u, t, nsr, false);
     SS_d.estimate(u_n, y, blockrows);
     SS_d.get_modal_parameters()

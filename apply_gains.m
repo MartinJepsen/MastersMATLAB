@@ -1,44 +1,54 @@
 clear; close all
 
-%% Load relevant variables
+%% Set simulation variables
 nsr = 0.05;
 err = 0.0;
 dam_ = 0.80;
+sensor = "acc";
 
-base_dir = sprintf("simulation/SYSID/model_error_%03d", err*100);
+%% Compute results
+base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
 load(sprintf("%s/00_000_%03d", base_dir, nsr*100))
 
-for damel = [2]
+for damel = [1:2]
     dam = [damel, dam_];
     set_up
     
-    %% load simulation results
+    % load simulation results
     filename = sprintf('%02d_%03d_%03d', dam(1,1), dam(1,2)*100, nsr*100);
     disp("Loading " + filename)
     load(fullfile(base_dir, filename))
     
-    %% load gains
-    load('gaindesign\01_strain_cond\gains_2_1.120.mat')
+    % load gains
+    load('gaindesign\01_strain_cond\gains_1_1.120.mat')
 %     load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
 %     load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
+
+    if sensor == "dis"
+        s_fac = 1;
+    elseif sensor == "vel"
+        s_fac = 1/s;
+    elseif sensor == "acc"
+        s_fac = 1 / (s^2);
+    end
     
     H_ref = (Mg*s^2 + Cg*s + Kg)^-1;                % reference OL transfer matrix
     H_CL_ref = (Mg*s^2 + Cg*s + Kg + B2*K*cdis)^-1; % reference CL transfer matrix
     A_CL_ex = SS_exact.A + SS_exact.B * B2 * K * cdis * SS_exact.C;
     Lambda_CL_ex = eig(A_CL_ex);                    % exact CL poles
 
-    %% Obtain characteristic strains for every run
+    % Obtain characteristic strains for every run
     tot_runs = 1;
 
     for run_u = 1:numel(SS_est)
         % OL
         SS = SS_est{run_u};
-        H = 1/(s^2) * SS.transfer_matrix(s);
+        H = s_fac * SS.transfer_matrix(s);
 
         for run_d = 1:numel(SS_est_d)
             SS_d = SS_est_d{run_d};
             if run_u == 1
-                H_d = 1/(s^2) * SS_d.transfer_matrix(s);
+                H_d = s_fac * SS_d.transfer_matrix(s);
             end
 
             DeltaH = H_d - H;                               % damage-induced transfer matrix shift (estimated)
