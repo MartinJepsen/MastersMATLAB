@@ -1,13 +1,12 @@
 clear
-damages = [3:14]';
+damages = [1:14]';
 rng(1)
 damages(:, 2) = 0.80;
 nsr = 0.05;
-err = 0.00;
-sensor = "dis";
+err = 0.02;
+sensor = "acc";
+%%
 
-gaindesign_1
-return
 for foo = 1:size(damages, 1)
     dam = damages(foo, :);
     estimate_models
@@ -15,3 +14,8 @@ for foo = 1:size(damages, 1)
 %     gaindesign_2
 %     gaindesign_3
 end
+
+
+%%
+% gaindesign_1
+% return
