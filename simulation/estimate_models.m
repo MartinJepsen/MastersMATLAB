@@ -5,19 +5,6 @@ zeta_ref = SS_exact_d.modal_parameters.zeta;
 omega_dev = [];
 zeta_dev = [];
 
-FE_e = FiniteElementModel();
-FE_e.from_xlsx('structures/paper_truss.xlsx')
-FE_e.mesh.element_properties.E = FE.mesh.element_properties.E .* unifrnd(1-err, 1+err, [n_el, 1]);
-FE_e.assembly('bar', dam);
-FE_e.apply_bc([1, 2, 9, 10]);
-FE_e.modal_damping(0.02);
-
-Kg_e = FE_e.Kg;
-Kg_de = FE_e.Kg_d;
-Cg_e = FE_e.Cg;
-Cg_de = FE_e.Cg_d;
-Mg_e = FE_e.Mg;
-
 base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
 
 if ~isfolder(base_dir)
@@ -28,7 +15,7 @@ end
 filename_u = sprintf("00_000_%03d.mat", nsr*100);
 
 t_0 = tic;
-parfor run = 1:100
+parfor run = 1:n_runs
     t_0_run = tic;
     % check if simulations of undamaged config exist:
     if exist(fullfile(base_dir, filename_u), "file") == 0

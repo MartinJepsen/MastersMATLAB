@@ -11,26 +11,11 @@ if ~exist('dam', 'var')
     dam = [1,1];
 end
 
-FE = FiniteElementModel();
-FE.from_xlsx('structures/paper_truss.xlsx')
-FE.assembly('bar', dam);
-FE.apply_bc([1, 2, 9, 10]);
-FE.modal_damping(0.02);
-FE.strains_from_disp([])
+generate_FE_models
 
-free_dof = size(FE.Kg, 1);
-n_dof = FE.n_dof;
 m = numel(out_dof);
 r = numel(in_dof);
-n_el = size(FE.mesh.topology, 1);
-B_strain = FE.B;
-bc = FE.mesh.bc_dof;
 
-Kg = FE.Kg;
-Kg_d = FE.Kg_d;
-Cg = FE.Cg;
-Cg_d = FE.Cg_d;
-Mg = FE.Mg;
 
 SS_exact = StateSpaceModel();
 SS_exact.set_io(1:12, 1:12, 24);

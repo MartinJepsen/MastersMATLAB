@@ -153,5 +153,5 @@ for damel = [1:14]
         yticks([1e-3, 1e-2, 1e-1, 1e0])
     end
 end
-
+results.delta = results.CL - results.OL
 results
