@@ -5,29 +5,24 @@ zeta_ref = SS_exact_d.modal_parameters.zeta;
 omega_dev = [];
 zeta_dev = [];
 
-FE_e = FiniteElementModel();
-FE_e.from_xlsx('structures/paper_truss.xlsx')
-FE_e.mesh.element_properties.E = FE.mesh.element_properties.E .* unifrnd(0.95, 1.05, [n_el, 1]);
-FE_e.assembly('bar', dam);
-FE_e.apply_bc([1, 2, 9, 10]);
-FE_e.modal_damping(0.02);
+base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
 
-Kg_e = FE_e.Kg;
-Kg_de = FE_e.Kg_d;
-Cg_e = FE_e.Cg;
-Cg_de = FE_e.Cg_d;
-Mg_e = FE_e.Mg;
-filename_u = sprintf("simulation/SYSID/model_error_005/00_000_%03d.mat", nsr*100);
+if ~isfolder(base_dir)
+    mkdir(base_dir)
+    addpath(base_dir)
+end
+
+filename_u = sprintf("00_000_%03d.mat", nsr*100);
 
 t_0 = tic;
-parfor run = 1:100
+parfor run = 1:n_runs
     t_0_run = tic;
     % check if simulations of undamaged config exist:
-    if exist(filename_u, "file") == 0
+    if exist(fullfile(base_dir, filename_u), "file") == 0
         disp('Generating reference model\n')
         SS = StateSpaceModel();
         SS.set_io(in_dof, out_dof);
-        SS.dt_from_FE(Kg_e, Cg_e, Mg_e, dt);
+        SS.dt_from_FE(Kg_e, Cg_e, Mg_e, dt, sensor);
         [u_n, y] = SS.time_response(u, t, nsr, false);
         SS.estimate(u_n, y, blockrows);
         SS.get_modal_parameters();
@@ -38,7 +33,7 @@ parfor run = 1:100
 
     SS_d = StateSpaceModel();
     SS_d.set_io(in_dof, out_dof);
-    SS_d.dt_from_FE(Kg_de, Cg_de, Mg_e, dt)
+    SS_d.dt_from_FE(Kg_de, Cg_de, Mg_e, dt, sensor)
     [u_n, y] = SS_d.time_response(u, t, nsr, false);
     SS_d.estimate(u_n, y, blockrows);
     SS_d.get_modal_parameters()
@@ -50,11 +45,12 @@ end
 fprintf("Finished all runs in %0.2f s", toc(t_0))
 
 %%
-filename = sprintf("simulation/SYSID/model_error_005/%02d_%03d_%03d", dam(1,1), dam(1,2)*100, nsr*100)
-save(filename, 'SS_est_d', 'lambda_est_d', 'FE_e')
+filename = sprintf("%02d_%03d_%03d", dam(1,1), dam(1,2)*100, nsr*100)
+
+save(fullfile(base_dir, filename), 'SS_est_d', 'lambda_est_d', 'FE_e')
 
 try
-    save(filename_u, 'SS_est', 'lambda_est')
+    save(fullfile(base_dir, filename_u), 'SS_est', 'lambda_est')
 catch
     disp('Reference models already exist')
 end

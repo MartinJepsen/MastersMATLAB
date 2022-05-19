@@ -1,17 +1,20 @@
 
-function f = plot_poles(Lambda_ref, Lambda_ex, s)
+function f = plot_poles(Lambda_ref, Lambda_ex, s, legend_str)
 % PLOT_POLES(Lambda_ref, Lambda_ex)
 % plot poles of two systems in the complex plane.
 % Arguments:
 % Lambda_ref: column vector containing poles (sorted by eigenfrequency)
 % Lambda_ex: column vector containing poles  (sorted by eigenfrequency)
 
+Lambda_ref = reshape(Lambda_ref, [numel(Lambda_ref), 1]);
+Lambda_ex = reshape(Lambda_ex, [numel(Lambda_ex), 1]);
+
 f = figure;
 f.Units = 'centimeters';
 f.Position([3, 4]) = [15, 8];
 hold on; grid on
 plot(real(Lambda_ref), imag(Lambda_ref), 'k.', 'MarkerSize', 15)
-plot(real(Lambda_ex), imag(Lambda_ex), 'r.', 'MarkerSize', 12)
+plot(real(Lambda_ex), imag(Lambda_ex), 'r.', 'MarkerSize', 10)
 
 try
     plot(real(s), imag(s), 'bx', 'MarkerSize', 15);
@@ -19,7 +22,6 @@ catch
 end
    
 
-set(gca, 'FontName','Palatino Linotype')
 a = gca;
 a.XLabel.Interpreter = 'Latex';
 a.XLabel.String = '$\Re(s)$';
@@ -38,8 +40,6 @@ a.YLabel.Rotation = 0;
 xline(0, 'k')
 yline(0, 'k')
 
-if exist('s', 'var')
-    legend('Exact OL', 'Exact CL', 's', 'Location','southeast')
-else
-    legend('Exact OL', 'Exact CL', 'Location','southeast')
+
+legend(legend_str, 'Location','southeast')
 end
