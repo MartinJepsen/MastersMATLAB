@@ -1,5 +1,5 @@
 set_up
-polenum = 2;
+polenum = 24;
 im_fac = 1.12;
 s = complex(real(Lambda(polenum)), imag(im_fac*Lambda(polenum)));
 

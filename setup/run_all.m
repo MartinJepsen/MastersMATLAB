@@ -1,13 +1,13 @@
 clear
-damages = [1:2]';
+damages = [3:14]';
 rng(1)
 damages(:, 2) = 0.80;
 nsr = 0.05;
 err = 0.00;
-sensor = "acc";
+sensor = "dis";
 
-% gaindesign_1
-% return
+gaindesign_1
+return
 for foo = 1:size(damages, 1)
     dam = damages(foo, :);
     estimate_models

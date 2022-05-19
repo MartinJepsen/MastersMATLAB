@@ -4,13 +4,13 @@ clear; close all
 nsr = 0.05;
 err = 0.0;
 dam_ = 0.80;
-sensor = "acc";
+sensor = "dis";
 
 %% Compute results
 base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
 load(sprintf("%s/00_000_%03d", base_dir, nsr*100))
 
-for damel = [1:2]
+for damel = [1:14]
     dam = [damel, dam_];
     set_up
     
