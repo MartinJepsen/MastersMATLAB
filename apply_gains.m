@@ -2,7 +2,7 @@ clear; close all
 
 %% Set simulation variables
 nsr = 0.05;
-err = 0.02;
+err = 0.00;
 dam_ = 0.80;
 sensor = "dis";
 
@@ -22,7 +22,7 @@ for damel = [1:14]
     disp("Loading " + filename)
     load(fullfile(base_dir, filename))
     
-    % load gains
+    % load gainss
     load('gaindesign/01_strain_cond/gains_1_1.120.mat')
 %     load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
 %     load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
@@ -155,3 +155,4 @@ for damel = [1:14]
 end
 results.delta = results.CL - results.OL
 results
+plot_poles(Lambda, lambda_est, s, {'Exact', 'Estimated', 's'})

@@ -1,7 +1,7 @@
-in_dof = [1, 2, 5, 6, 7, 8, 11, 12];
+in_dof = [1:12];
 out_dof = in_dof;
 dt = 0.0001;                            % time increment size
-Nsamples = 25000;
+Nsamples = 20000;
 t = 0:dt:(Nsamples * dt - dt);          % time sequence
 u = randn(numel(in_dof), numel(t));
 blockrows = 60;
@@ -18,7 +18,7 @@ r = numel(in_dof);
 
 
 SS_exact = StateSpaceModel();
-SS_exact.set_io(1:12, 1:12, 24);
+SS_exact.set_io(1:free_dof, 1:free_dof, 2*free_dof);
 SS_exact.dt_from_FE(Kg, Cg, Mg, dt, sensor);
 SS_exact.get_modal_parameters();
 SS_exact.to_ct();
@@ -26,7 +26,7 @@ Lambda = SS_exact.modal_parameters.Lambda;
 
 % Exact, damaged
 SS_exact_d = StateSpaceModel();
-SS_exact_d.set_io(1:12, 1:12, 24);
+SS_exact_d.set_io(1:free_dof, 1:free_dof, 2*free_dof);
 SS_exact_d.dt_from_FE(Kg_d, Cg_d, Mg, dt, sensor);
 SS_exact_d.get_modal_parameters();
 SS_exact_d.to_ct();

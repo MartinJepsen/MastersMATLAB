@@ -1,7 +1,7 @@
 set_up
-polenum = 24;
-im_fac = 1.12;
-s = complex(real(Lambda(polenum)), imag(im_fac*Lambda(polenum)));
+polenum = 5;
+im_fac = 0.12;
+s = complex(real(Lambda(polenum)), imag(Lambda(polenum)) + imag(im_fac*Lambda(1)));
 
 H = (Mg*s^2 + Cg*s + Kg)^-1;
 H_ = zeros(n_dof, free_dof);
