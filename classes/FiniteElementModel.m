@@ -3,9 +3,7 @@ classdef FiniteElementModel < handle
         mesh {isstruct}
         n_dof
         Kg
-        Kg_d
         Cg
-        Cg_d
         Mg
         B                   % strain mapping matrix
         H
@@ -44,13 +42,13 @@ classdef FiniteElementModel < handle
             self.mesh.n_el = size(self.mesh.topology,1);
         end
         
-        function assembly(self, type, dam)
-            % Class method FiniteElementModel.assembly(type, dam)
-            % type (str, char): 'bar' or 'beam'
-            % dam (array)
+        function assembly(self, type, bc_dof)
+            % Class method FiniteElementModel.assembly(type, bc_dof)
+            % type (str): "bar" or "beam"
+            % bc_dof (array): indices of rows and columns in system matrices to remove
             
             % check for valid element type
-            if ~any(strcmp({'bar','beam'}, type))
+            if ~any(strcmp({"bar", "beam"}, type))
                 throw('Unrecognised element type')
             end
             
@@ -59,15 +57,6 @@ classdef FiniteElementModel < handle
             n_el = self.mesh.n_el;
             topology = self.mesh.topology;
             coords = self.mesh.coordinates;
-            
-            % expand dam to match number of elements
-            if exist('dam', 'var') && ~isempty(dam)
-                damel = ones(n_el, 2);
-                damel(:, 1) = 1:n_el;
-                damel(dam(:, 1), 2) = dam(:, 2);
-            else
-                clearvars damel dam
-            end
             
             % element lengths
             self.mesh.element_properties.L = zeros(n_el,1);
@@ -84,7 +73,14 @@ classdef FiniteElementModel < handle
                 s = dy/L;
                 self.mesh.element_properties.rot(el,:) = [c, s];
 
-                if type == 'bar'
+                if el == 1
+                    self.mesh.element_type = type;
+                    Kg = zeros(n_dof);
+                    Mg = zeros(n_dof);
+                    Cg = zeros(n_dof);
+                end
+
+                if type == "bar"
                     for node = 1:n_node
                         dof_node(node, :)=[node * 2 - 1, node * 2];
                     end
@@ -107,16 +103,8 @@ classdef FiniteElementModel < handle
                     
                     n_dof = dof_node(end);
                     self.n_dof = n_dof;
-                    if el == 1
-                        self.mesh.element_type = type;
-                        Kg = zeros(n_dof);
-                        if exist('dam', 'var')
-                            Kg_d = zeros(n_dof);
-                        end
-                        Mg = zeros(n_dof);
-                    end
                     
-                elseif type == 'beam'
+                elseif type == "beam"
                     % do something
                 end
                 
@@ -125,97 +113,27 @@ classdef FiniteElementModel < handle
                 Kg(dof_element(el, :), dof_element(el, :)) =...
                     Kg(dof_element(el, :), dof_element(el, :)) + ke;
                 
-                % damaged stiffness matrix
-                if exist('dam', 'var')
-                    A_d = damel(el, 2) * A;
-                    kel_d = A_d * E / L * [1, 0, -1, 0; 0, 0, 0, 0; -1, 0, 1, 0; 0, 0, 0, 0];
-                    ke_d = T' * kel_d * T;
-                    Kg_d(dof_element(el, :), dof_element(el, :)) =...
-                        Kg_d(dof_element(el, :), dof_element(el, :)) + ke_d;
-                end
-                
                 % mass matrix
                 me = T' * mel * T;
                 Mg(dof_element(el, :), dof_element(el, :)) =...
                     Mg(dof_element(el, :), dof_element(el, :)) + me;
             end
             
+            % apply BCs
+            Kg(dof, :) = [];
+            Kg(:, dof) = [];
+            Cg(dof, :) = [];
+            Cg(:, dof) = [];
+            Mg(dof, :) = [];
+            Mg(:, dof) = [];
+
             self.Kg = Kg;
-            
-            if exist('Kg_d', 'var')
-                self.Kg_d = Kg_d;
-                self.mesh.element_properties.damel = damel;
-            end
-            
+            self.Cg = Cg;
             self.Mg = Mg;
-            self.Cg = zeros(n_dof);
+
             self.mesh.element_properties.dof_element = dof_element;
         end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function apply_bc(self, dof)
-            self.Kg(dof, :) = [];
-            self.Kg(:, dof) = [];
-            
-            % try applying BC's to the damaged stiffness matrix
-            try
-                self.Kg_d(dof, :) = [];
-                self.Kg_d(:, dof) = [];
-            catch
-            end
-            
-            self.Mg(dof, :) = [];
-            self.Mg(:, dof) = [];
-            
-            if size(self.Cg) == size(self.Kg)
-                self.Cg(dof, :) = [];
-                self.Cg(:, dof) = [];
-            end
-            
-            self.mesh.bc_dof = dof;
-        end
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       
-        function rayleigh_damping(self, damping_ratios, modes)
-            if numel(damping_ratios) ~= 2 || numel(modes) ~= 2
-                throw('rayleigh_damping: number of damping ratios or specified modes is not equal to 2')
-                return
-            end
-            
-            % if eigenfrequencies already exist, use them, if not, compute them
-            if isfield(self.modal_parameters, 'Lambda')
-                omega1 = sqrt(self.modal_parameters.Lambda(modes(1),modes(1)));
-                omega2 = sqrt(self.modal_parameters.Lambda(modes(2),modes(2)));
-            else
-                [Phi, Lambda] = eig(self.Kg, self.Mg);
-                self.modal_parameters.Phi = Phi;
-                self.modal_parameters.Lambda = Lambda;
-                omega1 = sqrt(Lambda(modes(1),modes(1)));
-                omega2 = sqrt(Lambda(modes(2),modes(2)));
-            end
-            
-            zeta1 = damping_ratios(1);
-            zeta2 = damping_ratios(2);
-            damp_coef = [1/(2*omega1), omega1/2; 1/(2*omega2), omega2/2] \ [zeta1;zeta2];
-            
-            Cg = damp_coef(1) * self.Mg + damp_coef(2) * self.Kg;
-            self.Cg = Cg;
-            C_tilde = Phi' * Cg * Phi;
-            
-            zetas = diag(C_tilde) ./ (2 * sqrt(diag(Lambda)));
-            self.modal_parameters.zeta = zetas;
-            criticalmode = find(zetas >= 1);
-            
-            if isempty(criticalmode)==1
-                disp(['MESSAGE: Damping matrix computed.'...
-                    ,' There are no critically damped modes.'])
-                disp(['         zeta_max=',...
-                    num2str(max(zetas))])
-            else
-                disp(['MESSAGE: Damping matrix computed.'...
-                    ,' Critical damping occurs at mode ', num2str(criticalmode(1)),...
-                    ', with zeta=',num2str(zetas(criticalmode(1)))])
-            end
-        end
-        
         function modal_damping(self, zeta)
             % modal_damping(zeta)
             % applies damping ratio zeta to all modes
@@ -226,16 +144,6 @@ classdef FiniteElementModel < handle
             Phi = Phi * diag(1./m_n);
             C_tilde = diag(2 * zeta * omega);
             self.Cg = inv(Phi)' * C_tilde * inv(Phi);
-
-            if isprop(self, 'Kg_d') && ~isempty(self.Kg)
-                [Phi, Lambda] = eig(self.Kg_d, self.Mg);
-                omega = sqrt(diag(Lambda));
-                m_n = sqrt(diag(Phi' * self.Mg * Phi)); % mass-normalised eigenvectors
-                Phi = Phi * diag(1./m_n);
-                C_tilde = diag(2 * zeta * omega);
-                self.Cg_d = inv(Phi)' * C_tilde * inv(Phi);
-            end
-
             zetas = diag(C_tilde) ./ (2 * omega);
             self.modal_parameters.zeta = zetas;
             self.modal_parameters.Phi = Phi;
