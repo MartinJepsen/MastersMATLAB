@@ -48,7 +48,7 @@ classdef FiniteElementModel < handle
             % bc_dof (array): indices of rows and columns in system matrices to remove
             
             % check for valid element type
-            if ~any(strcmp({"bar", "beam"}, type))
+            if ~any(strcmp({'bar', 'beam'}, type))
                 throw('Unrecognised element type')
             end
             
@@ -73,16 +73,15 @@ classdef FiniteElementModel < handle
                 s = dy/L;
                 self.mesh.element_properties.rot(el,:) = [c, s];
 
-                if el == 1
-                    self.mesh.element_type = type;
-                    Kg = zeros(n_dof);
-                    Mg = zeros(n_dof);
-                    Cg = zeros(n_dof);
-                end
-
                 if type == "bar"
-                    for node = 1:n_node
-                        dof_node(node, :)=[node * 2 - 1, node * 2];
+                    if el == 1
+                        self.mesh.element_type = type;
+                        for node = 1:n_node
+                            dof_node(node, :)=[node * 2 - 1, node * 2];
+                        end
+                        n_dof = dof_node(end);
+                        Kg = zeros(n_dof);
+                        Mg = zeros(n_dof);
                     end
                     % Determines which DOF belong to which elements, for indexing purposes
                     dof_element(el, :) = [dof_node(topology(el,1),:), dof_node(topology(el,2),:)];
@@ -101,9 +100,6 @@ classdef FiniteElementModel < handle
                     kel = A * E / L * [1, 0, -1, 0; 0, 0, 0, 0; -1, 0, 1, 0; 0, 0, 0, 0];
                     mel = rho * A * L / 6 * [2, 0, 1, 0; 0, 0, 0, 0; 1, 0, 2, 0; 0, 0, 0, 0];
                     
-                    n_dof = dof_node(end);
-                    self.n_dof = n_dof;
-                    
                 elseif type == "beam"
                     % do something
                 end
@@ -120,15 +116,15 @@ classdef FiniteElementModel < handle
             end
             
             % apply BCs
-            Kg(dof, :) = [];
-            Kg(:, dof) = [];
-            Cg(dof, :) = [];
-            Cg(:, dof) = [];
-            Mg(dof, :) = [];
-            Mg(:, dof) = [];
+            Kg(bc_dof, :) = [];
+            Kg(:, bc_dof) = [];
+            Mg(bc_dof, :) = [];
+            Mg(:, bc_dof) = [];
 
+            self.n_dof = n_dof;
+            self.mesh.bc_dof = bc_dof;
+            
             self.Kg = Kg;
-            self.Cg = Cg;
             self.Mg = Mg;
 
             self.mesh.element_properties.dof_element = dof_element;
