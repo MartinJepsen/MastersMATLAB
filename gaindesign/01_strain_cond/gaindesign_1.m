@@ -1,8 +1,9 @@
-set_up
-polenum = 5;
-im_fac = 0.12;
+clear
+load("gaindesign/01_strain_cond/SetUp.mat")
+polenum = 19;
+im_fac = 1.01;
 Lambda = ReferenceModels.Lambda;
-s = complex(real(Lambda(polenum)), imag(Lambda(polenum)) + imag(im_fac*Lambda(1)));
+s = complex(real(Lambda(polenum)), im_fac*imag(Lambda(polenum)));
 
 GeneralParameters.s = s;
 
@@ -50,16 +51,12 @@ run = 0;
 good = 0;
 tic
 for run = 0
-    % change seed on every iteration
-    seed = ceil(abs(randn * randn) * 10) 
-    rng(seed);
-
     ObjectiveFunction = @main_gain_design;
     options = optimoptions('ga', 'Generations', 5000,...
                             'PopulationSize', 100,...
-                            'CrossoverFraction', 0.6,...
-                            'FunctionTolerance',1e-7);%,...
-%                             'PlotFcn', @gaplotbestf);
+                            'CrossoverFraction', 0.5,...
+                            'FunctionTolerance',1e-6,...
+                            'PlotFcn', @gaplotbestf);
     
     np = r*m; % No. of entries in gain matrix
     [res, fval] = ga(ObjectiveFunction, np*2, [], [], [], [], [], [], [], options);
@@ -81,7 +78,6 @@ for i = 1:numel(fvals)
     gains(i,1) = results(ind(i),1);
 end
 beep
-clearvars -except GeneralParameters ReferenceModels DamagedModels K
 
 %% Store results
 K = gains{1,1};
