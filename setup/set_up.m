@@ -1,6 +1,4 @@
 
-clear
-
 if ~exist('damage', 'var')
     warning('No damage defined. Setting damaged configuration equal to the reference.')
     damage = [1, 1];
@@ -21,16 +19,19 @@ if ~exist('n_runs', 'var')
     warning('No number of runs defined. Setting number of runs to 4.')
     n_runs = 4;
 end
+if ~exist('dt', 'var')
+    warning('No dt defined. Setting dt to 1.')
+    dt = 1;
+end
 
-dt = 0.0001;
 GeneralParameters.in_dof = [1:12];
 GeneralParameters.out_dof = [1:12];
 GeneralParameters.r = numel(GeneralParameters.in_dof);
 GeneralParameters.m = numel(GeneralParameters.out_dof);
 GeneralParameters.dt = dt;
-GeneralParameters.t = [0:dt:(20000 * dt - dt)]';          % time sequence
-GeneralParameters.u = randn(numel(GeneralParameters.in_dof), numel(GeneralParameters.t));
-GeneralParameters.blockrows = 60;
+GeneralParameters.t = [0:dt:(n_samples * dt - dt)]';          % time sequence
+GeneralParameters.u = randn(numel(in_dof), numel(GeneralParameters.t));
+GeneralParameters.blockrows = blockrows;
 GeneralParameters.sensor = sensor;
 GeneralParameters.nsr = nsr;
 GeneralParameters.err = err;
@@ -38,6 +39,16 @@ GeneralParameters.n_runs = n_runs;
 
 [ReferenceModels, GeneralParameters] = generate_reference_models(err, GeneralParameters);
 [ReferenceModels, GeneralParameters] = generate_state_space_models(ReferenceModels, GeneralParameters);
+
+
+base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
+% base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
+if ~isfolder(base_dir)
+    mkdir(base_dir)
+    addpath(base_dir)
+end
+
+save(fullfile(base_dir, "SetUp.mat"), "GeneralParameters", "ReferenceModels")
 
 function [ReferenceModels, GeneralParameters] = generate_state_space_models(ReferenceModels,...
                                                                             GeneralParameters);
@@ -75,5 +86,6 @@ function [ReferenceModels, GeneralParameters] = generate_state_space_models(Refe
     GeneralParameters.B2 = StateSpaceModel().set_io(in_dof, out_dof, 2 * free_dof);
     GeneralParameters.cdis = cdis;
     ReferenceModels.Lambda = Lambda;
+    ReferenceModels.SS_exact = SS_exact;
 %     DamagedModels.Lambda_d = Lambda_d;
 end
