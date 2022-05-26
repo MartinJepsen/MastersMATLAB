@@ -1,25 +1,49 @@
 set_up
-polenum = 24;
-im_fac = 1.12;
-s = complex(real(Lambda(polenum)), imag(im_fac*Lambda(polenum)));
+polenum = 5;
+im_fac = 0.12;
+Lambda = ReferenceModels.Lambda;
+s = complex(real(Lambda(polenum)), imag(Lambda(polenum)) + imag(im_fac*Lambda(1)));
+
+GeneralParameters.s = s;
+
+%%
+
+Kg = ReferenceModels.Kg;
+Mg = ReferenceModels.Mg;
+Cg = ReferenceModels.Cg;
 
 H = (Mg*s^2 + Cg*s + Kg)^-1;
-H_ = zeros(n_dof, free_dof);
-H_(idx, :) = H;
+H_ = zeros(GeneralParameters.n_dof, GeneralParameters.free_dof);
+H_(GeneralParameters.idx, :) = H;
 
-vars.n_dof = n_dof;
-vars.free_dof = free_dof;
-vars.m = m;
-vars.r = r;
-vars.B2 = B2;
-vars.B = B_strain;
-vars.idx  = idx ;
-vars.H_ = H_;
-vars.cdis = cdis;
-vars.s = s;
-vars.Kg = Kg;
-vars.Cg = Cg;
-vars.Mg = Mg;
+ReferenceModels.H = H;
+ReferenceModels.H_ = H_;
+
+% H = (Mg*s^2 + Cg*s + Kg)^-1;
+% n_dof = GeneralParameters.n_dof;
+% free_dof =  GeneralParameters.free_dof;
+% idx  = GeneralParameters.idx;
+% H_ = zeros(n_dof, free_dof);
+% H_(idx, :) = H;
+
+% vars.n_dof = n_dof;
+% vars.free_dof =  free_dof;
+% vars.m = GeneralParameters.m;
+% vars.r = GeneralParameters.r;
+% vars.B2 = GeneralParameters.B2;
+% vars.B = GeneralParameters.B_strain;
+% vars.idx = idx;
+% vars.H_ = H_;
+% vars.cdis = GeneralParameters.cdis;
+% vars.s = s;
+% vars.Kg = Kg;
+% vars.Cg = Cg;
+% vars.Mg = Mg;
+
+r = GeneralParameters.r;
+m = GeneralParameters.m;
+%%
+
 
 %% Genetic algorithm
 run = 0;
@@ -30,13 +54,12 @@ for run = 0
     seed = ceil(abs(randn * randn) * 10) 
     rng(seed);
 
-    
     ObjectiveFunction = @main_gain_design;
-    options = optimoptions('ga', 'Generations', 20000,...
+    options = optimoptions('ga', 'Generations', 5000,...
                             'PopulationSize', 100,...
                             'CrossoverFraction', 0.6,...
-                            'FunctionTolerance',1e-7,...
-                            'PlotFcn', @gaplotbestf);
+                            'FunctionTolerance',1e-7);%,...
+%                             'PlotFcn', @gaplotbestf);
     
     np = r*m; % No. of entries in gain matrix
     [res, fval] = ga(ObjectiveFunction, np*2, [], [], [], [], [], [], [], options);
@@ -58,6 +81,7 @@ for i = 1:numel(fvals)
     gains(i,1) = results(ind(i),1);
 end
 beep
+clearvars -except GeneralParameters ReferenceModels DamagedModels K
 
 %% Store results
 K = gains{1,1};
@@ -65,20 +89,22 @@ save(sprintf("gaindesign/01_strain_cond/gains_%d_%0.3f.mat", polenum, im_fac),"K
 
 function [J] = main_gain_design(X)
     % Load pre-defined variables from base workspace
-    vars = evalin('base', 'vars');
-    n_dof = vars.n_dof;
-    free_dof = vars.free_dof;
-    m = vars.m;
-    r = vars.r;
-    B2 = vars.B2;
-    B = vars.B;
-    idx  = vars.idx ;
-    H_ = vars.H_;
-    cdis = vars.cdis;
-    s = vars.s;
-    Kg = vars.Kg;
-    Cg = vars.Cg;
-    Mg = vars.Mg;
+    GeneralParameters = evalin('base', 'GeneralParameters');
+    ReferenceModels = evalin('base', 'ReferenceModels');
+
+    n_dof = GeneralParameters.n_dof;
+    free_dof =  GeneralParameters.free_dof;
+    m = GeneralParameters.m;
+    r = GeneralParameters.r;
+    B2 = GeneralParameters.B2;
+    B = GeneralParameters.B_strain;
+    idx = GeneralParameters.idx;
+    cdis = GeneralParameters.cdis;
+    Kg = ReferenceModels.Kg;
+    Cg = ReferenceModels.Cg;
+    Mg = ReferenceModels.Mg;
+    H_ = ReferenceModels.H_;
+    s = GeneralParameters.s;
     
     % Reshape the function argument into a complex-valued r x m matrix.
     np = r*m;

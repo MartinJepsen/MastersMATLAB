@@ -11,10 +11,20 @@ show_plots = false;
 %% Compute results
 base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
 load(sprintf("%s/00_000_%03d", base_dir, nsr*100))
+load(fullfile(base_dir, "SetUp.mat"))
+
+Kg = ReferenceModels.Kg;
+Cg = ReferenceModels.Cg;
+Mg = ReferenceModels.Mg;
+B2 = GeneralParameters.B2;
+cdis = GeneralParameters.cdis;
+B_strain = GeneralParameters.B_strain;
+n_dof = GeneralParameters.n_dof;
+idx = GeneralParameters.idx;
+SS_exact = ReferenceModels.SS_exact;
 
 for damel = [1:14]
     dam = [damel, dam_];
-    set_up
     tot_runs = 1;
     
     % load simulation results
@@ -22,10 +32,15 @@ for damel = [1:14]
     disp("Loading " + filename)
     load(fullfile(base_dir, filename))
     
-    % load gains
-    load('gaindesign/01_strain_cond/gains_1_1.120.mat')
+    % load gainss
+%     load('gaindesign/01_strain_cond/gains_5_0.120.mat')
+%     load('gaindesign/01_strain_cond/gains_1_1.120.mat')
 %     load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
 %     load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
+    load(sprintf("Ks_%03d_%03d_%03d_%s", err*100, dam_*100, nsr*100, sensor))
+%     load("K_best_s_acc")
+    A_CL_ex = SS_exact.A + SS_exact.B * B2 * K * cdis * SS_exact.C;
+    Lambda_CL = eig(A_CL_ex);                       % exact CL poles
 
     % account for output type
     if sensor == "dis"
@@ -39,8 +54,6 @@ for damel = [1:14]
     % model transfer matrices
     H_ref = (Mg*s^2 + Cg*s + Kg)^-1;                % reference OL transfer matrix
     H_CL_ref = (Mg*s^2 + Cg*s + Kg + B2*K*cdis)^-1; % reference CL transfer matrix
-    A_CL_ex = SS_exact.A + SS_exact.B * B2 * K * cdis * SS_exact.C;
-    Lambda_CL = eig(A_CL_ex);                       % exact CL poles
 
     % Compute all estimated transfer matrices
     n_sim = numel(SS_est);
@@ -100,7 +113,7 @@ for damel = [1:14]
 
     %% Results post-processing
     n_el = size(B_strain, 1);
-    
+
     clearvars success_rates
     for i = 1:n_el
         success_rates(i, 1:2) = [sum(min_strain_OL == i), sum(min_strain_CL == i)];
@@ -114,15 +127,15 @@ for damel = [1:14]
         s_norm = strains ./ max(m);     % normalise rows by largest mean value
         s_s = std(s_norm,0,2);          % standard deviation of un-normalised strain array
         m_norm = mean(s_norm,2);        % mean of rows normalised by largest mean (the strain field to be plotted)
-        
+
         % Plot results
         f2 = figure;
         hold on
-        
+
         x = [1:n_el];  % positions of the bars
         b1 = bar(x, m_norm(:, 1), 'k');
         b2 = bar(x+x(end), m_norm(:,2), 'w');
-        
+
         for i = 1:2*n_el
             end_pos = [m_norm(i), m_norm(i)]; % y-values of whiskers
             end_pos = end_pos + [s_s(i), -s_s(i)];
@@ -134,18 +147,17 @@ for damel = [1:14]
         % legend
         percentile = 16;
         l = legend('OL', 'CL', 'Coeff. of variation', 'location', 'south west');
-        
-       
+
         a2 = gca;
         grid on
         a2.XGrid = 'off';
-        
+
         % x axis
         xticks([1:2*n_el])
         xticklabels([string([1:n_el, 1:n_el])])
         xlabel("Element number")
         a2.XTickLabelRotation = 0;
-        
+
         % y axis
         set(gca, 'YScale', 'log')
         ylim([1e-3, 2.1])
@@ -155,3 +167,5 @@ for damel = [1:14]
 end
 results.delta = results.CL - results.OL
 results
+Lambda = ReferenceModels.Lambda;
+plot_poles(Lambda, lambda_est, s, {'Exact', 'Estimated', 's'});
