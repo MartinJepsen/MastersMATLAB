@@ -25,7 +25,7 @@ if ~isfolder(base_dir)
     mkdir(base_dir)
     addpath(base_dir)
 end
-filename_u = sprintf("00_000_%03d.mat", nsr*100);
+filename_u = sprintf("00_000_%03d.mat", round(nsr*100,0));
 
 t_0 = tic;
 parfor run = 1:n_runs
@@ -58,7 +58,7 @@ end
 fprintf("Finished all runs in %0.2f s", toc(t_0))
 
 %%
-filename = sprintf("%02d_%03d_%03d", damage(1,1), damage(1,2)*100, nsr*100)
+filename = sprintf("%02d_%03d_%03d.mat", damage(1,1), damage(1,2)*100, round(nsr*100,0));
 
 save(fullfile(base_dir, filename), 'SS_est_d', 'lambda_est_d', 'DamagedModels')
 

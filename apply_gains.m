@@ -1,16 +1,16 @@
 clear; close all
 
 %% Set simulation variables
-nsr = 0.01;
+nsr = 0.05;
 err = 0.00;
-dam_ = 0.95;
+dam_ = 0.0;
 sensor = "dis";
 
 show_plots = true;
 
 %% Compute results
 base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
-load(sprintf("%s/00_000_%03d", base_dir, nsr*100))
+load(sprintf("%s/00_000_%03d", base_dir, round(nsr*100,0)))
 load(fullfile(base_dir, "SetUp.mat"))
 
 Kg = ReferenceModels.Kg;
@@ -23,7 +23,8 @@ n_dof = GeneralParameters.n_dof;
 idx = GeneralParameters.idx;
 SS_exact = ReferenceModels.SS_exact;
 
-poles = 1:2:19;
+% poles = 1:2:19;
+poles = 1;
 elements = 1:10;
 s_vals = [];
 
@@ -34,7 +35,7 @@ for damel = elements
     dam = [damel, dam_];
 
     % load simulation results
-    filename = sprintf('%02d_%03d_%03d', dam(1,1), dam(1,2)*100, nsr*100);
+    filename = sprintf('%02d_%03d_%03d', dam(1,1), dam(1,2)*100, round(nsr*100,0));
     disp("Loading " + filename)
     load(fullfile(base_dir, filename))
 
@@ -53,7 +54,8 @@ for damel = elements
         
         % load gainss
         %     load('gaindesign/01_strain_cond/gains_5_0.120.mat')
-            load(sprintf("gaindesign/01_strain_cond/gains_%d_1.010.mat", pole))
+%             load(sprintf("gaindesign/01_strain_cond/gains_%d_1.010.mat", pole))
+            load(sprintf("gaindesign/01_strain_cond/gains_%d_1.050.mat", pole))
         %     load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
         %     load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
         %     load(sprintf("Ks_%03d_%03d_%03d_%s", err*100, dam_*100, nsr*100, sensor))
@@ -178,7 +180,7 @@ for damel = elements
             yticks(logspace(-18, 0, 19))
         end
 end
-results.delta = results.CL - results.OL
+results.delta = results.CL - results.OL;
 results
 Lambda = ReferenceModels.Lambda;
 plot_poles(Lambda, lambda_est, s_vals, {'Exact', 'Estimated', 's'});
