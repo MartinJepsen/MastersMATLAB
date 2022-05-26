@@ -19,7 +19,7 @@ t = GeneralParameters.t;
 blockrows = GeneralParameters.blockrows;
 
 
-base_dir = sprintf("test1/model_error_%03d_%s", err*100, sensor);
+base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
 % base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
 if ~isfolder(base_dir)
     mkdir(base_dir)
