@@ -24,8 +24,8 @@ if ~exist('dt', 'var')
     dt = 1;
 end
 
-GeneralParameters.in_dof = [1:12];
-GeneralParameters.out_dof = [1:12];
+GeneralParameters.in_dof = in_dof;
+GeneralParameters.out_dof = out_dof;
 GeneralParameters.r = numel(GeneralParameters.in_dof);
 GeneralParameters.m = numel(GeneralParameters.out_dof);
 GeneralParameters.dt = dt;
@@ -48,7 +48,11 @@ if ~isfolder(base_dir)
     addpath(base_dir)
 end
 
-save(fullfile(base_dir, "SetUp.mat"), "GeneralParameters", "ReferenceModels")
+filepath = fullfile(base_dir, "SetUp.mat");
+save(filepath, "GeneralParameters", "ReferenceModels")
+copyfile(filepath, "gaindesign/01_strain_cond/SetUp.mat")
+copyfile(filepath, "gaindesign/02_sens/SetUp.mat")
+copyfile(filepath, "gaindesign/03_strain_norm/SetUp.mat")
 
 function [ReferenceModels, GeneralParameters] = generate_state_space_models(ReferenceModels,...
                                                                             GeneralParameters);
