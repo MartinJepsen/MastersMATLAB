@@ -1,39 +1,31 @@
 classdef ChainSystem < handle
     properties
         Kg                  % stiffness matrix
-        Kg_d                % stiffness matrix (damaged)
         Cg                  % damping matrix
-        Cg_d                % damping matrix (damaged)
         Mg                  % mass matrix
         B                   % strain mapping matrix
         n_dof               % number of free DOF + constrained DOF
         damage              % damaged elements
         modal_parameters    % modal parameters
+        element_properties  % element properties
         results             % displacements/strains
         end
     methods
         function self = ChainSystem()
         end
 
-        function assembly(self, k, m, damage)
+        function assembly(self, k, m)
             % ChainSystem.assembly(k, m)
             % generate stiffness and mass matrices for chain system
             % k: spring stiffnes(es)
             % m: point mass(es)
-            % damage: [damaged_element, damaged_stiffness/reference_stiffness]
             
             n_dof = max(numel(k), numel(m));
             n_dof = n_dof(1);
             self.n_dof = n_dof;
+            self.element_properties.k = k;
+            self.element_properties.m = m;
 
-            if exist('damage', 'var') 
-                dam = [[1:n_dof]', ones(n_dof, 1)];
-                dam(damage(:, 1), :) = damage;
-            else
-                disp('ChainSystem: no damage defined.')
-                dam = ones(n_dof, 2);
-            end
-            self.damage = dam;
             
             % Formulate stiffness matrix
             if numel(k) ~= n_dof && numel(k) == 1
@@ -48,14 +40,10 @@ classdef ChainSystem < handle
 
                 Kg([el:el + 1], [el:el + 1]) =...
                     Kg([el:el + 1], [el:el + 1]) + k_el;
-                Kg_d([el:el + 1], [el:el + 1]) =...
-                    Kg_d([el:el + 1], [el:el + 1]) + dam(el, 2) * k_el;
             end
             % apply BC's
             Kg(1, :) = []; Kg(:, 1) = [];
-            Kg_d(1, :) = []; Kg_d(:, 1) = [];
             self.Kg = Kg;
-            self.Kg_d = Kg_d;
             
             % Formulate mass matrix
             if numel(m) ~= n_dof
@@ -68,7 +56,7 @@ classdef ChainSystem < handle
             Mg = diag(m);
             self.Mg = Mg;
 
-            B = zeros(n_dof + 1);
+            B = zeros(n_dof, n_dof + 1);
             B(1:size(B)+1:numel(B)) = -1;
             B = B - circshift(B,1,2);
             self.B = B;
@@ -103,25 +91,81 @@ classdef ChainSystem < handle
             self.Cg = inv(Phi)' * C_tilde * inv(Phi);
             zetas = diag(C_tilde) ./ (2 * omega);
             
-            % damaged system
-            Kg_d = self.Kg_d;
-            [Phi_d, Lambda_d] = eig(Kg_d, Mg);
-            omega_d = sqrt(diag(Lambda_d));
-            m_n = sqrt(diag(Phi_d' * Mg * Phi_d)); % mass-normalised eigenvectors
-            Phi_d = Phi_d * diag(1./m_n);
-            self.Cg_d = inv(Phi_d)' * C_tilde * inv(Phi_d);
-
-            zetas_d = diag(Phi_d' * self.Cg * Phi) ./ (2 * omega_d);
             self.modal_parameters.zeta = zetas;
-            self.modal_parameters.zeta_d = zetas_d;
             self.modal_parameters.Phi = Phi;
-            self.modal_parameters.Phi_d = Phi_d;
             self.modal_parameters.Lambda = Lambda;
-            self.modal_parameters.Lambda_d = Lambda_d;
             self.modal_parameters.omega = omega;
-            self.modal_parameters.omega_d = omega_d;
             self.modal_parameters.omega_hz = omega / (2 * pi);
-            self.modal_parameters.omega_hz_d = omega_d / (2 * pi);
+        end
+
+        function rayleigh_damping(self, damping_ratios, modes)
+            if numel(damping_ratios) ~= 2 || numel(modes) ~= 2
+                throw('rayleigh_damping: number of damping ratios or specified modes is not equal to 2')
+            end
+            
+            % if eigenfrequencies already exist, use them, if not, compute them
+            if isfield(self.modal_parameters, 'Lambda')
+                omega1 = sqrt(self.modal_parameters.Lambda(modes(1),modes(1)));
+                omega2 = sqrt(self.modal_parameters.Lambda(modes(2),modes(2)));
+            else
+                [Phi, Lambda] = eig(self.Kg, self.Mg);
+                self.modal_parameters.Phi = Phi;
+                self.modal_parameters.Lambda = Lambda;
+                omega1 = sqrt(Lambda(modes(1),modes(1)));
+                omega2 = sqrt(Lambda(modes(2),modes(2)));
+            end
+            
+            zeta1 = damping_ratios(1);
+            zeta2 = damping_ratios(2);
+            damp_coef = [1/(2*omega1), omega1/2; 1/(2*omega2), omega2/2] \ [zeta1;zeta2];
+            
+            fprintf("Generating Rayleigh damping matrix with alpha=%0.5f and beta=%0.5f\n", damp_coef)
+            Cg = damp_coef(1) * self.Mg + damp_coef(2) * self.Kg;
+            self.Cg = Cg;
+            C_tilde = Phi' * Cg * Phi;
+            
+            zetas = diag(C_tilde) ./ (2 * sqrt(diag(Lambda)));
+            self.modal_parameters.zeta = zetas;
+            criticalmode = find(zetas >= 1);
+            
+            if isempty(criticalmode)
+                disp(['MESSAGE: Damping matrix computed.'...
+                    ,' There are no critically damped modes.'])
+                disp(['         zeta_max=',...
+                    num2str(max(zetas))])
+            else
+                disp(['MESSAGE: Damping matrix computed.'...
+                    ,' Critical damping occurs at mode ', num2str(criticalmode(1)),...
+                    ', with zeta=',num2str(zetas(criticalmode(1)))])
+            end
+            self.modal_parameters.omega = sqrt(diag(Lambda));
+            self.modal_parameters.omega_hz = sqrt(diag(Lambda)) / (2 * pi);
+            self.modal_parameters.alpha = damp_coef(1);
+            self.modal_parameters.beta = damp_coef(2);
+        end
+
+        function get_modal_parameters(self)
+            Kg = self.Kg;
+            Cg = self.Cg;
+            Mg = self.Mg;
+
+            [Phi, Lambda] = eig(Kg, Mg);
+            omega = sqrt(diag(Lambda));
+            omega_hz = omega / (2*pi);
+            % mass-normalise eigenvectors
+            m_n = sqrt(diag(Phi' * Mg * Phi)); 
+            Phi = Phi * diag(1 ./ m_n);
+            
+            % get damping matrix
+            C_tilde = Phi' * Cg * Phi;
+            zetas = diag(C_tilde) ./ (2 * omega);
+
+            self.modal_parameters.zeta = zetas;
+            self.modal_parameters.Phi = Phi;
+            self.modal_parameters.Lambda = Lambda;
+            self.modal_parameters.omega = omega;
+            self.modal_parameters.omega_hz = omega_hz;
+            
         end
     end
 end
