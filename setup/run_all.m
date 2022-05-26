@@ -1,17 +1,17 @@
 clear
-damages = [1:14]';
+damages = [1:10]';
 rng(1)
-damages(:, 2) = 0.80;
+damages(:, 2) = 0.95;
 
-nsr = 0.05;
-err = 0.02;
-sensor = "acc";
-in_dof = [1:12];
+nsr = 0.025;
+err = 0.00;
+sensor = "dis";
+in_dof = [1:10];
 out_dof = in_dof;
-dt = 0.0001;                            % time increment size
-n_samples = 20000;
-blockrows = 60;
-n_runs = 50;
+dt = 0.01;                            % time increment size
+n_samples = 5000;
+blockrows = 10;
+n_runs = 25;
 set_up
 
 %% Run estimation

@@ -41,5 +41,5 @@ xline(0, 'k')
 yline(0, 'k')
 
 
-legend(legend_str, 'Location','southeast')
+legend(legend_str)
 end

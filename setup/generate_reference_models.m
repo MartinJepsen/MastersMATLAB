@@ -1,17 +1,20 @@
 function [ReferenceModels, GeneralParameters] = generate_reference_models(err, GeneralParameters)
     %% Exact reference model
-    FE = FiniteElementModel();
-    FE.from_xlsx('structures/paper_truss.xlsx');
-    FE.assembly("bar", [1, 2, 9, 10]);
-    FE.modal_damping(0.02);
-    FE.strains_from_disp([]);
-    n_el = size(FE.mesh.topology, 1);
+    n_el = 10;
+    stiffness = [10:-1:1]'*1e3;
+    mass = ones*3;
+    damping_ratios = [0.01, 0.05];
+    modes = [1, 6];
+    FE = ChainSystem();
+    FE.assembly(stiffness, mass)
+    FE.rayleigh_damping(damping_ratios, modes)
     
     %% Error reference model
-    FE_e = FE;
-    FE_e.mesh.element_properties.E = FE.mesh.element_properties.E .* unifrnd(1-err, 1+err, [n_el, 1]);
-    FE_e.assembly("bar", [1, 2, 9, 10]);
-    FE_e.modal_damping(0.02);
+    stiffness_e = stiffness .* unifrnd(1-err, 1+err, [n_el, 1]);
+    FE_e = ChainSystem();
+    FE_e.assembly(stiffness_e, mass)
+    FE_e.Cg = FE.modal_parameters.alpha * FE_e.Mg + FE.modal_parameters.beta * FE_e.Kg;
+    FE_e.get_modal_parameters();
     
     ReferenceModels.FE = FE;
     ReferenceModels.FE_e = FE_e;
@@ -21,11 +24,10 @@ function [ReferenceModels, GeneralParameters] = generate_reference_models(err, G
     ReferenceModels.Kg_e = FE_e.Kg;
     ReferenceModels.Cg_e = FE_e.Cg;
 
-    GeneralParameters.n_dof = FE.n_dof;
+    GeneralParameters.n_dof = FE.n_dof+1;
     GeneralParameters.free_dof = size(FE.Kg, 1);
     GeneralParameters.n_el = n_el;
-    GeneralParameters.bc = FE.mesh.bc_dof;
+    GeneralParameters.bc = 1;
     GeneralParameters.B_strain = FE.B;
-    GeneralParameters.idx = setdiff(1:FE.n_dof, FE.mesh.bc_dof);
-
+    GeneralParameters.idx = setdiff(1:GeneralParameters.n_dof, GeneralParameters.bc);
 end
