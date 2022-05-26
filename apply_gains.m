@@ -2,16 +2,26 @@ clear; close all
 
 %% Set simulation variables
 nsr = 0.05;
+<<<<<<< HEAD
 err = 0.0;
 dam_ = 0.80;
+=======
+err = 0.00;
+dam_ = 0.0;
+>>>>>>> 72159f8 (loop over poles when designing/applying gains)
 sensor = "dis";
 
 show_plots = false;
 
 %% Compute results
+<<<<<<< HEAD
 % base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
 base_dir = sprintf("simulation/SYSID/t_model_error_%03d_%s", err*100, sensor);
 load(sprintf("%s/00_000_%03d", base_dir, nsr*100))
+=======
+base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
+load(sprintf("%s/00_000_%03d", base_dir, round(nsr*100,0)))
+>>>>>>> 72159f8 (loop over poles when designing/applying gains)
 load(fullfile(base_dir, "SetUp.mat"))
 
 Kg = ReferenceModels.Kg;
@@ -24,8 +34,14 @@ n_dof = GeneralParameters.n_dof;
 idx = GeneralParameters.idx;
 SS_exact = ReferenceModels.SS_exact;
 
+<<<<<<< HEAD
 poles = 1;
 elements = 1:14;
+=======
+% poles = 1:2:19;
+poles = 1;
+elements = 1:10;
+>>>>>>> 72159f8 (loop over poles when designing/applying gains)
 s_vals = [];
 
 
@@ -35,7 +51,7 @@ for damel = elements
     dam = [damel, dam_];
 
     % load simulation results
-    filename = sprintf('%02d_%03d_%03d', dam(1,1), dam(1,2)*100, nsr*100);
+    filename = sprintf('%02d_%03d_%03d', dam(1,1), dam(1,2)*100, round(nsr*100,0));
     disp("Loading " + filename)
     load(fullfile(base_dir, filename))
 
@@ -54,7 +70,12 @@ for damel = elements
         
         % load gainss
         %     load('gaindesign/01_strain_cond/gains_5_0.120.mat')
+<<<<<<< HEAD
             load(sprintf("gaindesign/01_strain_cond/gains_%d_1.120.mat", pole))
+=======
+%             load(sprintf("gaindesign/01_strain_cond/gains_%d_1.010.mat", pole))
+            load(sprintf("gaindesign/01_strain_cond/gains_%d_1.050.mat", pole))
+>>>>>>> 72159f8 (loop over poles when designing/applying gains)
         %     load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
         %     load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
         %     load(sprintf("Ks_%03d_%03d_%03d_%s", err*100, dam_*100, nsr*100, sensor))
@@ -180,7 +201,7 @@ for damel = elements
         end
 %         plot_poles(Lambda, lambda_est, s_vals, {'Exact', 'Estimated', 's'});
 end
-results.delta = results.CL - results.OL
+results.delta = results.CL - results.OL;
 results
 Lambda = ReferenceModels.Lambda;
 plot_poles(Lambda, lambda_est, s_vals, {'Exact', 'Estimated', 's'});

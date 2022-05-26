@@ -1,7 +1,7 @@
 clear
 load("gaindesign/01_strain_cond/SetUp.mat")
-polenum = 19;
-im_fac = 1.01;
+for polenum = 1:2:19
+im_fac = 1.05;
 Lambda = ReferenceModels.Lambda;
 s = complex(real(Lambda(polenum)), im_fac*imag(Lambda(polenum)));
 
@@ -82,7 +82,7 @@ beep
 %% Store results
 K = gains{1,1};
 save(sprintf("gaindesign/01_strain_cond/gains_%d_%0.3f.mat", polenum, im_fac),"K", "gains", "s")
-
+end
 function [J] = main_gain_design(X)
     % Load pre-defined variables from base workspace
     GeneralParameters = evalin('base', 'GeneralParameters');
