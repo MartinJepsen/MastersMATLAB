@@ -53,12 +53,12 @@ parfor run = 1:n_runs
     SS_d.to_ct();
     SS_est_d{run} = SS_d;
     lambda_est_d(:, run) = SS_d.modal_parameters.Lambda;
-    fprintf("Finished realisation no. %03d in %0.2f s\n", run, toc(t_0_run))
+%     fprintf("Finished realisation no. %03d in %0.2f s\n", run, toc(t_0_run))
 end
 fprintf("Finished all runs in %0.2f s", toc(t_0))
 
 %%
-filename = sprintf("%02d_%03d_%03d.mat", damage(1,1), damage(1,2)*100, round(nsr*100,0));
+filename = sprintf("%02d_%03d_%03d.mat", damage(1,1), damage(1,2)*100, round(nsr*100,0))
 
 save(fullfile(base_dir, filename), 'SS_est_d', 'lambda_est_d', 'DamagedModels')
 

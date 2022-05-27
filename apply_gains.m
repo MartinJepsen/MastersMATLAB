@@ -1,9 +1,9 @@
 clear; close all
 
 %% Set simulation variables
-nsr = 0.05;
+nsr = 0.02;
 err = 0.00;
-dam_ = 0.0;
+dam_ = 0.8;
 sensor = "dis";
 
 show_plots = true;
@@ -24,7 +24,7 @@ idx = GeneralParameters.idx;
 SS_exact = ReferenceModels.SS_exact;
 
 % poles = 1:2:19;
-poles = 1;
+poles = 1:2:7;
 elements = 1:10;
 s_vals = [];
 

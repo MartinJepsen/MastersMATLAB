@@ -1,8 +1,3 @@
-
-if ~exist('damage', 'var')
-    warning('No damage defined. Setting damaged configuration equal to the reference.')
-    damage = [1, 1];
-end
 if ~exist('sensor', 'var')
     warning('No sensor type defined. Setting sensor to displacements.')
     sensor = "dis";
