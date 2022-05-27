@@ -3,22 +3,24 @@ clear; close all
 %% Set simulation variables
 % nsr = 0.02;
 err = 0.00;
-dam_ = 0.9;
+dam_ = 0.75;
 sensor = "dis";
 i = 1;
 poles = 1:2:19;
 pole_fac = 1.12;
-nsr = [0.01, 0.03, 0.05, 0.07];
+% nsr = [0.01, 0.03, 0.05, 0.07];
 nsr = 0.05;
 
-pole_fac = [1.01, 1.05, 1.12];
-for pole_fac = [1.01, 1.05, 1.12]
+% pole_fac = [1.01, 1.05, 1.12];
+pole_fac = 1.12;
+for dam_ = [0.75, 0.8, 0.85, 0.9]
     results = get_results(nsr, err, dam_, sensor, poles, pole_fac)
     OL(:, i) = results.OL;
     CL(:, i) = results.CL;
     i = i + 1;
 end
 
+bar3(CL')
 
 
 function results = get_results(nsr, err, dam_, sensor, poles, im_fac)

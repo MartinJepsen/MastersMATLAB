@@ -1,7 +1,7 @@
 function [ReferenceModels, GeneralParameters] = generate_reference_models(err, GeneralParameters)
     %% Exact reference model
     n_el = 10;
-    stiffness = [7]'*1e3;
+    stiffness = ones(10, 1) * 7 *1e3;
     mass = ones*3;
     damping_ratios = [0.01, 0.05];
     modes = [1, 6];
