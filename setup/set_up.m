@@ -43,7 +43,7 @@ fs = (t(2)-t(1))^-1;                    % sampling frequency
 faxis=bins*fs/N;                        % frequency axis
 
 
-fc = omega(8) / (2*pi);
+fc = omega(6) / (2*pi);
 [b,a] = butter(6,fc/(fs/2));
 
 for in = in_dof
