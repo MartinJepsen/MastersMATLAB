@@ -6,14 +6,15 @@ err = 0.00;
 dam_ = 0.75;
 sensor = "dis";
 i = 1;
-poles = 1;
-pole_fac = 1.12;
+poles = 11;
+pole_fac = 1.01;
 % nsr = [0.01, 0.03, 0.05, 0.07];
 nsr = 0.05;
 
 % pole_fac = [1.01, 1.05, 1.12];
+damages = [0.5, 0.6, 0.75, 0.8, 0.9, 0.95, 0.99, 1];
 pole_fac = 1.12;
-for dam_ = [0.5, 0.6, 0.75, 0.8, 0.9, 0.95, 0.99]
+for dam_ = damages
     results = get_results(nsr, err, dam_, sensor, poles, pole_fac)
     OL(:, i) = results.OL;
     CL(:, i) = results.CL;
@@ -24,40 +25,64 @@ end
 %%
 close all
 figure
-hold on
 
-z = [OL(:,1), DEL(:,1)]
-
-
-
-b1 = bar3(z,1, 'stacked');
-% b2 = bar3(0:2:12, z, 1);
-
-for i = 1:length(b1)
-  b1(i).FaceAlpha = '0.9';
+x = 1:numel(damages);
+y = 1:8;
+z(:, :, 1) = OL';
+z(:, :, 2) = DEL';
+[y1,x1]=meshgrid(y,x);
+ngroups = 2;
+z1=zeros(size(z,1),size(z,2));    % initial 'zldata'
+for i1=1:ngroups
+    z2=z1;
+    z1=z1+squeeze(z(:,:,i1));
+    h(i1)=CREATESTACKEDMULTIBAR3d(x1, y1, z2, z1, i1.*ones(numel(z1(:)),1), 1, ngroups);
+    hold on
 end
 
-% xlim([-0.5,size(z,1)])
-% ylim([0.5,8.5])
-xticks(1:7)
-% xticklabels(string(y))
-xlabel('x')
-ylabel('y')
-zlabel('ROSL (%)')
-view([45, 30])
-% zticks([-100:2:100])
-grid on
-box on
 a = gca;
-a.BoxStyle = "full";
-% colorbar
-% for k = 1:length(b1)
-%     zdata = b1(k).ZData;
-%     b1(k).CData = zdata;
-%     b1(k).FaceColor = 'interp';
-% end
-set(gca, 'XAxisLocation', 'origin', 'YAxisLocation', 'origin')
-% bar3(OL','r')
+
+for ii = 1:floor(numel(a.Children)/2)
+    a.Children(ii).FaceColor = [33,26,82]/255;
+end
+for ii = (floor(numel(a.Children)/2)+1):numel(a.Children)
+    a.Children(ii).FaceColor = [200,200,200]/255;
+    a.Children(ii).EdgeColor = 'k';
+    a.Children(ii).FaceAlpha = 0.3;
+end
+
+
+% xlim([x(1)-0.5, x(end)+0.5])
+% ylim([y(1)-0.5, y(end)+0.5])
+
+
+axis tight
+xlabel('Damage (%)')
+xticks(x);
+xticklabels(string((1-damages)*100))
+
+ylabel('Element')
+yticks(y);
+
+zlim([0, 100])
+zticks([0:10:100])
+a.ZAxis.MinorTick = 'on';
+a.GridColor = 'k';
+a.GridAlpha = 1;
+a.XGrid = 'off';
+a.YGrid = 'off';
+a.ZGrid = 'on';
+
+
+zlabel('POL (%)')
+
+
+view(45,45)
+box on
+
+% a.BoxStyle = "full";
+
+
 
 
 %%
