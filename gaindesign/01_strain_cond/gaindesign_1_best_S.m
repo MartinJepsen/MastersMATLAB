@@ -1,10 +1,9 @@
-clear
-load("gaindesign/01_strain_cond/SetUp.mat")
-polenum = 19;
-im_fac = 1.01;
-Lambda = ReferenceModels.Lambda;
-s = complex(real(Lambda(polenum)), im_fac*imag(Lambda(polenum)));
-
+% set_up
+% polenum = 5;
+% im_fac = 0.12;
+% Lambda = ReferenceModels.Lambda;
+% s = complex(real(Lambda(polenum)), imag(Lambda(polenum)) + imag(im_fac*Lambda(1)));
+% load(sprintf("s_%03d_%03d_%03d_%s", err*100, dam_*100, nsr*100, sensor))
 GeneralParameters.s = s;
 
 %%
@@ -51,11 +50,15 @@ run = 0;
 good = 0;
 tic
 for run = 0
+    % change seed on every iteration
+    seed = ceil(abs(randn * randn) * 10) 
+    rng(seed);
+
     ObjectiveFunction = @main_gain_design;
-    options = optimoptions('ga', 'Generations', 5000,...
-                            'PopulationSize', 100,...
+    options = optimoptions('ga', 'Generations', 20000,...
+                            'PopulationSize', 200,...
                             'CrossoverFraction', 0.5,...
-                            'FunctionTolerance',1e-6,...
+                            'FunctionTolerance',1e-7,...
                             'PlotFcn', @gaplotbestf);
     
     np = r*m; % No. of entries in gain matrix
@@ -66,22 +69,24 @@ for run = 0
     im = reshape(res(np+1:end), r, m);
     K = complex(re, im);
 
-    results{run+1, 1} = K;
-    results{run+1, 2} = fval;
+%     results{run+1, 1} = K;
+%     results{run+1, 2} = fval;
 end
-
-[fvals, ind] = sort([results{:,2}], 'ascend');
-toc
-%% Sort gain matrices by cost function value
-for i = 1:numel(fvals)
-    gains{i,2} = fvals(i);
-    gains(i,1) = results(ind(i),1);
-end
-beep
+% 
+% [fvals, ind] = sort([results{:,2}], 'ascend');
+% toc
+% %% Sort gain matrices by cost function value
+% for i = 1:numel(fvals)
+%     gains{i,2} = fvals(i);
+%     gains(i,1) = results(ind(i),1);
+% end
+% beep
+% clearvars -except GeneralParameters ReferenceModels DamagedModels K
 
 %% Store results
-K = gains{1,1};
-save(sprintf("gaindesign/01_strain_cond/gains_%d_%0.3f.mat", polenum, im_fac),"K", "gains", "s")
+% K = gains{1,1};
+% save(sprintf("gaindesign/01_strain_cond/gains_%d_%0.3f.mat", polenum, im_fac),"K", "gains", "s")
+save("K_best_s_acc", "K", "s")
 
 function [J] = main_gain_design(X)
     % Load pre-defined variables from base workspace

@@ -2,11 +2,20 @@ clear
 damages = [1:14]';
 rng(1)
 damages(:, 2) = 0.80;
+
 nsr = 0.05;
+err = 0.02;
+sensor = "acc";
+in_dof = [1:12];
+out_dof = in_dof;
+dt = 0.0001;                            % time increment size
+n_samples = 20000;
+blockrows = 60;
+n_runs = 50;
+set_up
+
+%% Run estimation
 for foo = 1:size(damages, 1)
-    dam = damages(foo, :);
+    damage = damages(foo, :);
     estimate_models
-%     gaindesign_1
-%     gaindesign_2
-%     gaindesign_3
 end

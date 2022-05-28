@@ -33,7 +33,12 @@ classdef StateSpaceModel < handle
             end
         end        
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function dt_from_FE(self, Kg, Cg, Mg, dt)
+        function dt_from_FE(self, Kg, Cg, Mg, dt, sensortype)
+
+            if ~exist("sensortype", "var")
+                disp("StateSpaceModel: No sensor type given. Outputting displacements.")
+                sensortype = 'dis';
+            end
             % FROM_FE(K, C, M)
             % Make DT state space model from FE system matrices
             self.A = [];
@@ -75,7 +80,17 @@ classdef StateSpaceModel < handle
             B = inv(A_c) * ((A - eye(size(A_c)))) * B_c;
             C = [C_dis C_vel]+[-C_acc*(Mg\Kg) -C_acc*(Mg\Cg)];
             D = C_acc*(Mg\B2);
-
+            
+            % acceleration output:
+            if sensortype == "vel"
+                out_dof = out_dof + n;
+            elseif sensortype == "acc"
+                out_dof = out_dof + 2*n;
+            elseif sensortype == "dis"
+                % do nothing
+            else
+                error("StateSpaceModel: No valid sensor type given")
+            end
             C = C(out_dof, :);
             D = D(out_dof, :);
 
