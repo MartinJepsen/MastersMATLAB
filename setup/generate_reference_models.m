@@ -8,7 +8,8 @@ function [ReferenceModels, GeneralParameters] = generate_reference_models(err, G
     n_el = size(FE.mesh.topology, 1);
     
     %% Error reference model
-    FE_e = FE;
+    FE_e = FiniteElementModel();
+    FE_e.from_xlsx('structures/paper_truss.xlsx');
     FE_e.mesh.element_properties.E = FE.mesh.element_properties.E .* unifrnd(1-err, 1+err, [n_el, 1]);
     FE_e.assembly("bar", [1, 2, 9, 10]);
     FE_e.modal_damping(0.02);
