@@ -6,23 +6,61 @@ err = 0.00;
 dam_ = 0.75;
 sensor = "dis";
 i = 1;
-poles = 1:2:19;
+poles = 1;
 pole_fac = 1.12;
 % nsr = [0.01, 0.03, 0.05, 0.07];
 nsr = 0.05;
 
 % pole_fac = [1.01, 1.05, 1.12];
 pole_fac = 1.12;
-for dam_ = [0.75, 0.8, 0.85, 0.9]
+for dam_ = [0.5, 0.6, 0.75, 0.8, 0.9, 0.95, 0.99]
     results = get_results(nsr, err, dam_, sensor, poles, pole_fac)
     OL(:, i) = results.OL;
     CL(:, i) = results.CL;
+    DEL(:, i) = results.CL - results.OL;
     i = i + 1;
 end
 
-bar3(CL')
+%%
+close all
+figure
+hold on
+
+z = [OL(:,1), DEL(:,1)]
 
 
+
+b1 = bar3(z,1, 'stacked');
+% b2 = bar3(0:2:12, z, 1);
+
+for i = 1:length(b1)
+  b1(i).FaceAlpha = '0.9';
+end
+
+% xlim([-0.5,size(z,1)])
+% ylim([0.5,8.5])
+xticks(1:7)
+% xticklabels(string(y))
+xlabel('x')
+ylabel('y')
+zlabel('ROSL (%)')
+view([45, 30])
+% zticks([-100:2:100])
+grid on
+box on
+a = gca;
+a.BoxStyle = "full";
+% colorbar
+% for k = 1:length(b1)
+%     zdata = b1(k).ZData;
+%     b1(k).CData = zdata;
+%     b1(k).FaceColor = 'interp';
+% end
+set(gca, 'XAxisLocation', 'origin', 'YAxisLocation', 'origin')
+% bar3(OL','r')
+
+
+%%
 function results = get_results(nsr, err, dam_, sensor, poles, im_fac)
     %% Compute results
     base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
@@ -39,7 +77,7 @@ function results = get_results(nsr, err, dam_, sensor, poles, im_fac)
     idx = GeneralParameters.idx;
     SS_exact = ReferenceModels.SS_exact;
     
-    elements = 1:10;
+    elements = 1:8;
     s_vals = [];
     
     
@@ -73,7 +111,7 @@ function results = get_results(nsr, err, dam_, sensor, poles, im_fac)
             %     load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
             %     load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
             %     load(sprintf("Ks_%03d_%03d_%03d_%s", err*100, dam_*100, nsr*100, sensor))
-            s_vals(pole) = s;
+            s_vals((pole+1)/2) = s;
             
             % account for output type
             if sensor == "dis"

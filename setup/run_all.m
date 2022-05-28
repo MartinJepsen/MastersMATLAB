@@ -1,16 +1,16 @@
 clear
-damages = [1:10]';
+damages = [1:8]';
 rng(1)
-damages(:, 2) = 0.75;
+damages(:, 2) = 0.50;
 nsr = 0.05;
 err = 0.00;
 
 sensor = "dis";
-in_dof = [1:10];
+in_dof = [1:8];
 out_dof = in_dof;
-dt = 0.005;                            % time increment size
+dt = 0.01;                            % time increment size
 n_samples = 5000;
-blockrows = 40;
+blockrows = 48;
 n_runs = 25;
 set_up
 
@@ -19,3 +19,9 @@ for foo = 1:size(damages, 1)
     damage = damages(foo, :);
     estimate_models
 end
+
+beep
+pause(0.2)
+beep
+pause(0.2)
+beep
