@@ -1,7 +1,7 @@
 clear
 damages = [1:8]';
 rng(1)
-damages(:, 2) = 0.50;
+damages(:, 2) = 1;
 nsr = 0.05;
 err = 0.00;
 
