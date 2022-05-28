@@ -1,8 +1,3 @@
-
-if ~exist('damage', 'var')
-    warning('No damage defined. Setting damaged configuration equal to the reference.')
-    damage = [1, 1];
-end
 if ~exist('sensor', 'var')
     warning('No sensor type defined. Setting sensor to displacements.')
     sensor = "dis";
@@ -30,7 +25,6 @@ GeneralParameters.r = numel(GeneralParameters.in_dof);
 GeneralParameters.m = numel(GeneralParameters.out_dof);
 GeneralParameters.dt = dt;
 GeneralParameters.t = [0:dt:(n_samples * dt - dt)]';          % time sequence
-GeneralParameters.u = randn(numel(in_dof), numel(GeneralParameters.t));
 GeneralParameters.blockrows = blockrows;
 GeneralParameters.sensor = sensor;
 GeneralParameters.nsr = nsr;
@@ -39,7 +33,25 @@ GeneralParameters.n_runs = n_runs;
 
 [ReferenceModels, GeneralParameters] = generate_reference_models(err, GeneralParameters);
 [ReferenceModels, GeneralParameters] = generate_state_space_models(ReferenceModels, GeneralParameters);
+omega = sqrt(diag(ReferenceModels.FE.modal_parameters.Lambda));
 
+t = GeneralParameters.t;
+N = numel(t);                           % number of samples
+bins = [0:N-1];                         % frequency bins
+N2 = ceil(N/2);                         % half of N
+fs = (t(2)-t(1))^-1;                    % sampling frequency
+faxis=bins*fs/N;                        % frequency axis
+
+
+fc = omega(8) / (2*pi);
+[b,a] = butter(6,fc/(fs/2));
+
+for in = in_dof
+    signal = randn(1, numel(t));
+    signal_f = filter(b,a,signal);
+    u(in, :) = signal_f;
+end
+GeneralParameters.u = u;
 
 base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
 % base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);

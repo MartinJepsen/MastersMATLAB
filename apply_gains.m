@@ -1,9 +1,9 @@
 clear; close all
 
 %% Set simulation variables
-nsr = 0.01;
+nsr = 0.05;
 err = 0.00;
-dam_ = 0.95;
+dam_ = 0.80;
 sensor = "dis";
 
 show_plots = true;
@@ -23,8 +23,8 @@ n_dof = GeneralParameters.n_dof;
 idx = GeneralParameters.idx;
 SS_exact = ReferenceModels.SS_exact;
 
-poles = 1:2:19;
-elements = 1:10;
+poles = 1;
+elements = 1;
 s_vals = [];
 
 
@@ -53,7 +53,7 @@ for damel = elements
         
         % load gainss
         %     load('gaindesign/01_strain_cond/gains_5_0.120.mat')
-            load(sprintf("gaindesign/01_strain_cond/gains_%d_1.010.mat", pole))
+            load(sprintf("gaindesign/01_strain_cond/gains_%d_1.120.mat", pole))
         %     load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
         %     load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
         %     load(sprintf("Ks_%03d_%03d_%03d_%s", err*100, dam_*100, nsr*100, sensor))
