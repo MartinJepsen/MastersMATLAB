@@ -6,8 +6,8 @@ err = 0.00;
 dam_ = 0.75;
 sensor = "dis";
 i = 1;
-poles = 11;
-pole_fac = 1.01;
+poles = 1:2:13;
+pole_fac = 1.12;
 % nsr = [0.01, 0.03, 0.05, 0.07];
 nsr = 0.05;
 
@@ -24,45 +24,63 @@ end
 
 %%
 close all
-figure
+fig = figure;
+DEL = DEL';
+OL = OL';
+
+del_neg = find(DEL<0);
+del_zero = find(DEL==0);
+OL_2 = OL;
+OL_2(del_neg) = OL_2(del_neg) + DEL(del_neg);
+DEL_2 = abs(DEL);
+DEL_2(del_zero) = DEL_2(del_zero) + 0.01;
 
 x = 1:numel(damages);
 y = 1:8;
-z(:, :, 1) = OL';
-z(:, :, 2) = DEL';
+z(:, :, 1) = OL_2;
+z(:, :, 2) = DEL_2;
+% z(:, :, 1) = OL;
+% z(:, :, 2) = DEL;
 [y1,x1]=meshgrid(y,x);
 ngroups = 2;
+widths = [0.95, 1];
 z1=zeros(size(z,1),size(z,2));    % initial 'zldata'
 for i1=1:ngroups
     z2=z1;
     z1=z1+squeeze(z(:,:,i1));
-    h(i1)=CREATESTACKEDMULTIBAR3d(x1, y1, z2, z1, i1.*ones(numel(z1(:)),1), 1, ngroups);
+    h(i1)=CREATESTACKEDMULTIBAR3d(x1, y1, z2, z1, i1.*ones(numel(z1(:)),1), widths(i1), ngroups);
     hold on
 end
 
 a = gca;
+n_patches = prod(size(OL));
 
-for ii = 1:floor(numel(a.Children)/2)
-    a.Children(ii).FaceColor = [33,26,82]/255;
+for ii = 1:floor(n_patches)
+    a.Children(ii).FaceColor = [33,255,82]/255;
 end
-for ii = (floor(numel(a.Children)/2)+1):numel(a.Children)
+for ii = (n_patches+1):2*n_patches
     a.Children(ii).FaceColor = [200,200,200]/255;
     a.Children(ii).EdgeColor = 'k';
     a.Children(ii).FaceAlpha = 0.3;
 end
-
-
-% xlim([x(1)-0.5, x(end)+0.5])
-% ylim([y(1)-0.5, y(end)+0.5])
-
+for ii = 1:numel(del_neg)
+    a.Children(n_patches+1-del_neg(ii)).FaceColor = 'r';
+end
+for ii = 1:numel(del_zero)
+    a.Children(n_patches+1-del_zero(ii)).FaceColor = 'b';
+end
 
 axis tight
 xlabel('Damage (%)')
 xticks(x);
-xticklabels(string((1-damages)*100))
+xticklabels(string((1-damages)*100));
+a.XLabel.Rotation = -16;
+a.XLabel.VerticalAlignment = 'middle';
 
-ylabel('Element')
+ylabel('Damage pattern')
 yticks(y);
+a.YLabel.Rotation = 19;
+a.YLabel.VerticalAlignment = 'middle';
 
 zlim([0, 100])
 zticks([0:10:100])
@@ -72,17 +90,15 @@ a.GridAlpha = 1;
 a.XGrid = 'off';
 a.YGrid = 'off';
 a.ZGrid = 'on';
-
-
 zlabel('POL (%)')
-
 
 view(45,45)
 box on
+l = legend([a.Children(end), a.Children(1), a.Children(n_patches+1-del_zero(1)), a.Children(n_patches+1-del_neg(1))], ...
+    {'DDLV', 'CLDDLV (better)', 'CLDDLV (same)', 'CLDDLV (worse)'});
+l.Position([1,2]) = [.04, .8];
 
-% a.BoxStyle = "full";
-
-
+exportgraphics(fig, 'C:\Users\MAJP\MAJP_personal\Masters_thesis\MastersLaTeX\figures\damage_size.eps')
 
 
 %%
