@@ -24,7 +24,7 @@ idx = GeneralParameters.idx;
 SS_exact = ReferenceModels.SS_exact;
 
 poles = 1;
-elements = 1:3;
+elements = 1;
 s_vals = [];
 
 
@@ -177,7 +177,7 @@ for damel = elements
             ylabel("Characteristic strain")
             yticks(logspace(-18, 0, 19))
         end
-        plot_poles(Lambda, lambda_est, s_vals, {'Exact', 'Estimated', 's'});
+%         plot_poles(Lambda, lambda_est, s_vals, {'Exact', 'Estimated', 's'});
 end
 results.delta = results.CL - results.OL
 results
