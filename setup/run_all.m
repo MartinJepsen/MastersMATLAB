@@ -2,8 +2,8 @@ clear
 damages = [1:8]';
 rng(1)
 damages(:, 2) = 0.8;
-nsr = 0.01;
-err = 0.00;
+nsr = 0.05;
+err = 0.35;
 
 sensor = "dis";
 in_dof = [1:8];

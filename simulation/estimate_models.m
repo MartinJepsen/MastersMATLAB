@@ -1,4 +1,3 @@
-set_up;
 Kg = ReferenceModels.Kg;
 Cg = ReferenceModels.Cg;
 Mg = ReferenceModels.Mg;
