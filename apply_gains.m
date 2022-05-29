@@ -6,7 +6,7 @@ err = 0.00;
 dam_ = 0.80;
 sensor = "dis";
 
-show_plots = true;
+show_plots = false;
 
 %% Compute results
 base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
@@ -24,7 +24,7 @@ idx = GeneralParameters.idx;
 SS_exact = ReferenceModels.SS_exact;
 
 poles = 1;
-elements = 1;
+elements = 1:14;
 s_vals = [];
 
 
