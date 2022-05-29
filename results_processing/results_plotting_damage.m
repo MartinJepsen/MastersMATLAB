@@ -23,18 +23,17 @@ for dam_ = damages
 end
 
 %%
-close all
-fig = figure;
 DEL = DEL';
 OL = OL';
-
 del_neg = find(DEL<0);
 del_zero = find(DEL==0);
 OL_2 = OL;
 OL_2(del_neg) = OL_2(del_neg) + DEL(del_neg);
 DEL_2 = abs(DEL);
 DEL_2(del_zero) = DEL_2(del_zero) + 0.01;
-
+%%
+close all
+fig = figure;
 x = 1:numel(damages);
 y = 1:8;
 z(:, :, 1) = OL_2;
@@ -66,7 +65,7 @@ end
 for ii = 1:numel(del_zero)
     a.Children(n_patches+1-del_zero(ii)).FaceColor = 'b';
 end
-
+a.DataAspectRatio = [1, 1, 35];
 axis tight
 xlabel('Damage (%)')
 xticks(x);
@@ -89,13 +88,13 @@ a.YGrid = 'off';
 a.ZGrid = 'on';
 zlabel('POL (%)')
 
-view(45,45)
+view(45,20)
 box on
 l = legend([a.Children(end), a.Children(1), a.Children(n_patches+1-del_zero(1)), a.Children(n_patches+1-del_neg(1))], ...
-    {'DDLV', 'CLDDLV (better)', 'CLDDLV (same)', 'CLDDLV (worse)'});
+    {'DDLV', 'CLDDLV (better)', 'CLDDLV (same)', 'CLDDLV (worse)'}, 'Orientation', 'vertical');
 l.Position([1,2]) = [.04, .8];
 
-% exportgraphics(fig, 'C:\Users\MAJP\MAJP_personal\Masters_thesis\MastersLaTeX\figures\damage_size.eps')
+exportgraphics(fig, 'D:\Programming\MastersLaTeX\figures\damage_size.pdf','ContentType','image','Resolution',500)
 
 
 %%

@@ -13,9 +13,9 @@ nsr = 0.05;
 dam_ = 0.8;
 pole_fac = 1.12;
 
-errs = [0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.1, 0.15, 0.20, 0.25, 0.30];
+errs = [0, 0.05, 0.1, 0.15, 0.20, 0.25, 0.30];
 for err = errs
-    results = get_results(nsr, err, dam_, sensor, poles, pole_fac)
+    results = get_results(nsr, err, dam_, sensor, poles, pole_fac);
     OL(:, i) = results.OL;
     CL(:, i) = results.CL;
     DEL(:, i) = results.CL - results.OL;
@@ -54,6 +54,8 @@ n_patches = prod(size(OL));
 
 for ii = 1:floor(n_patches)
     a.Children(ii).FaceColor = [33,255,82]/255;
+    a.Children(ii).FaceAlpha = 1;
+    a.Children(ii).EdgeAlpha = 1;
 end
 for ii = (n_patches+1):2*n_patches
     a.Children(ii).FaceColor = [200,200,200]/255;
@@ -85,7 +87,7 @@ xticklabels(string((errs)*100));
 a.XLabel.Rotation = -19;
 a.XLabel.VerticalAlignment = 'bottom';
 a.XLabel.HorizontalAlignment = 'l';
-a.XLabel.Position = [1,0,-30];
+a.XLabel.Position = [2,0,-30];
 
 ylabel('Damage pattern')
 yticks(y);
@@ -110,14 +112,20 @@ idx_plus = find(DEL>1);
 idx_plus = idx_plus(1);
 h_plus = a.Children(idx_plus);
 
+handles = [h_DDLV, h_plus, h_zero, h_neg];
+labels = {'DDLV', 'CLDDLV (better)', 'CLDDLV (same)', 'CLDDLV (worse)'};
 
-    
+for ii = numel(handles)
+ if isempty(handles(ii))
+     handles(ii) = [];
+     labels(ii) = {};
+ end
+end
 
-l = legend([h_DDLV, h_plus, h_zero, h_neg], ...
-    {'DDLV', 'CLDDLV (better)', 'CLDDLV (same)', 'CLDDLV (worse)'});
+l = legend(handles,labels,'Orientation','vertical');
 l.Position([1,2]) = [.07, .75];
 
-% exportgraphics(fig, 'C:\Users\MAJP\MAJP_personal\Masters_thesis\MastersLaTeX\figures\err_levels.eps')
+exportgraphics(fig, 'D:\Programming\MastersLaTeX\figures\err_levels.pdf','ContentType','image','Resolution',500)
 
 
 %%

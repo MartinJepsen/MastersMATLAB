@@ -3,21 +3,18 @@ clear; close all
 %% Set simulation variables
 % nsr = 0.02;
 err = 0.00;
-dam_ = 0.75;
+dam_ = 0.8;
 sensor = "dis";
 i = 1;
 poles = 1:2:13;
 pole_fac = 1.12;
-nsrs = [0.01, 0.02, 0.05, 0.07, 0.1, 0.15];
-% nsr = 0.05;
-
-% pole_fac = [1.01, 1.05, 1.12];
-damages = [0.5, 0.6, 0.75, 0.8, 0.9, 0.95, 0.99, 1];
+nsr = 0.05;
 
 dam_ = 0.8;
-pole_fac = 1.12;
-for nsr = nsrs
-    results = get_results(nsr, err, dam_, sensor, poles, pole_fac)
+pole_facs = sort([0, 1, 1.01, 1.02, 1.04, 1.12, 1.2],'descend');
+
+for pole_fac = pole_facs
+    results = get_results(nsr, err, dam_, sensor, poles, pole_fac);
     OL(:, i) = results.OL;
     CL(:, i) = results.CL;
     DEL(:, i) = results.CL - results.OL;
@@ -36,7 +33,7 @@ DEL_2(del_zero) = DEL_2(del_zero) + 0.01;
 %% Make figure
 close all
 fig = figure;
-x = [1:numel(nsrs)];
+x = [1:numel(pole_facs)];
 y = 1:8;
 z(:, :, 1) = OL_2;
 z(:, :, 2) = DEL_2;
@@ -56,6 +53,8 @@ n_patches = prod(size(OL));
 
 for ii = 1:floor(n_patches)
     a.Children(ii).FaceColor = [33,255,82]/255;
+    a.Children(ii).FaceAlpha = 1;
+    a.Children(ii).EdgeAlpha = 1;
 end
 for ii = (n_patches+1):2*n_patches
     a.Children(ii).FaceColor = [200,200,200]/255;
@@ -70,18 +69,24 @@ if ~isempty(del_neg)
 else
     h_neg = [];
 end
-for ii = 1:numel(del_zero)
-    a.Children(n_patches+1-del_zero(ii)).FaceColor = 'b';
+
+if ~isempty(del_zero)
+    for ii = 1:numel(del_zero)
+        a.Children(n_patches+1-del_zero(ii)).FaceColor = 'b';
+    end
+    h_zero = a.Children(n_patches+1-del_zero(1));
+else
+    h_zero = [];
 end
 
 axis tight
-xlabel('Noise-to-signal ratio (%)')
+xlabel('$b$','Interpreter','latex')
 xticks(x);
-xticklabels(string((nsrs)*100));
+xticklabels(string((pole_facs)));
 a.XLabel.Rotation = -19;
 a.XLabel.VerticalAlignment = 'bottom';
 a.XLabel.HorizontalAlignment = 'l';
-a.XLabel.Position = [1,0,-30];
+a.XLabel.Position = [2,0,-30];
 
 ylabel('Damage pattern')
 yticks(y);
@@ -105,15 +110,21 @@ h_DDLV = a.Children(end);
 idx_plus = find(DEL>1);
 idx_plus = idx_plus(1);
 h_plus = a.Children(idx_plus);
-h_zero = a.Children(n_patches+1-del_zero(1));
 
-    
+handles = [h_DDLV, h_plus, h_zero, h_neg];
+labels = {'DDLV', 'CLDDLV (better)', 'CLDDLV (same)', 'CLDDLV (worse)'};
 
-l = legend([h_DDLV, h_plus, h_zero, h_neg], ...
-    {'DDLV', 'CLDDLV (better)', 'CLDDLV (same)', 'CLDDLV (worse)'},'Orientation','vertical');
+for ii = numel(handles)
+ if isempty(handles(ii))
+     handles(ii) = [];
+     labels(ii) = {};
+ end
+end
+
+l = legend(handles,labels,'Orientation','vertical');
 l.Position([1,2]) = [.07, .75];
 
-exportgraphics(fig, 'D:\Programming\MastersLaTeX\figures\nsr_levels.pdf','ContentType','image','Resolution',500)
+exportgraphics(fig, 'D:\Programming\MastersLaTeX\figures\svals.pdf','ContentType','image','Resolution',500)
 
 
 %%
