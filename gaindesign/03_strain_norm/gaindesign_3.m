@@ -15,7 +15,6 @@ out_dof = GeneralParameters(1).out_dof;
 in_dof = GeneralParameters(1).in_dof;
 
 Lambda = ReferenceModels(1).Lambda;
-im_fac = 1.01;
 
 % collect ga variables
 ga_vars.idx = GeneralParameters(1).idx;
@@ -36,6 +35,7 @@ ga_vars.Cg_d = Cg_d;
 ga_vars.Kg_d = Kg_d;
 
 poles = 1:2:15;
+im_fac = 0;
 
 parfor polenum = 1:numel(poles) 
 tic

@@ -11,7 +11,7 @@ nsr = 0.05;
 
 dam_ = 0.8;
 % pole_facs = sort([0, 1, 1.01, 1.02, 1.04, 1.12, 1.2],'descend');
-pole_facs = [1.12, 1.04, 1.01];
+pole_facs = [1.12, 1.04, 1.01, 1, 0];
 
 for pole_fac = pole_facs
     results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme);
