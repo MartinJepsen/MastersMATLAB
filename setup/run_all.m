@@ -1,10 +1,10 @@
 clear
 damages = [3:14]';
 rng(1)
-damages(:, 2) = 0.80;
+damages(:, 2) = 0.70;
 
 nsr = 0.05;
-err = 0.0;
+err = 0.02;
 sensor = "dis";
 in_dof = [1:12];
 out_dof = in_dof;

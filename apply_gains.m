@@ -2,8 +2,8 @@ clear; close all
 
 %% Set simulation variables
 nsr = 0.05;
-err = 0.0;
-dam_ = 0.80;
+err = 0.02;
+dam_ = 0.70;
 sensor = "dis";
 
 show_plots = false;

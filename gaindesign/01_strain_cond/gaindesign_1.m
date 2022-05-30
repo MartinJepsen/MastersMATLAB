@@ -1,12 +1,17 @@
 clear
 load("gaindesign/01_strain_cond/SetUp.mat")
-for polenum = 3:2:19
+for polenum = 1:2:19
 im_fac = 1.12;
 Lambda = ReferenceModels.Lambda;
+
+r = GeneralParameters.r;
+m = GeneralParameters.m;
 
 if polenum ~= 1
     load('gaindesign/01_strain_cond/gains_1_1.120.mat',"K")
     initpop = [reshape(real(K), 1, numel(K)), reshape(imag(K), 1, numel(K))];
+else
+    initpop = ones(1, 2*m*r);
 end
 
 s = complex(real(Lambda(polenum)), im_fac*imag(Lambda(polenum)));
@@ -46,8 +51,7 @@ ReferenceModels.H_ = H_;
 % vars.Cg = Cg;
 % vars.Mg = Mg;
 
-r = GeneralParameters.r;
-m = GeneralParameters.m;
+
 %%
 
 
