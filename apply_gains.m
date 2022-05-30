@@ -25,7 +25,7 @@ n_dof = GeneralParameters.n_dof;
 idx = GeneralParameters.idx;
 SS_exact = ReferenceModels.SS_exact;
 
-poles = 1;
+poles = 1:2:19;
 elements = 1:14;
 s_vals = [];
 
@@ -60,7 +60,7 @@ for damel = elements
         %     load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
         %     load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
         %     load(sprintf("Ks_%03d_%03d_%03d_%s", err*100, dam_*100, nsr*100, sensor))
-        s_vals(pole) = s;
+        s_vals((pole+1)/2) = s;
         
         % account for output type
         if sensor == "dis"
