@@ -1,10 +1,15 @@
 clear
 load("gaindesign/01_strain_cond/SetUp.mat")
-for polenum = 1:2:19
-im_fac = 1.05;
+for polenum = 3:2:19
+im_fac = 1.12;
 Lambda = ReferenceModels.Lambda;
-s = complex(real(Lambda(polenum)), im_fac*imag(Lambda(polenum)));
 
+if polenum ~= 1
+    load('gaindesign/01_strain_cond/gains_1_1.120.mat',"K")
+    initpop = [reshape(real(K), 1, numel(K)), reshape(imag(K), 1, numel(K))];
+end
+
+s = complex(real(Lambda(polenum)), im_fac*imag(Lambda(polenum)));
 GeneralParameters.s = s;
 
 %%
@@ -52,10 +57,11 @@ good = 0;
 tic
 for run = 0
     ObjectiveFunction = @main_gain_design;
-    options = optimoptions('ga', 'Generations', 5000,...
-                            'PopulationSize', 100,...
+    options = optimoptions('ga', 'Generations', 20000,...
+                            'PopulationSize', 500,...
                             'CrossoverFraction', 0.5,...
-                            'FunctionTolerance',1e-6,...
+                            'FunctionTolerance',1e-5,...
+                            'InitialPopulation', initpop,...
                             'PlotFcn', @gaplotbestf);
     
     np = r*m; % No. of entries in gain matrix
