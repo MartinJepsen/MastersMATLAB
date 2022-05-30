@@ -45,7 +45,7 @@ function results = get_results(nsr, err, dam_, sensor, poles, im_fac, scheme)
             elseif scheme == 2
                 load(sprintf("gaindesign/02_sens/gain%d_%d_%0.3f.mat", damel, pole, im_fac))
             elseif scheme == 3
-                % do nothing
+                load(sprintf("gaindesign/03_strain_norm/gain%d_%d_%0.3f.mat", damel, pole, im_fac))
             end
             s_vals((pole+1)/2) = s;
             

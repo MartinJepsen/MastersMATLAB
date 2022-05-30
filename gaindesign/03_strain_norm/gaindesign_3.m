@@ -1,93 +1,110 @@
-set_up
+% load('gaindesign/02_sens/SetUp.mat')
+[DamagedModels] = generate_damaged_models(ReferenceModels(1).FE, ReferenceModels(1).FE_e, damage);
 
-load("gaindesign/gain_pars")          % load system matrices
-damel = dam(:, 1);
 
-H_ref = (Mg*s^2 + Cg*s + Kg)^-1;
-H_ = zeros(n_dof, free_dof);
-H_(idx, :) = H_ref;
-H = H_ref(out_dof, in_dof);
-
-% Apply normalisation of stiffness perturbation
+Mg = ReferenceModels(1).Mg;
+Cg = ReferenceModels(1).Cg;
+Kg = ReferenceModels(1).Kg;
+Cg_d = DamagedModels(1).Cg_d;
+Kg_d = DamagedModels(1).Kg_d;
 DeltaKg = Kg_d - Kg;
 DeltaKg(DeltaKg ~= 0) = DeltaKg(DeltaKg ~= 0) ./ abs(DeltaKg(DeltaKg ~= 0));
 Kg_d = DeltaKg - Kg;
 
+out_dof = GeneralParameters(1).out_dof;
+in_dof = GeneralParameters(1).in_dof;
+
+Lambda = ReferenceModels(1).Lambda;
+im_fac = 1.01;
+
+% collect ga variables
+ga_vars.idx = GeneralParameters(1).idx;
+ga_vars.n_dof = GeneralParameters(1).n_dof;
+ga_vars.free_dof = GeneralParameters(1).free_dof;
+ga_vars.B = GeneralParameters(1).B_strain;
+ga_vars.damel = DamagedModels(1).damage(1,1);
+ga_vars.r = GeneralParameters(1).r;
+ga_vars.m = GeneralParameters(1).m;
+ga_vars.in_dof = in_dof;
+ga_vars.out_dof = out_dof;
+ga_vars.B2 = GeneralParameters(1).B2;
+ga_vars.cdis = GeneralParameters(1).cdis;
+ga_vars.Mg = Mg;
+ga_vars.Cg = Cg;
+ga_vars.Kg = Kg;
+ga_vars.Cg_d = Cg_d;
+ga_vars.Kg_d = Kg_d;
+
+poles = 1:2:15;
+
+parfor polenum = 1:numel(poles) 
+tic
+pole = poles(polenum);
+s = complex(real(Lambda(pole)), im_fac*imag(Lambda(pole)));
+
+H_ref = (Mg*s^2 + Cg*s + Kg)^-1;
+H = H_ref(out_dof, in_dof);
+
 H_d = (Mg*s^2 + Cg_d*s + Kg_d)^-1;
-H_d = H_d(out_dof, in_dof);
+
+DeltaH = H - H_d;
+[~, ~, V] = svd(DeltaH);
+
+% ga_vars.V = V;
+% ga_vars.H_ref = H_ref;
 
 %% Genetic algorithm
-run = 0;
-good = 0;
-tic
-for run = 0
-    seed = ceil(abs(randn * randn) * 10)
-    rng(seed);
-    np = r*m; % No. of parameters
-    
-    ObjectiveFunction = @main_gain_design;
-    options = optimoptions('ga', 'Generations', 1000,...
-                            'PopulationSize', 1000,...
-                            'FunctionTolerance', 1e8,...
-                            'MaxStallGenerations', 1000,...
-                            'CrossoverFraction', 0.20,...
-                            'PlotFcn', @gaplotbestf);
-    
-    % [res, fval] = ga(ObjectiveFunction, nvars, [], [], [], [], lb, ub, [], options);
-    [res, fval] = ga(ObjectiveFunction, 2*np, [], [], [], [], [], [], [], options);
-    
-    re = reshape(res(1:np), r, m);
-    im = reshape(res(np+1:end), r, m);
-    K = complex(re, im);
-    
-    results{run+1,1} = K;
-    results{run+1,2} = fval;
+r = GeneralParameters(1).r;
+m = GeneralParameters(1).m;
+np = r*m;
 
-end
-[fvals, ind] = sort([results{:,2}], 'ascend');
+options = optimoptions('ga', 'Generations', 5000,...
+                        'PopulationSize', 200,...
+                        'FunctionTolerance',1e-5,...
+                        'CrossoverFraction',0.5,...
+                        'MaxStallGenerations', 500);%,...
+%                         'PlotFcn', @gaplotbestf);
+
+[res, fval] = ga({@scheme3, ga_vars, s, V, H_ref, np}, np*2, [], [], [], [], [], [], [], options);
+   
+re = reshape(res(1:np), r, m);
+im = reshape(res(np+1:end), r, m);
+K = complex(re, im);
+
+parsave(damage, pole, im_fac, K, s, fval)
+
+% save(sprintf("gaindesign/03_strain_norm/gain%d_%d_%0.3f.mat", damage(1,1), polenum, im_fac),"K", "gains", "s")
 toc
-%% Sort results
-for i = 1:numel(fvals)
-    gains{i,2} = fvals(i);
-    gains(i,1) = results(ind(i),1);
 end
 
-%%
-K = gains{1,1};
-save(sprintf("gaindesign/03_strain_norm/gains_%02d", damel),"K", 'gains')
-beep
 
-function [J] = main_gain_design(X)
-    in_dof = evalin('base', 'in_dof');
-    out_dof = evalin('base', 'out_dof');
-    free_dof = evalin('base', 'free_dof');
-    n_dof = evalin('base', 'n_dof');
-    m = evalin('base', 'm');
-    r = evalin('base', 'r');
-    B2 = evalin('base', 'B2');
-    cdis = evalin('base','cdis');
-    B = evalin('base', 'B_strain');
-    idx = evalin('base', 'idx');
+function [J] = scheme3(X, ga_vars, s, V, H_ref, np)
 
-    H_ref = evalin('base', 'H_ref');
-    H = evalin('base', 'H');
-    H_d = evalin('base', 'H_d');
+    r          = ga_vars.r;
+    m          = ga_vars.m;
+%     s          = ga_vars.s;
+    in_dof     = ga_vars.in_dof;
+    out_dof    = ga_vars.out_dof;
+    B2         = ga_vars.B2;
+    cdis       = ga_vars.cdis;
+    Mg         = ga_vars.Mg;
+    Cg         = ga_vars.Cg;
+    Kg         = ga_vars.Kg;
+    Cg_d       = ga_vars.Cg_d;
+    Kg_d       = ga_vars.Kg_d;
+%     H_ref      = ga_vars.H_ref;
+    idx        = ga_vars.idx;
+    n_dof      = ga_vars.n_dof;
+    free_dof   = ga_vars.free_dof;
+    B          = ga_vars.B;
+%     V = ga_vars.V;
 
-    s = evalin('base', 's');
-    Kg = evalin('base', 'Kg');
-    Kg_d = evalin('base', 'Kg_d');
-    Cg = evalin('base', 'Cg');
-    Cg_d = evalin('base', 'Cg_d')
-    Mg = evalin('base', 'Mg');
-    damel = evalin('base', 'damel');
-
-    np = r*m;
+%     np = ga_vars.np;
     re = reshape(X(1:np), r, m);
     im = reshape(X(np+1:end), r, m);
     K = complex(re, im);
-    % OLDDLV
-    DeltaH = H - H_d;
-    [~, ~, V] = svd(DeltaH);
+    
+    % DDLV
 
     d = H_ref * B2 * V(:, end);
     d_ = zeros(n_dof, 1);
@@ -110,7 +127,12 @@ function [J] = main_gain_design(X)
     eps_CL = abs(eps_CL) / max(abs(eps_CL));
     
     dofs = [1:size(B,1)];
-    dofs(damel) = [];
+    dofs(ga_vars.damel) = [];
     J = norm(eps(dofs)) / norm(eps_CL(dofs));
 
+end
+
+function parsave(damage, pole, im_fac, K, s, fval)
+    fprintf("Saving gain%d_%d_%0.3f.mat", damage(1,1), pole, im_fac)
+    save(sprintf("gaindesign/03_strain_norm/gain%d_%d_%0.3f.mat", damage(1,1), pole, im_fac),"K", "fval", "s")
 end
