@@ -50,25 +50,24 @@ m = GeneralParameters.m;
 run = 0;
 good = 0;
 tic
-for run = 0
-    ObjectiveFunction = @main_gain_design;
-    options = optimoptions('ga', 'Generations', 5000,...
-                            'PopulationSize', 100,...
-                            'CrossoverFraction', 0.5,...
-                            'FunctionTolerance',1e-6,...
-                            'PlotFcn', @gaplotbestf);
-    
-    np = r*m; % No. of entries in gain matrix
-    [res, fval] = ga(ObjectiveFunction, np*2, [], [], [], [], [], [], [], options);
-    
-    % Reshape result into complex-values r x m matrix
-    re = reshape(res(1:np), r, m);
-    im = reshape(res(np+1:end), r, m);
-    K = complex(re, im);
 
-    results{run+1, 1} = K;
-    results{run+1, 2} = fval;
-end
+ObjectiveFunction = @main_gain_design;
+options = optimoptions('ga', 'Generations', 5000,...
+                        'PopulationSize', 100,...
+                        'CrossoverFraction', 0.5,...
+                        'FunctionTolerance',1e-6,...
+                        'PlotFcn', @gaplotbestf);
+
+np = r*m; % No. of entries in gain matrix
+[res, fval] = ga(ObjectiveFunction, np*2, [], [], [], [], [], [], [], options);
+
+% Reshape result into complex-values r x m matrix
+re = reshape(res(1:np), r, m);
+im = reshape(res(np+1:end), r, m);
+K = complex(re, im);
+
+results{run+1, 1} = K;
+results{run+1, 2} = fval;
 
 [fvals, ind] = sort([results{:,2}], 'ascend');
 toc
@@ -83,6 +82,7 @@ beep
 K = gains{1,1};
 save(sprintf("gaindesign/01_strain_cond/gains_%d_%0.3f.mat", polenum, im_fac),"K", "gains", "s")
 end
+
 function [J] = main_gain_design(X)
     % Load pre-defined variables from base workspace
     GeneralParameters = evalin('base', 'GeneralParameters');
