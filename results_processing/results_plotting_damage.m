@@ -7,7 +7,7 @@ i = 1;
 poles = 1:2:13;
 pole_fac = 1.12;
 nsr = 0.05;
-scheme = 1;
+scheme = 3;
 
 % pole_fac = [1.01, 1.05, 1.12];
 damages = [0.5, 0.6, 0.75, 0.8, 0.9, 0.95, 0.99, 1];
@@ -64,7 +64,7 @@ labels ={'DDLV'};
 h_neg = NaN;
 h_zero = NaN;
 h_plus = NaN;
-idx_plus = find(DEL>1);
+idx_plus = find(DEL'>1);
 if ~isempty(idx_plus)
     idx_plus = idx_plus(1);
     h_plus = a.Children(idx_plus);
@@ -115,6 +115,6 @@ view(45,20)
 box on
 
 l = legend(handles,labels,'Orientation','vertical');
-l.Position([1,2]) = [.04, .8];
+l.Position([1,2]) = [.04, .75];
 
 exportgraphics(fig, sprintf("D:/Programming/MastersLaTeX/figures/damage_size%d.pdf", scheme),'ContentType','image','Resolution',500)

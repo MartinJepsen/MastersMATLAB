@@ -11,7 +11,7 @@ nsr = 0.05;
 
 dam_ = 0.8;
 % pole_facs = sort([0, 1, 1.01, 1.02, 1.04, 1.12, 1.2],'descend');
-pole_facs = [1.2, 1.12];
+pole_facs = [1.12, 1.04, 1.01];
 
 for pole_fac = pole_facs
     results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme);
@@ -123,4 +123,4 @@ box on
 l = legend(handles,labels,'Orientation','vertical');
 l.Position([1,2]) = [.07, .75];
 
-exportgraphics(fig, sprintf('D:/Programming/MastersLaTeX/figures/svals%d.pdf',scheme),'ContentType','image','Resolution',500)
+% exportgraphics(fig, sprintf('D:/Programming/MastersLaTeX/figures/svals%d.pdf',scheme),'ContentType','image','Resolution',500)
