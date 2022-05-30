@@ -1,10 +1,10 @@
 clear
-damages = [7:14]';
+damages = [1:14]';
 rng(1)
 damages(:, 2) = 0.80;
 
 nsr = 0.05;
-err = 0.00;
+err = 0.0;
 sensor = "dis";
 in_dof = [1:12];
 out_dof = in_dof;

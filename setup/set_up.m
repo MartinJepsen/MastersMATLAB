@@ -48,8 +48,8 @@ fc = omega(6) / (2*pi);
 
 for in = in_dof
     signal = randn(1, numel(t));
-    signal_f = filter(b,a,signal);
-    u(in, :) = signal_f;
+%     signal_f = filter(b,a,signal);
+    u(in, :) = signal;
 end
 GeneralParameters.u = u;
 
