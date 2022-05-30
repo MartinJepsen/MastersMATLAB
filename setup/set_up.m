@@ -49,11 +49,14 @@ fc = omega(6) / (2*pi);
 for in = in_dof
     signal = randn(1, numel(t));
     signal_f = filter(b,a,signal);
-    u(in, :) = signal_f;
+    if truncate
+        u(in, :) = signal_f;
+    else
+        u(in, :) = signal;
+    end
 end
 GeneralParameters.u = u;
 
-base_dir = sprintf("simulation/SYSID/t_model_error_%03d_%s", err*100, sensor);
 % base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
 if ~isfolder(base_dir)
     mkdir(base_dir)
