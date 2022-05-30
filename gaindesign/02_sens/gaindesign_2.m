@@ -45,11 +45,11 @@ options = optimoptions('ga', 'Generations', 5000,...
 %                         'PlotFcn', @gaplotbestf);
 poles = 1:2:15;
 Lambda = ReferenceModels(1).Lambda;
-im_fac = 1;
+im_fac = 0;
 
 parfor polenum = 1:numel(poles) 
 pole = poles(polenum);
-s = complex(0*real(Lambda(pole)), im_fac*imag(Lambda(pole)));
+s = complex(real(Lambda(pole)), im_fac*imag(Lambda(pole)));
 H_ref = (Mg*s^2 + Cg*s + Kg)^-1;
 H = H_ref(out_dof, in_dof);
 dH = -H * DeltaKg * H;
