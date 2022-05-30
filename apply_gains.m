@@ -25,7 +25,7 @@ n_dof = GeneralParameters.n_dof;
 idx = GeneralParameters.idx;
 SS_exact = ReferenceModels.SS_exact;
 
-poles = 1:2:19;
+poles = 1:2:11;
 elements = 1:14;
 s_vals = [];
 
