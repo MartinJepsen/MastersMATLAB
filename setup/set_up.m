@@ -36,7 +36,20 @@ GeneralParameters.n_runs = n_runs;
 [ReferenceModels, GeneralParameters] = generate_state_space_models(ReferenceModels, GeneralParameters);
 
 
-base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
+fc = omega(6) / (2*pi);
+[b,a] = butter(6,fc/(fs/2));
+
+for in = in_dof
+    signal = randn(1, numel(t));
+    signal_f = filter(b,a,signal);
+    if truncate
+        u(in, :) = signal_f;
+    else
+        u(in, :) = signal;
+    end
+end
+GeneralParameters.u = u;
+
 % base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
 if ~isfolder(base_dir)
     mkdir(base_dir)

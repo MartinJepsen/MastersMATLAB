@@ -12,6 +12,8 @@ dt = 0.01;                            % time increment size
 n_samples = 5000;
 blockrows = 48;
 n_runs = 25;
+truncate = false;
+base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
 set_up
 
 %% Run estimation
