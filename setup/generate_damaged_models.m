@@ -26,8 +26,8 @@ function [DamagedModels] = generate_damaged_models(FE, FE_e, damage)%% Exact ref
     DamagedModels.FE_de = FE_de;
     DamagedModels.Kg_d = FE_d.Kg;
     DamagedModels.Cg_d = FE_d.Cg;
-    DamagedModels.Kg_de = FE_e.Kg;
-    DamagedModels.Cg_de = FE_e.Cg;
+    DamagedModels.Kg_de = FE_de.Kg;
+    DamagedModels.Cg_de = FE_de.Cg;
     DamagedModels.Lambda = Lambda;
     DamagedModels.Phi = Phi;
 
