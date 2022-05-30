@@ -19,12 +19,7 @@ t = GeneralParameters.t;
 blockrows = GeneralParameters.blockrows;
 
 
-base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
-% base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
-if ~isfolder(base_dir)
-    mkdir(base_dir)
-    addpath(base_dir)
-end
+base_dir = GeneralParameters.base_dir;
 filename_u = sprintf("00_000_%03d.mat", nsr*100);
 
 t_0 = tic;
