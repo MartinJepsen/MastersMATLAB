@@ -42,22 +42,25 @@ N2 = ceil(N/2);                         % half of N
 fs = (t(2)-t(1))^-1;                    % sampling frequency
 faxis=bins*fs/N;                        % frequency axis
 
-
-fc = omega(6) / (2*pi);
-[b,a] = butter(6,fc/(fs/2));
+t = GeneralParameters.t;
+fs = GeneralParameters.dt^-1;
 
 for in = in_dof
     signal = randn(1, numel(t));
-    signal_f = filter(b,a,signal);
-    if truncate
+    if truncated_mode ~= 0
+        fc = ReferenceModels.FE.modal_parameters.omega(truncated_mode) / (2*pi) * truncated_mode/2.5;
+        [b,a] = butter(6,fc/(fs/2));
+        signal_f = filter(b,a,signal);
         u(in, :) = signal_f;
+        base_dir = sprintf("simulation/SYSID/t%d_model_error_%03d_%s", truncated_mode, err*100, sensor);
     else
         u(in, :) = signal;
+        base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
     end
 end
 GeneralParameters.u = u;
 
-% base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
+GeneralParameters.base_dir = base_dir;
 if ~isfolder(base_dir)
     mkdir(base_dir)
     addpath(base_dir)
