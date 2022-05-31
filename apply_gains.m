@@ -11,10 +11,13 @@ elements = 1;
 show_plots = false;
 
 %% Compute results
+if mode ~= 0
+    base_dir = sprintf("simulation/SYSID/t%d_model_error_%03d_%s", mode, err*100, sensor);
+elseif mode == 0
+    base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
+end
 
-base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
-% base_dir = sprintf("simulation/SYSID/t_model_error_%03d_%s", err*100, sensor);
-load(sprintf("%s/00_000_%03d", base_dir, nsr*100))
+load(sprintf("%s/00_000_%03d", base_dir, round(nsr*100,0)))
 load(fullfile(base_dir, "SetUp.mat"))
 
 Kg = ReferenceModels.Kg;
@@ -28,7 +31,6 @@ idx = GeneralParameters.idx;
 SS_exact = ReferenceModels.SS_exact;
 
 s_vals = [];
-
 
 for damel = elements
     tot_runs = 1;
