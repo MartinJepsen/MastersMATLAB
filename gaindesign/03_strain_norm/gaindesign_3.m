@@ -35,7 +35,7 @@ ga_vars.Cg_d = Cg_d;
 ga_vars.Kg_d = Kg_d;
 
 poles = 1:2:15;
-im_fac = 0;
+im_fac = 1.2;
 
 parfor polenum = 1:numel(poles) 
 tic
