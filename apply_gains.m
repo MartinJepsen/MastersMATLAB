@@ -5,8 +5,9 @@ nsr = 0.05;
 err = 0;
 dam_ = 0.8;
 sensor = "dis";
-mode = 2;
-poles = 1:2:(mode*2)-2;
+mode = 8;
+% poles = 1:2:(mode*2)-2;
+poles = 1:2:mode-3;
 elements = 1:8;
 
 show_plots = true;

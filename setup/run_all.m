@@ -13,7 +13,7 @@ n_samples = 5000;
 blockrows = 48;
 n_runs = 25;
 
-for truncated_mode = [1:8]
+for truncated_mode = [0]
     set_up
     tic
     for foo = 1:size(damages, 1)

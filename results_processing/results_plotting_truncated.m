@@ -8,10 +8,10 @@ poles = 1:2:13;
 nsr = 0.05;
 dam_ = 0.8;
 pole_fac = 1.12;
-modes = [8:-1:2];
+modes = [14:-2:2];
 for i = 1:numel(modes)
     mode = modes(i);
-    poles = 1:2:(mode*2)-2;
+    poles = 1:2:mode-3;
     results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode);
     OL(:, i) = results.OL;
     CL(:, i) = results.CL;
@@ -91,7 +91,7 @@ if ~isempty(del_neg)
 end
 
 axis tight
-xlabel('Truncated mode','Interpreter','latex')
+xlabel('Model order','Interpreter','latex')
 xticks(x);
 xticklabels(string((modes)));
 a.XLabel.Rotation = -19;
