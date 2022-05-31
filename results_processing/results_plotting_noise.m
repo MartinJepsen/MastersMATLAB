@@ -9,7 +9,7 @@ sensor = "dis";
 
 poles = 1:2:13;
 pole_fac = 1.12;
-nsrs = [0.01, 0.02, 0.05, 0.07, 0.1, 0.15];
+nsrs = [0.01, 0.02, 0.05];
 mode = 0;
 
 for i = 1:numel(nsrs)
