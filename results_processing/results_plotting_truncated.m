@@ -2,17 +2,16 @@ clear; close all
 
 %% Set simulation variables
 scheme = 1;
+err = 0.00;
 sensor = "dis";
 poles = 1:2:13;
-pole_fac = 1.12;
 nsr = 0.05;
 dam_ = 0.8;
 pole_fac = 1.12;
-mode = 0;
-
-errs = [0, 0.05, 0.1, 0.15, 0.20, 0.25, 0.30];
-for i = 1:numel(errs)
-    err = errs(i);
+modes = [8:-1:2];
+for i = 1:numel(modes)
+    mode = modes(i);
+    poles = 1:2:(mode*2)-2;
     results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode);
     OL(:, i) = results.OL;
     CL(:, i) = results.CL;
@@ -28,10 +27,11 @@ OL_2 = OL;
 OL_2(del_neg) = OL_2(del_neg) + DEL(del_neg);
 DEL_2 = abs(DEL);
 DEL_2(del_zero) = DEL_2(del_zero) + 0.01;
+
 %% Make figure
 close all
 fig = figure;
-x = [1:numel(errs)];
+x = [1:numel(modes)];
 y = 1:8;
 z(:, :, 1) = OL_2;
 z(:, :, 2) = DEL_2;
@@ -91,9 +91,9 @@ if ~isempty(del_neg)
 end
 
 axis tight
-xlabel('Model error (%)')
+xlabel('Truncated mode','Interpreter','latex')
 xticks(x);
-xticklabels(string((errs)*100));
+xticklabels(string((modes)));
 a.XLabel.Rotation = -19;
 a.XLabel.VerticalAlignment = 'bottom';
 a.XLabel.HorizontalAlignment = 'l';
@@ -117,7 +117,8 @@ zlabel('POL (%)')
 view(45,20)
 box on
 
+
 l = legend(handles,labels,'Orientation','vertical');
 l.Position([1,2]) = [.07, .75];
 
-exportgraphics(fig, sprintf("D:/Programming/MastersLaTeX/figures/err_levels%d.pdf",scheme),'ContentType','image','Resolution',500)
+% exportgraphics(fig, sprintf('D:/Programming/MastersLaTeX/figures/svals%d.pdf',scheme),'ContentType','image','Resolution',500)

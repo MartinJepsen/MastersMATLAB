@@ -1,28 +1,23 @@
 clear; close all
 
 %% Set simulation variables
-% nsr = 0.02;
+
 scheme = 1;
 err = 0.00;
-dam_ = 0.75;
+dam_ = 0.80;
 sensor = "dis";
-i = 1;
+
 poles = 1:2:13;
 pole_fac = 1.12;
 nsrs = [0.01, 0.02, 0.05, 0.07, 0.1, 0.15];
-% nsr = 0.05;
+mode = 0;
 
-% pole_fac = [1.01, 1.05, 1.12];
-damages = [0.5, 0.6, 0.75, 0.8, 0.9, 0.95, 0.99, 1];
-
-dam_ = 0.8;
-pole_fac = 1.12;
-for nsr = nsrs
-    results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme)
+for i = 1:numel(nsrs)
+    nsr = nsrs(i);
+    results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode)
     OL(:, i) = results.OL;
     CL(:, i) = results.CL;
     DEL(:, i) = results.CL - results.OL;
-    i = i + 1;
 end
 
 %% Process data

@@ -3,22 +3,21 @@ clear; close all
 %% Set simulation variables
 scheme = 2;
 err = 0.00;
-dam_ = 0.8;
 sensor = "dis";
-i = 1;
 poles = 1:2:13;
 nsr = 0.05;
-
 dam_ = 0.8;
+mode = 0;
+
 % pole_facs = sort([0, 1, 1.01, 1.02, 1.04, 1.12, 1.2],'descend');
 pole_facs = [1.12, 1.04, 1.01, 1, 0];
 
-for pole_fac = pole_facs
-    results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme);
+for i = 1:numel(pole_facs)
+    pole_fac = pole_facs(i);
+    results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode);
     OL(:, i) = results.OL;
     CL(:, i) = results.CL;
     DEL(:, i) = results.CL - results.OL;
-    i = i + 1;
 end
 
 %% Process data
