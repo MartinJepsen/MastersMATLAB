@@ -18,7 +18,6 @@ u = GeneralParameters.u;
 t = GeneralParameters.t;
 blockrows = GeneralParameters.blockrows;
 
-
 base_dir = GeneralParameters.base_dir;
 filename_u = sprintf("00_000_%03d.mat", round(nsr*100,0));
 

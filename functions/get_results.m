@@ -1,6 +1,11 @@
-function results = get_results(nsr, err, dam_, sensor, poles, im_fac, scheme)
+function results = get_results(nsr, err, dam_, sensor, poles, im_fac, scheme, mode)
     %% Compute results
-    base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
+    if mode ~= 0
+        base_dir = sprintf("simulation/SYSID/t%d_model_error_%03d_%s", mode, err*100, sensor);
+    elseif mode == 0
+        base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
+    end
+
     load(sprintf("%s/00_000_%03d", base_dir, round(nsr*100,0)))
     load(fullfile(base_dir, "SetUp.mat"))
     
