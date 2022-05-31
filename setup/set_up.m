@@ -25,7 +25,6 @@ GeneralParameters.r = numel(GeneralParameters.in_dof);
 GeneralParameters.m = numel(GeneralParameters.out_dof);
 GeneralParameters.dt = dt;
 GeneralParameters.t = [0:dt:(n_samples * dt - dt)]';          % time sequence
-GeneralParameters.u = randn(numel(in_dof), numel(GeneralParameters.t));
 GeneralParameters.blockrows = blockrows;
 GeneralParameters.sensor = sensor;
 GeneralParameters.nsr = nsr;
@@ -35,22 +34,25 @@ GeneralParameters.n_runs = n_runs;
 [ReferenceModels, GeneralParameters] = generate_reference_models(err, GeneralParameters);
 [ReferenceModels, GeneralParameters] = generate_state_space_models(ReferenceModels, GeneralParameters);
 
-
-fc = omega(6) / (2*pi);
-[b,a] = butter(6,fc/(fs/2));
+t = GeneralParameters.t;
+fs = GeneralParameters.dt^-1;
 
 for in = in_dof
     signal = randn(1, numel(t));
-    signal_f = filter(b,a,signal);
-    if truncate
+    if truncated_mode ~= 0
+        fc = ReferenceModels.FE.modal_parameters.omega(truncated_mode) / (2*pi) * truncated_mode/2.5;
+        [b,a] = butter(6,fc/(fs/2));
+        signal_f = filter(b,a,signal);
         u(in, :) = signal_f;
+        base_dir = sprintf("simulation/SYSID/t%d_model_error_%03d_%s", truncated_mode, err*100, sensor);
     else
         u(in, :) = signal;
+        base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
     end
 end
 GeneralParameters.u = u;
 
-% base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
+GeneralParameters.base_dir = base_dir;
 if ~isfolder(base_dir)
     mkdir(base_dir)
     addpath(base_dir)
