@@ -92,6 +92,8 @@ end
 
 function [J] = scheme1(X, GeneralParameters, ReferenceModels)
     % Load pre-defined variables from base workspace
+    GeneralParameters = evalin('base', 'GeneralParameters');
+    ReferenceModels = evalin('base', 'ReferenceModels');
 
     n_dof = GeneralParameters.n_dof;
     free_dof =  GeneralParameters.free_dof;
