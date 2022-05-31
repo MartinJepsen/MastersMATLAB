@@ -2,16 +2,18 @@ clear; close all
 
 %% Set simulation variables
 nsr = 0.05;
-err = 0.02;
-dam_ = 0.70;
+err = 0.00;
+dam_ = 0.95;
 sensor = "dis";
+poles = 1;
+elements = 1;
 
 show_plots = false;
 
 %% Compute results
 
-% base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
-base_dir = sprintf("simulation/SYSID/t_model_error_%03d_%s", err*100, sensor);
+base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
+% base_dir = sprintf("simulation/SYSID/t_model_error_%03d_%s", err*100, sensor);
 load(sprintf("%s/00_000_%03d", base_dir, nsr*100))
 load(fullfile(base_dir, "SetUp.mat"))
 
@@ -25,8 +27,6 @@ n_dof = GeneralParameters.n_dof;
 idx = GeneralParameters.idx;
 SS_exact = ReferenceModels.SS_exact;
 
-poles = 1:2:11;
-elements = 1:14;
 s_vals = [];
 
 
