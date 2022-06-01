@@ -10,9 +10,8 @@ nsr = 0.05;
 scheme = 3;
 mode = 0;
 
-% pole_fac = [1.01, 1.05, 1.12];
 damages = [0.5, 0.6, 0.75, 0.8, 0.9, 0.95, 0.99, 1];
-pole_fac = 1.12;
+
 for i = 1:numel(damages)
     dam_ = damages(i);
     results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode)

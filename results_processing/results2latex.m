@@ -58,3 +58,4 @@ for colnum = 1:size(OL,2)
     
 
 end
+fclose("all")

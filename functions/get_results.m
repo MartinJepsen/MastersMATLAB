@@ -19,7 +19,7 @@ function results = get_results(nsr, err, dam_, sensor, poles, im_fac, scheme, mo
     idx = GeneralParameters.idx;
     SS_exact = ReferenceModels.SS_exact;
     
-    elements = 1:8;
+    elements = 1:14;
     s_vals = [];
     
     
