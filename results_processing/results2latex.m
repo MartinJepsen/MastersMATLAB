@@ -23,7 +23,7 @@ end
 %%
 blockrow = [];
 lines = strings(1);
-fileID = fopen(sprintf("tr_damage_results_%d.txt", scheme), 'w');
+fileID = fopen(sprintf("results_processing/ch_damage_results_%d.txt", scheme), 'w');
 
 topheader = "OL&CL&$\Delta$";
 firstcol = [1:size(OL,1)]';
