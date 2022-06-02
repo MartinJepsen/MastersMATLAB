@@ -4,13 +4,14 @@ clear; close all
 scheme = 1;
 sensor = "dis";
 poles = 1:2:13;
-pole_fac = 1.12;
 nsr = 0.05;
 dam_ = 0.8;
 pole_fac = 1.12;
 mode = 0;
 
 errs = [0, 0.05, 0.1, 0.15, 0.20, 0.25, 0.30];
+for scheme = 1:3
+    clearvars -except scheme errs sensor poles nsrs damages mode pole_fac nsr dam_
 for i = 1:numel(errs)
     err = errs(i);
     results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode);
@@ -46,7 +47,8 @@ for i1=1:ngroups
 end
 
 a = gca;
-a.DataAspectRatio = [1, 1, 35];
+a.DataAspectRatio = [1, 1, 20];
+fig.Position([3,4]) = [7.5, 5.5];
 n_patches = prod(size(OL));
 
 for ii = 1:floor(n_patches)
@@ -94,15 +96,16 @@ axis tight
 xlabel('Model error (%)')
 xticks(x);
 xticklabels(string((errs)*100));
-a.XLabel.Rotation = -19;
+a.XLabel.Rotation = -20;
 a.XLabel.VerticalAlignment = 'bottom';
-a.XLabel.HorizontalAlignment = 'l';
-a.XLabel.Position = [2,0,-30];
+a.XLabel.HorizontalAlignment = 'center';
+a.XLabel.Position = [mean(a.XLim)+0.5, -1.8, -10];
 
 ylabel('Damage pattern')
 yticks(y);
 a.YLabel.Rotation = 19;
 a.YLabel.VerticalAlignment = 'middle';
+a.YLabel.Position = [a.XLim(2)+2.5, 0, 0];
 
 zlim([0, 100])
 zticks([0:10:100])
@@ -117,7 +120,8 @@ zlabel('POL (%)')
 view(45,20)
 box on
 
-l = legend(handles,labels,'Orientation','vertical');
-l.Position([1,2]) = [.07, .75];
+% l = legend(handles,labels,'Orientation','vertical');
+% l.Position([1,2]) = [.07, .75];
 
-exportgraphics(fig, sprintf("D:/Programming/MastersLaTeX/figures/err_levels%d.pdf",scheme),'ContentType','image','Resolution',500)
+exportgraphics(fig, sprintf("D:/Programming/MastersLaTeX/figures/ch_err_levels%d.pdf",scheme),'ContentType','image','Resolution',1000)
+end

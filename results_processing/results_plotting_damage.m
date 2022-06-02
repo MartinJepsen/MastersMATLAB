@@ -9,10 +9,10 @@ pole_fac = 1.12;
 nsr = 0.05;
 scheme = 3;
 mode = 0;
-
-% pole_fac = [1.01, 1.05, 1.12];
 damages = [0.5, 0.6, 0.75, 0.8, 0.9, 0.95, 0.99, 1];
-pole_fac = 1.12;
+for scheme = 1:3
+    clearvars -except scheme err sensor poles nsrs damages mode pole_fac nsr
+
 for i = 1:numel(damages)
     dam_ = damages(i);
     results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode)
@@ -34,6 +34,7 @@ DEL_2(del_zero) = DEL_2(del_zero) + 0.01;
 %%
 close all
 fig = figure;
+
 x = 1:numel(damages);
 y = 1:8;
 z(:, :, 1) = OL_2;
@@ -62,7 +63,7 @@ end
 
 h_DDLV = a.Children(end);
 handles = [h_DDLV];
-labels ={'DDLV'};
+labels ={'OL'};
 h_neg = NaN;
 h_zero = NaN;
 h_plus = NaN;
@@ -71,7 +72,7 @@ if ~isempty(idx_plus)
     idx_plus = idx_plus(1);
     h_plus = a.Children(idx_plus);
     handles = [handles, h_plus];
-    labels = {labels{:}, 'CLDDLV (better)'};
+    labels = {labels{:}, 'CL (better)'};
 end
 if ~isempty(del_zero)
     for ii = 1:numel(del_zero)
@@ -79,7 +80,7 @@ if ~isempty(del_zero)
     end
     h_zero = a.Children(n_patches+1-del_zero(1));
     handles = [handles, h_zero];
-    labels = {labels{:}, 'CLDDLV (same)'};
+    labels = {labels{:}, 'CL (same)'};
 end
 if ~isempty(del_neg)
     for ii = 1:numel(del_neg)
@@ -87,21 +88,31 @@ if ~isempty(del_neg)
     end
     h_neg = a.Children(n_patches+1-del_neg(1));
     handles = [handles, h_neg];
-    labels = {labels{:}, 'CLDDLV (worse)'};
+    labels = {labels{:}, 'CL (worse)'};
 end
 
-a.DataAspectRatio = [1, 1, 35];
+% figure proportions
+a.DataAspectRatio = [1, 1, 20];
+fig.Position([3,4]) = [7.5, 5.5];
+
 axis tight
+
+% xlabel
 xlabel('Damage (%)')
 xticks(x);
 xticklabels(string((1-damages)*100));
-a.XLabel.Rotation = -16;
+a.XLabel.Rotation = -17;
 a.XLabel.VerticalAlignment = 'middle';
+a.XLabel.HorizontalAlignment = 'center';
+a.XLabel.Position = [mean(a.XLim)+0.5, -1, -10];
 
+% ylabel
 ylabel('Damage pattern')
 yticks(y);
-a.YLabel.Rotation = 19;
+a.YLabel.Rotation = 20;
 a.YLabel.VerticalAlignment = 'middle';
+a.YLabel.Position = [a.XLim(2)+2.5, 0, 0];
+
 
 zlim([0, 100])
 zticks([0:10:100])
@@ -116,7 +127,8 @@ zlabel('POL (%)')
 view(45,20)
 box on
 
-l = legend(handles,labels,'Orientation','vertical');
-l.Position([1,2]) = [.04, .75];
+% l = legend(handles,labels,'Orientation','vertical','location','layout');
+% l.Position([1,2]) = [.1, .75];
 
-exportgraphics(fig, sprintf("D:/Programming/MastersLaTeX/figures/damage_size%d.pdf", scheme),'ContentType','image','Resolution',500)
+exportgraphics(fig, sprintf("D:/Programming/MastersLaTeX/figures/ch_damage_size%d.pdf", scheme),'Resolution',1000)
+end
