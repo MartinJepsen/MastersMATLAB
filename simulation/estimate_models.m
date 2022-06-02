@@ -22,6 +22,7 @@ base_dir = GeneralParameters.base_dir;
 filename_u = sprintf("00_000_%03d.mat", round(nsr*100,0));
 
 t_0 = tic;
+clearvars SS_est SS_est_d
 parfor run = 1:n_runs
     % check if simulations of undamaged config exist:
     if exist(fullfile(base_dir, filename_u), "file") == 0
