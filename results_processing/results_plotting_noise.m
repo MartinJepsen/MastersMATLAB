@@ -20,7 +20,7 @@ for i = 1:numel(nsrs)
     CL(:, i) = results.CL;
     DEL(:, i) = results.CL - results.OL;
 end
-
+CL = CL';
 %% Process data
 DEL = DEL';
 OL = OL';
@@ -53,7 +53,7 @@ fig.Position([3,4]) = [7.5, 5.5];
 n_patches = prod(size(OL));
 
 for ii = 1:floor(n_patches)
-    a.Children(ii).FaceColor = [33,255,82]/255;
+    a.Children(ii).FaceColor = [33,255,30]/255;
 end
 for ii = (n_patches+1):2*n_patches
     a.Children(ii).FaceColor = [200,200,200]/255;

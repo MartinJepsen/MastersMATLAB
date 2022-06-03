@@ -22,7 +22,7 @@ for i = 1:numel(pole_facs)
     CL(:, i) = results.CL;
     DEL(:, i) = results.CL - results.OL;
 end
-
+CL = CL';
 %% Process data
 DEL = DEL';
 OL = OL';
@@ -55,7 +55,7 @@ fig.Position([3,4]) = [7.5, 5.5];
 n_patches = prod(size(OL));
 
 for ii = 1:floor(n_patches)
-    a.Children(ii).FaceColor = [33,255,82]/255;
+    a.Children(ii).FaceColor = [33,255,30]/255;
     a.Children(ii).FaceAlpha = 1;
     a.Children(ii).EdgeAlpha = 1;
 end
