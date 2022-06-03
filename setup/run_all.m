@@ -2,10 +2,10 @@ clear
 
     damages = [1:14]';
     rng(1)
-    damages(:, 2) = 0.80;
+    damages(:, 2) = 0.5;
     
     nsr = 0.05;
-    err = 0.00;
+    err = 0.02;
     sensor = "dis";
     in_dof = [1:12];
     out_dof = in_dof;
@@ -14,7 +14,7 @@ clear
     blockrows = 48;
     n_runs = 50;
 
-    for truncated_mode = [12, 10]
+    for truncated_mode = [7]
         set_up
         t_start = tic;
         for foo = 1:size(damages, 1)
