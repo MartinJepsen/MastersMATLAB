@@ -6,7 +6,7 @@ err = 0.02;
 dam_ = 0.5;
 sensor = "dis";
 poles = 1;
-elements = 1;
+elements = 1:14;
 mode = 6;
 
 show_plots = false;
@@ -81,11 +81,48 @@ for damel = elements
         H_CL_d_arr = cell(n_sim_d, 1);
         for run_u = 1:n_sim
             H = s_fac * SS_est{run_u}.transfer_matrix(s);
+
+            A = SS_est_d{run_u}.A;
+            B = SS_est_d{run_u}.B;
+            C = SS_est_d{run_u}.C;
+% 
+            [PsiUS,LamUS]=eig(A);
+            lamUS=diag(LamUS);
+            [~,D1]=sort(abs(imag(lamUS)));
+            lam=lamUS(D1);
+            Psi=PsiUS(:,D1);
+            Phi=inv(Psi);
+            Lam=diag(lam);
+            
+            G=C*(eye(size(A))*s-A)^-1*B;
+            Gm=C*Psi*(eye(size(A))*s-Lam)^-1*Phi*B;
+            
+            Z=1:14;
+            H=C*Psi(:,Z)*(eye(numel(Z))*s-Lam(Z,Z))^-1*Phi(Z,:)*B;
+
             H_arr{run_u, 1} = H;
             H_CL_arr{run_u, 1} = (eye(size(H)) + H * K)^-1 * H;
         end
         for run_d = 1:n_sim_d
-            H_d = s_fac * SS_est_d{run_d}.transfer_matrix(s);
+%             H_d = s_fac * SS_est_d{run_d}.transfer_matrix(s);
+            A = SS_est_d{run_d}.A;
+            B = SS_est_d{run_d}.B;
+            C = SS_est_d{run_d}.C;
+% 
+            [PsiUS,LamUS]=eig(A);
+            lamUS=diag(LamUS);
+            [~,D1]=sort(abs(imag(lamUS)));
+            lam=lamUS(D1);
+            Psi=PsiUS(:,D1);
+            Phi=inv(Psi);
+            Lam=diag(lam);
+            
+            G=C*(eye(size(A))*s-A)^-1*B;
+            Gm=C*Psi*(eye(size(A))*s-Lam)^-1*Phi*B;
+            
+            Z=1:2:12;
+            H_d=C*Psi(:,Z)*(eye(numel(Z))*s-Lam(Z,Z))^-1*Phi(Z,:)*B;
+
             H_d_arr{run_d, 1} = H_d;
             H_CL_d_arr{run_d, 1} = (eye(size(H_d)) + H_d * K)^-1 * H_d;   % estimated CL transfer matrix, damaged
         end
