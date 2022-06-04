@@ -12,9 +12,9 @@ clear
     dt = 0.0001;                            % time increment size
     n_samples = 20000;
     blockrows = 48;
-    n_runs = 50;
+    n_runs = 100;
 
-    for truncated_mode = [6]
+    for truncated_mode = [7]
         set_up
         t_start = tic;
         for foo = 1:size(damages, 1)

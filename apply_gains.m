@@ -6,8 +6,8 @@ err = 0.02;
 dam_ = 0.5;
 sensor = "dis";
 poles = 1;
-elements = 1;
-mode = 6;
+elements = 1:14;
+mode = 7;
 
 show_plots = false;
 
