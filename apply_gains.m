@@ -5,12 +5,12 @@ nsr = 0.05;
 err = 0;
 dam_ = 0.8;
 sensor = "dis";
-mode = 8;
+mode = 0;
 % poles = 1:2:(mode*2)-2;
-poles = 1:2:mode-3;
+poles = 1;
 elements = 1:8;
 
-show_plots = true;
+show_plots = false;
 
 %% Compute results
 if mode ~= 0
@@ -58,10 +58,11 @@ for damel = elements
     for pole = poles
         
         % load gainss
-        %     load('gaindesign/01_strain_cond/gains_5_0.120.mat')
-            load(sprintf("gaindesign/01_strain_cond/gains_%d_1.120.mat", pole))
+%             load('gaindesign/01_strain_cond/gains_5_0.120.mat')
+%             load(sprintf("gaindesign/01_strain_cond/gains_%d_1.120.mat", pole))
 %             load(sprintf("gaindesign/01_strain_cond/gains_%d_1.000.mat", pole))
-        %     load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
+%             load("gaindesign/02_sens/gain1_1_1.120")
+            load("gaindesign/03_strain_norm/gain1_1_1.120")
         %     load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
         %     load(sprintf("Ks_%03d_%03d_%03d_%s", err*100, dam_*100, nsr*100, sensor))
         s_vals((pole+1)/2) = s;
@@ -84,6 +85,9 @@ for damel = elements
             H = s_fac * SS_est{run_u}.transfer_matrix(s);
             H_arr{run_u, 1} = H;
             H_CL_arr{run_u, 1} = (eye(size(H)) + H * K)^-1 * H;
+            A_CL_est = SS_est{run_u}.A +  SS_est{run_u}.B * B2 * K * cdis *  SS_est{run_u}.C;
+            Lambda_CL_est(:,run_u) = eig(A_CL_est);                       % exact CL poles
+
         end
         for run_d = 1:n_sim_d
             H_d = s_fac * SS_est_d{run_d}.transfer_matrix(s);
@@ -188,4 +192,4 @@ end
 results.delta = results.CL - results.OL;
 results
 Lambda = ReferenceModels.Lambda;
-plot_poles(Lambda, lambda_est, s_vals, {'Exact', 'Estimated', 's'});
+f = plot_poles(Lambda, lambda_est, s_vals, {'Theoretical OL', 'Estimated OL', '$s$'});
