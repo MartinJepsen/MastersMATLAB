@@ -43,9 +43,9 @@ options = optimoptions('ga', 'Generations', 5000,...
                         'CrossoverFraction',0.5,...
                         'MaxStallGenerations', 500);%,...
 %                         'PlotFcn', @gaplotbestf);
-poles = 1:2:15;
+poles = 1:2:21;
 Lambda = ReferenceModels(1).Lambda;
-im_fac = 0;
+im_fac = 1.12;
 
 parfor polenum = 1:numel(poles) 
 pole = poles(polenum);
