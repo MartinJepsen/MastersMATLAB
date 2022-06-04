@@ -1,9 +1,8 @@
-clear
-blabla = [0.5, 0.6, 0.75, 0.80, 0.90, 0.99, 1];
-for abcd = 1:numel(blabla)
+% clear
+
 damages = [1:14]';
 rng(1)
-damages(:, 2) = blabla(abcd);
+damages(:, 2) = 0.80;
 
 nsr = 0.05;
 err = 0.00;
@@ -15,16 +14,16 @@ n_samples = 20000;
 blockrows = 48;
 n_runs = 50;
 
-for truncated_mode = [1:8]
+for truncated_mode = [8:12]
     set_up
-    tic
+    t1 = tic;
     for foo = 1:size(damages, 1)
         damage = damages(foo, :);
         estimate_models
-    %     gaindesign_2;
-    %     gaindesign_3;
+%         gaindesign_2;
+%         gaindesign_3;
     end
-    toc
+    toc(t1)
 end
 
 beep
