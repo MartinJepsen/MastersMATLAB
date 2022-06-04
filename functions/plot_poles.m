@@ -41,5 +41,11 @@ xline(0, 'k')
 yline(0, 'k')
 
 
-legend(legend_str, 'Location','southeast')
+
+l = legend(legend_str);
+l.Position = [0.0181    0.8971    0.9209    0.0650];
+a.Position(4) = 0.75;
+l.EdgeColor=[1,1,1];
+% l.Position(2) = 0.936;
+
 end
