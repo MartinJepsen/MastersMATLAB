@@ -28,7 +28,6 @@ parfor run = 1:n_runs
     t_0_run = tic;
     % check if simulations of undamaged config exist:
     if exist(fullfile(base_dir, filename_u), "file") == 0
-        disp('Generating reference model\n')
         SS = StateSpaceModel();
         SS.set_io(in_dof, out_dof);
         SS.dt_from_FE(Kg_e, Cg_e, Mg, dt, sensor);
