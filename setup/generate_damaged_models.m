@@ -30,5 +30,6 @@ function [DamagedModels] = generate_damaged_models(FE, FE_e, damage)%% Exact ref
     DamagedModels.Cg_de = FE_de.Cg;
     DamagedModels.Lambda = Lambda;
     DamagedModels.Phi = Phi;
+    DamagedModels.damage = damage;
 
 end
