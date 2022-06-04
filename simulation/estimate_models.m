@@ -22,7 +22,12 @@ base_dir = GeneralParameters.base_dir;
 filename_u = sprintf("00_000_%03d.mat", round(nsr*100,0));
 
 t_0 = tic;
-clearvars SS_est SS_est_d
+if truncated_mode == 0
+    order = 24;
+else
+    order = truncated_mode*2;
+end
+
 parfor run = 1:n_runs
     % check if simulations of undamaged config exist:
     if exist(fullfile(base_dir, filename_u), "file") == 0
@@ -31,7 +36,7 @@ parfor run = 1:n_runs
         SS.set_io(in_dof, out_dof);
         SS.dt_from_FE(Kg_e, Cg_e, Mg, dt, sensor);
         [u_n, y] = SS.time_response(u, t, nsr, false);
-        SS.estimate(u_n, y, blockrows);
+        SS.estimate(u_n, y, blockrows, order);
         SS.get_modal_parameters();
         SS.to_ct();
         SS_est{run} = SS;
@@ -42,11 +47,12 @@ parfor run = 1:n_runs
     SS_d.set_io(in_dof, out_dof);
     SS_d.dt_from_FE(Kg_de, Cg_de, Mg, dt, sensor)
     [u_n, y] = SS_d.time_response(u, t, nsr, false);
-    SS_d.estimate(u_n, y, blockrows);
+    SS_d.estimate(u_n, y, blockrows, order);
     SS_d.get_modal_parameters()
     SS_d.to_ct();
     SS_est_d{run} = SS_d;
     lambda_est_d(:, run) = SS_d.modal_parameters.Lambda;
+%     fprintf("Finished realisation no. %03d in %0.2f s\n", run, toc(t_0_run))
 end
 fprintf("Finished all runs in %0.2f s", toc(t_0))
 
