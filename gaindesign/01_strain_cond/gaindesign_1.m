@@ -1,7 +1,7 @@
 clear
 load("gaindesign/01_strain_cond/SetUp.mat")
 for polenum = 1:2:15
-im_fac = 1;
+im_fac = 1.12;
 Lambda = ReferenceModels.Lambda;
 s = complex(real(Lambda(polenum)), im_fac*imag(Lambda(polenum)));
 
@@ -52,7 +52,7 @@ good = 0;
 tic
 
 ObjectiveFunction = @main_gain_design;
-options = optimoptions('ga', 'Generations', 5000,...
+options = optimoptions('ga', 'Generations', 20000,...
                         'PopulationSize', 100,...
                         'CrossoverFraction', 0.5,...
                         'FunctionTolerance',1e-6,...
