@@ -120,7 +120,6 @@ for damel = elements
             G=C*(eye(size(A))*s-A)^-1*B;
             Gm=C*Psi*(eye(size(A))*s-Lam)^-1*Phi*B;
             
-            Z=1:2:12;
             H_d=C*Psi(:,Z)*(eye(numel(Z))*s-Lam(Z,Z))^-1*Phi(Z,:)*B;
 
             H_d_arr{run_d, 1} = H_d;
@@ -132,7 +131,26 @@ for damel = elements
     
         % model transfer matrices
         H_ref = (Mg*s^2 + Cg*s + Kg)^-1;                % reference OL transfer matrix
-        H_CL_ref = (Mg*s^2 + Cg*s + Kg + B2*K*cdis)^-1; % reference CL transfer matrix
+        SS = ReferenceModels.SS_exact;
+        A = SS.A;
+        B = SS.B;
+        C = SS.C;   
+        [PsiUS,LamUS]=eig(A);
+        lamUS=diag(LamUS);
+        [~,D1]=sort(abs(imag(lamUS)));
+        lam=lamUS(D1);
+        Psi=PsiUS(:,D1);
+        Phi=inv(Psi);
+        Lam=diag(lam);
+        
+        G=C*(eye(size(A))*s-A)^-1*B;
+        Gm=C*Psi*(eye(size(A))*s-Lam)^-1*Phi*B;
+        
+        H_ref=C*Psi(:,Z)*(eye(numel(Z))*s-Lam(Z,Z))^-1*Phi(Z,:)*B;
+        G = C*((eye(size(A))*s-A)\B);
+
+%         H_CL_ref = (Mg*s^2 + Cg*s + Kg + B2*K*cdis)^-1; % reference CL transfer matrix
+        H_CL_ref = (eye(size(H_ref)) + H_ref * B2*K*cdis)^-1 * H_ref
 
         for run_u = 1:n_sim
             H = H_arr{run_u};
