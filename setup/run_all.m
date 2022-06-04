@@ -1,11 +1,11 @@
 % clear
 
-damages = [1:14]';
+damages = [1]';
 rng(1)
-damages(:, 2) = 0.80;
+damages(:, 2) = 0.50;
 
-nsr = 0.05;
-err = 0.00;
+nsr = 0.02;
+err = 0.05;
 sensor = "dis";
 in_dof = [1:12];
 out_dof = in_dof;
@@ -14,7 +14,7 @@ n_samples = 20000;
 blockrows = 48;
 n_runs = 50;
 
-for truncated_mode = [8:12]
+for truncated_mode = [2:2:12];
     set_up
     t1 = tic;
     for foo = 1:size(damages, 1)

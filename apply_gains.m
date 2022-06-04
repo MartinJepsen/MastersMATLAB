@@ -1,13 +1,13 @@
 clear; close all
 
 %% Set simulation variables
-nsr = 0.05;
-err = 0.00;
-dam_ = 0.80;
+nsr = 0.02;
+err = 0.05;
+dam_ = 0.50;
 sensor = "dis";
 poles = 1;
 elements = 1;
-mode = 6;
+mode = 12;
 
 show_plots = false;
 
