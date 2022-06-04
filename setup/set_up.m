@@ -33,14 +33,6 @@ GeneralParameters.n_runs = n_runs;
 
 [ReferenceModels, GeneralParameters] = generate_reference_models(err, GeneralParameters);
 [ReferenceModels, GeneralParameters] = generate_state_space_models(ReferenceModels, GeneralParameters);
-omega = sqrt(diag(ReferenceModels.FE.modal_parameters.Lambda));
-
-t = GeneralParameters.t;
-N = numel(t);                           % number of samples
-bins = [0:N-1];                         % frequency bins
-N2 = ceil(N/2);                         % half of N
-fs = (t(2)-t(1))^-1;                    % sampling frequency
-faxis=bins*fs/N;                        % frequency axis
 
 t = GeneralParameters.t;
 fs = GeneralParameters.dt^-1;
@@ -48,9 +40,13 @@ fs = GeneralParameters.dt^-1;
 for in = in_dof
     signal = randn(1, numel(t));
     if truncated_mode ~= 0
-        fc = ReferenceModels.FE.modal_parameters.omega(truncated_mode) / (2*pi) * truncated_mode/2.5;
-        [b,a] = butter(6,fc/(fs/2));
-        signal_f = filter(b,a,signal);
+%         fc = mean([(ReferenceModels.FE.modal_parameters.omega(truncated_mode) / (2*pi)),...
+%             (ReferenceModels.FE.modal_parameters.omega(truncated_mode+1) / (2*pi))]);
+        fc = (ReferenceModels.FE.modal_parameters.omega(truncated_mode) / (2*pi))*1.2;
+        [z,p,k] = butter(6,fc/(fs/2));
+        [soslp,glp] = zp2sos(z,p,k);
+
+        signal_f = filtfilt(soslp,glp,signal);  
         u(in, :) = signal_f;
         base_dir = sprintf("simulation/SYSID/t%d_model_error_%03d_%s", truncated_mode, err*100, sensor);
     else
@@ -65,7 +61,6 @@ if ~isfolder(base_dir)
     mkdir(base_dir)
     addpath(base_dir)
 end
-GeneralParameters.base_dir = base_dir;
 
 filepath = fullfile(base_dir, "SetUp.mat");
 save(filepath, "GeneralParameters", "ReferenceModels")
