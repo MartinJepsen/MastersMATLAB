@@ -1,11 +1,11 @@
 clear; close all
 
 %% Set simulation variables
-nsr = 0.05;
+nsr = 0.02;
 err = 0.02;
-dam_ = 0.70;
+dam_ = 0.40;
 sensor = "dis";
-poles = 1;
+poles =5;
 elements = 1:14;
 mode = 7;
 
@@ -83,7 +83,7 @@ for damel = elements
             H = s_fac * SS_est{run_u}.transfer_matrix(s);
             H_arr{run_u, 1} = H;
             H_CL_arr{run_u, 1} = (eye(size(H)) + H * K)^-1 * H;
-            A_CL_est = SS_est{run_u}.A +  SS_est{run_u}.B * B2 * K * cdis *  SS_est{run_u}.C;
+            A_CL_est = SS_est{run_u}.A +  SS_est{run_u}.B * K *  SS_est{run_u}.C;
             Lambda_CL_est(:,run_u) = eig(A_CL_est);                       % exact CL poles
 
         end
