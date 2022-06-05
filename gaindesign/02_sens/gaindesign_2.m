@@ -11,6 +11,9 @@ DeltaKg = Kg_d - Kg;
 DeltaKg(DeltaKg ~= 0) = DeltaKg(DeltaKg ~= 0) ./ abs(DeltaKg(DeltaKg ~= 0));
 Kg_d = DeltaKg - Kg;
 
+DeltaKg = DeltaKg(out_dof, in_dof);
+Kg_d = Kg_d(out_dof, in_dof);
+
 out_dof = GeneralParameters(1).out_dof;
 in_dof = GeneralParameters(1).in_dof;
 
@@ -37,17 +40,17 @@ m = GeneralParameters(1).m;
 np = r*m;
 
 % ga options
-options = optimoptions('ga', 'Generations', 5000,...
-                        'PopulationSize', 200,...
-                        'FunctionTolerance',1e-5,...
+options = optimoptions('ga', 'Generations', 20000,...
+                        'PopulationSize', 50,...
+                        'FunctionTolerance',1e-6,...
                         'CrossoverFraction',0.5,...
-                        'MaxStallGenerations', 500,...
-                        'PlotFcn', @gaplotbestf);
+                        'MaxStallGenerations', 500);
 poles = 1:2:21;
 Lambda = ReferenceModels(1).Lambda;
 im_fac = 1.12;
 
-for polenum = 1:numel(poles) 
+parfor polenum = 1:numel(poles)
+    tic
 pole = poles(polenum);
 s = complex(real(Lambda(pole)), im_fac*imag(Lambda(pole)));
 H_ref = (Mg*s^2 + Cg*s + Kg)^-1;
@@ -62,6 +65,7 @@ im = reshape(res(np+1:end), r, m);
 K = complex(re, im);
 
 parsave(damage, pole, im_fac, K, s, fval)
+toc
 end
 
 function [J] = scheme2(X, ga_vars, s, H, dH, DeltaKg)
