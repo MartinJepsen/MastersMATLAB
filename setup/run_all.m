@@ -6,7 +6,7 @@ clear
     
     nsr = 0.05;
     sensor = "dis";
-    in_dof = [1:6];
+    in_dof = [7:12];
     out_dof = in_dof;
     dt = 0.0001;                            % time increment size
     n_samples = 15000;
