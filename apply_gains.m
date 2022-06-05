@@ -2,13 +2,13 @@ clear; close all
 
 %% Set simulation variables
 nsr = 0.02;
-err = 0.02;
+err = 0.2;
 dam_ = 0.40;
 sensor = "dis";
 elements = 1:14;
-mode = 7;
+mode = 0;
 % poles = 1:2:(2*mode-3);
-poles = 1:2:3;
+poles = [1];
 
 show_plots = false;
 
@@ -92,7 +92,7 @@ for damel = elements
             H_CL_d_arr{run_d, 1} = (eye(size(H_d)) + H_d * K)^-1 * H_d;   % estimated CL transfer matrix, damaged
         end
 
-        A_CL_ex = SS_exact.A + SS_exact.B * K * SS_exact.C;
+        A_CL_ex = SS_exact.A + SS_exact.B * B2 * K * cdis * SS_exact.C;
         Lambda_CL = eig(A_CL_ex);                       % exact CL poles
     
         % model transfer matrices
