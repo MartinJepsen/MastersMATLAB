@@ -37,7 +37,7 @@ GeneralParameters.n_runs = n_runs;
 t = GeneralParameters.t;
 fs = GeneralParameters.dt^-1;
 
-for in = in_dof
+for in = 1:numel(in_dof)
     signal = randn(1, numel(t));
     if truncated_mode ~= 0
 %         fc = mean([(ReferenceModels.FE.modal_parameters.omega(truncated_mode) / (2*pi)),...
