@@ -112,7 +112,7 @@ classdef StateSpaceModel < handle
             self.B2 = SS.B2;
         end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function [A, B, C, D] = estimate(self, u, y, blockrows)
+        function [A, B, C, D] = estimate(self, u, y, blockrows, order)
             self.A = [];
             self.B = [];
             self.C = [];
@@ -127,7 +127,7 @@ classdef StateSpaceModel < handle
                     return
                 end
             end
-            [A, B, C, D] = n4sid_(y, u, blockrows);
+            [A, B, C, D] = n4sid_(y, u, blockrows, order);
 
             self.A = A;
             self.B = B;

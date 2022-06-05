@@ -2,19 +2,20 @@ clear
 
     damages = [1:14]';
     rng(1)
-    damages(:, 2) = 0.5;
+    damages(:, 2) = 0.7;
     
     nsr = 0.02;
-    err = 0.02;
+%     err = 0.02;
     sensor = "dis";
     in_dof = [1:12];
     out_dof = in_dof;
     dt = 0.0001;                            % time increment size
-    n_samples = 20000;
+    n_samples = 10000;
     blockrows = 48;
-    n_runs = 100;
+    n_runs = 50;
+    truncated_mode = 0;
 
-    for truncated_mode = [7]
+    for err = [10, 20, 30, 40, 50, 60]/100
         set_up
         t_start = tic;
         for foo = 1:size(damages, 1)
