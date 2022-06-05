@@ -30,12 +30,10 @@ end
 
 lambda_est = zeros(order, n_runs);
 lambda_est_d = zeros(order, n_runs);
-
 parfor run = 1:n_runs
     t_0_run = tic;
     % check if simulations of undamaged config exist:
     if exist(fullfile(base_dir, filename_u), "file") == 0
-        disp('Generating reference model')
         SS = StateSpaceModel();
         SS.set_io(in_dof, out_dof);
         SS.dt_from_FE(Kg_e, Cg_e, Mg, dt, sensor);
@@ -47,22 +45,21 @@ parfor run = 1:n_runs
         lambda_est(:, run) = SS.modal_parameters.Lambda;
     end
 
-     SS_d = StateSpaceModel();
-     SS_d.set_io(in_dof, out_dof);
-     SS_d.dt_from_FE(Kg_de, Cg_de, Mg, dt, sensor)
-     [u_n, y] = SS_d.time_response(u, t, nsr, false);
-     SS_d.estimate(u_n, y, blockrows, order);
-     SS_d.get_modal_parameters()
-     SS_d.to_ct();
-     SS_est_d{run} = SS_d;
-     lambda_est_d(:, run) = SS_d.modal_parameters.Lambda;
-     fprintf("Finished realisation no. %03d in %0.2f s\n", run, toc(t_0_run))
+    SS_d = StateSpaceModel();
+    SS_d.set_io(in_dof, out_dof);
+    SS_d.dt_from_FE(Kg_de, Cg_de, Mg, dt, sensor)
+    [u_n, y] = SS_d.time_response(u, t, nsr, false);
+    SS_d.estimate(u_n, y, blockrows, order);
+    SS_d.get_modal_parameters()
+    SS_d.to_ct();
+    SS_est_d{run} = SS_d;
+    lambda_est_d(:, run) = SS_d.modal_parameters.Lambda;
+    fprintf("Finished realisation no. %03d in %0.2f s\n", run, toc(t_0_run))
 end
 fprintf("Finished all runs in %0.2f s\n", toc(t_0))
 
-%%
+%% Save results
 filename = sprintf("%02d_%03d_%03d.mat", damage(1,1), damage(1,2)*100, round(nsr*100,0));
-fprintf("Saving %s\n", filename)
 save(fullfile(base_dir, filename), 'SS_est_d', 'lambda_est_d', 'DamagedModels')
 
 if exist(fullfile(base_dir, filename_u), "file") == 0
