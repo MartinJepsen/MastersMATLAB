@@ -43,7 +43,8 @@ for i_d = elements
     filename = sprintf('%02d_%03d_%03d', dam(1,1), dam(1,2)*100, round(nsr*100,0));
     disp("Loading " + filename)
     load(fullfile(base_dir, filename))
-
+    
+    n_el = size(B_strain, 1);
     % Compute all estimated transfer matrices
     n_sim = numel(SS_est);
     n_sim_d = numel(SS_est_d);
@@ -56,7 +57,9 @@ for i_d = elements
     min_strain_CL = zeros(n_runs, 1);
     
     polenum = 1;
+    i_p2 = 1;
     for i_p = poles
+        eps_p = zeros(n_el, n_sim*n_sim_d, 2);
         
         % load gainss
         %     load('gaindesign/01_strain_cond/gains_5_0.120.mat')
@@ -120,27 +123,27 @@ for i_d = elements
                 eps_CL = B_strain * d_CL;                       % CL strain vector
             
                 % Compute strains
-                strains(:, tot_runs, 1) = abs(eps_OL);        % array of characteristic OL strain vectors
-                strains(:, tot_runs, 2) = abs(eps_CL);        % array of characteristic CL strain vectors
+                eps_p(:, i_p2, 1) = abs(eps_OL);        % array of characteristic OL strain vectors
+                eps_p(:, i_p2, 2) = abs(eps_CL);        % array of characteristic CL strain vectors
     
-                eps_norm_OL = abs(eps_OL) / max(abs(eps_OL));
-                eps_norm_CL = abs(eps_CL) / max(abs(eps_CL));
                 
-                min_strain_OL(tot_runs, 1) = find(eps_norm_OL == min(eps_norm_OL));   % index of smallest OL strain
-                min_strain_CL(tot_runs, 1) = find(eps_norm_CL == min(eps_norm_CL));   % index of smallest CL strain
+%                 min_strain_OL(tot_runs, 1) = find(eps_norm_OL == min(eps_norm_OL));   % index of smallest OL strain
+%                 min_strain_CL(tot_runs, 1) = find(eps_norm_CL == min(eps_norm_CL));   % index of smallest CL strain
+                
                 tot_runs = tot_runs + 1;
+                i_p2 = i_p2 + 1;
             end
         end
-        idx_s = ((polenum-1)*n_sim*n_sim_d+1):(tot_runs-1);
-        strains(:, idx_s, 1) = strains(:, idx_s,1) / max(strains(:, idx_s,1),[],'all');
-        strains(:, idx_s, 2) = strains(:, idx_s,2) / max(strains(:, idx_s,2),[],'all');
+%         idx_s = ((polenum-1)*n_sim*n_sim_d+1):(tot_runs-1);
+%         strains(:, idx_s, 1) = strains(:, idx_s,1) / max(strains(:, idx_s,1),[],'all');
+%         strains(:, idx_s, 2) = strains(:, idx_s,2) / max(strains(:, idx_s,2),[],'all');
         polenum = polenum + 1;
     end
 
     
     %% Results post-processing
     clearvars success_rates
-    n_el = size(B_strain, 1);
+    
     for i = 1:n_el
         success_rates(i, 1:2) = [sum(min_strain_OL == i), sum(min_strain_CL == i)];
     end
