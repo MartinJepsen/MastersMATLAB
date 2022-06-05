@@ -131,12 +131,13 @@ for damel = elements
                 tot_runs = tot_runs + 1;
             end
         end
+        idx_s = ((polenum-1)*n_sim*n_sim_d+1):(tot_runs-1);
+        strains(:, idx_s, 1) = strains(:, idx_s,1) / max(strains(:, idx_s,1),[],'all');
+        strains(:, idx_s, 2) = strains(:, idx_s,2) / max(strains(:, idx_s,2),[],'all');
+        polenum = polenum + 1;
     end
-    idx_s = (tot_runs/polenum)-tot_runs+1:tot_runs-1;
-    strains(:, idx_s, 1) = strains(:, idx_s,1) / max(strains(:, idx_s,1),[],'all');
-    strains(:, idx_s, 2) = strains(:, idx_s,2) / max(strains(:, idx_s,2),[],'all');
 
-    polenum = polenum + 1;
+    
     %% Results post-processing
     clearvars success_rates
     n_el = size(B_strain, 1);
