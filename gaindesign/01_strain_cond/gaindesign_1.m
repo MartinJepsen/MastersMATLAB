@@ -1,9 +1,9 @@
 clear
 load("gaindesign/01_strain_cond/SetUp.mat")
-for polenum = 3:2:21
-im_fac = 1;
+for polenum = 1:2:21
+im_fac = 1.12;
 Lambda = ReferenceModels.Lambda;
-s = complex(0*real(Lambda(polenum)), im_fac*imag(Lambda(polenum)));
+s = complex(real(Lambda(polenum)), im_fac*imag(Lambda(polenum)));
 
 GeneralParameters.s = s;
 
@@ -51,8 +51,8 @@ run = 0;
 good = 0;
 tic
 
-options = optimoptions('ga', 'Generations', 20000,...
-                        'PopulationSize', 100,...
+options = optimoptions('ga', 'Generations', 100000,...
+                        'PopulationSize', 10,...
                         'CrossoverFraction', 0.5,...
                         'FunctionTolerance',1e-6);%,...
 %                         'PlotFcn', @gaplotbestf);
