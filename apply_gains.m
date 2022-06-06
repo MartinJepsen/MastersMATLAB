@@ -8,8 +8,8 @@ sensor = "dis";
 elements = 1:14;
 mode = 0;
 im_fac = 1.12;
-poles = 1:2:(2*mode-3);
-scheme = 1;
+poles = 1:2:21;
+scheme = 3;
 
 show_plots = false;
 
@@ -87,7 +87,7 @@ for i_e = elements
             H = s_fac * SS_est{i_u}.transfer_matrix(s);
             H_arr{i_u, 1} = H;
             H_CL_arr{i_u, 1} = (eye(size(H)) + H * K)^-1 * H;
-            A_CL_est = SS_est{i_u}.A +  SS_est{i_u}.B * B2 * K * cdis *  SS_est{i_u}.C;
+            A_CL_est = SS_est{i_u}.A +  SS_est{i_u}.B * K * SS_est{i_u}.C;
             Lambda_CL_est(:,i_u) = eig(A_CL_est);                       % exact CL poles
         end
         for i_d = 1:n_sim_d
@@ -96,8 +96,10 @@ for i_e = elements
             H_CL_d_arr{i_d, 1} = (eye(size(H_d)) + H_d * K)^-1 * H_d;   % estimated CL transfer matrix, damaged
         end
 
-        A_CL_ex = SS_exact.A + SS_exact.B * K * SS_exact.C;
+        A_CL_ex = SS_exact.A + SS_exact.B * B2 * K * cdis * SS_exact.C;
         Lambda_CL = eig(A_CL_ex);                       % exact CL poles
+        Lambda = ReferenceModels.Lambda;
+        f = plot_poles(Lambda, Lambda_CL, s, {'Theoretical CL', 'Estimated CL', '$s$'});
     
         % model transfer matrices
         H_ref = (Mg*s^2 + Cg*s + Kg)^-1;                % reference OL transfer matrix
@@ -202,9 +204,9 @@ results
 Lambda = ReferenceModels.Lambda;
 
 %% Plot OL poles
-f = plot_poles(Lambda, lambda_est, s_vals, {'Theoretical OL', 'Estimated OL', '$s$'});
+% f = plot_poles(Lambda, lambda_est, s_vals, {'Theoretical OL', 'Estimated OL', '$s$'});
 % exportgraphics(f, "D:\Programming\MastersLaTeX\figures\tr_ol_poles.png","Resolution",1000)
 
 %% Plot CL poles
-f = plot_poles(Lambda_CL, Lambda_CL_est, s_vals, {'Theoretical CL', 'Estimated CL', '$s$'});
+% f = plot_poles(Lambda_CL, Lambda_CL_est, s_vals, {'Theoretical CL', 'Estimated CL', '$s$'});
 % exportgraphics(f, "D:\Programming\MastersLaTeX\figures\tr_cl_poles3.png","Resolution",1000)
