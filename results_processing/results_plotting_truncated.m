@@ -1,19 +1,19 @@
 clear; close all
 
 %% Set simulation variables
-scheme = 3;
+scheme = 2;
 err = 0.02;
 sensor = "dis";
-poles = 1;
 nsr = 0.02;
 dam_ = 0.4;
 pole_fac = 1.12;
 modes = [11:-2:1];
 elements = 1:14;
 % modes = [5,3,1]
+
 for i = 1:numel(modes)
     mode = modes(i);
-    poles = 1:2:max(mode-3,1);
+    poles = 1:2:max(2*mode-3,1);
     results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode, elements);
     OL(:, i) = results.OL;
     CL(:, i) = results.CL;
