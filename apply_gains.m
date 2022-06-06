@@ -5,10 +5,13 @@ nsr = 0.02;
 err = 0.02;
 dam_ = 0.40;
 sensor = "dis";
-elements = 1:14;
-mode = 1;
+elements = 10;
+mode = 5;
+im_fac = 1.12;
 % poles = 1:2:(2*mode-3);
-poles = 1:2:max(mode-3,1);
+% poles = 1:2:max(mode-1,1);
+poles = 3;
+scheme = 3;
 
 show_plots = false;
 
@@ -59,12 +62,13 @@ for i_e = elements
     for i_p = poles
         
         % load gainss
-        %     load('gaindesign/01_strain_cond/gains_5_0.120.mat')
-
-            load(sprintf("gaindesign/01_strain_cond/gains_%d_1.120.mat", i_p))
-        %     load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
-        %     load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
-        %     load(sprintf("Ks_%03d_%03d_%03d_%s", err*100, dam_*100, nsr*100, sensor))
+        if scheme == 1
+            load(sprintf("gaindesign/01_strain_cond/gains_%d_%0.3f.mat", i_p, im_fac))
+        elseif scheme == 2
+            load(sprintf("gaindesign/02_sens/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
+        elseif scheme == 3
+            load(sprintf("gaindesign/03_strain_norm/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
+        end
         s_vals(polenum) = s;
         
         % account for output type
@@ -85,6 +89,8 @@ for i_e = elements
             H = s_fac * SS_est{i_u}.transfer_matrix(s);
             H_arr{i_u, 1} = H;
             H_CL_arr{i_u, 1} = (eye(size(H)) + H * K)^-1 * H;
+            A_CL_est = SS_est{i_u}.A +  SS_est{i_u}.B * B2 * K * cdis *  SS_est{i_u}.C;
+            Lambda_CL_est(:,i_u) = eig(A_CL_est);                       % exact CL poles
         end
         for i_d = 1:n_sim_d
             H_d = s_fac * SS_est_d{i_d}.transfer_matrix(s);
@@ -134,7 +140,7 @@ for i_e = elements
 %         idx_s = ((polenum-1)*n_sim*n_sim_d+1):(tot_runs-1);
 %         strains(:, idx_s, 1) = strains(:, idx_s,1) / max(strains(:, idx_s,1),[],'all');
 %         strains(:, idx_s, 2) = strains(:, idx_s,2) / max(strains(:, idx_s,2),[],'all');
-%         polenum = polenum + 1;
+        polenum = polenum + 1;
     end
 
     
@@ -197,5 +203,10 @@ results.delta = results.CL - results.OL;
 results
 Lambda = ReferenceModels.Lambda;
 
-%% Plot poles
-plot_poles(Lambda, lambda_est, s_vals, {'Theoretical OL', 'Estimated OL', '$s$'});
+%% Plot OL poles
+% f = plot_poles(Lambda, lambda_est, s_vals, {'Theoretical OL', 'Estimated OL', '$s$'});
+% exportgraphics(f, "D:\Programming\MastersLaTeX\figures\tr_ol_poles.png","Resolution",1000)
+
+%% Plot CL poles
+f = plot_poles(Lambda_CL, Lambda_CL_est, s_vals, {'Theoretical CL', 'Estimated CL', '$s$'});
+exportgraphics(f, "D:\Programming\MastersLaTeX\figures\tr_cl_poles3.png","Resolution",1000)
