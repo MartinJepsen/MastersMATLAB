@@ -1,14 +1,14 @@
 clear; close all
 
 %% Set simulation variables
-nsr = 0.02;
+nsr = 0.05;
 err = 0.02;
-dam_ = 0.60;
+dam_ = 0.80;
 sensor = "dis";
 elements = 1:14;
 mode = 7;
 % poles = 1:2:(2*mode-3);
-poles = 1:2:3;
+poles = 1:2:5;
 
 show_plots = false;
 
