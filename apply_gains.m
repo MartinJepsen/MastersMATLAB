@@ -6,9 +6,9 @@ err = 0.02;
 dam_ = 0.40;
 sensor = "dis";
 elements = 1:14;
-mode = 7;
+mode = 1;
 % poles = 1:2:(2*mode-3);
-poles = 1:2:3;
+poles = 1:2:max(mode-3,1);
 
 show_plots = false;
 
@@ -34,10 +34,10 @@ SS_exact = ReferenceModels.SS_exact;
 
 s_vals = [];
 
-for i_d = elements
+for i_e = elements
     tot_runs = 1;
 
-    dam = [i_d, dam_];
+    dam = [i_e, dam_];
 
     % load simulation results
     filename = sprintf('%02d_%03d_%03d', dam(1,1), dam(1,2)*100, round(nsr*100,0));
@@ -131,10 +131,10 @@ for i_d = elements
                 tot_runs = tot_runs + 1;
             end
         end
-        idx_s = ((polenum-1)*n_sim*n_sim_d+1):(tot_runs-1);
-        strains(:, idx_s, 1) = strains(:, idx_s,1) / max(strains(:, idx_s,1),[],'all');
-        strains(:, idx_s, 2) = strains(:, idx_s,2) / max(strains(:, idx_s,2),[],'all');
-        polenum = polenum + 1;
+%         idx_s = ((polenum-1)*n_sim*n_sim_d+1):(tot_runs-1);
+%         strains(:, idx_s, 1) = strains(:, idx_s,1) / max(strains(:, idx_s,1),[],'all');
+%         strains(:, idx_s, 2) = strains(:, idx_s,2) / max(strains(:, idx_s,2),[],'all');
+%         polenum = polenum + 1;
     end
 
     
@@ -146,7 +146,7 @@ for i_d = elements
     end
     success_rates = array2table([[1:n_el]', round(success_rates/size(min_strain_OL, 1)*100)], 'VariableNames',...
                     {'el', 'OL', 'CL'});
-    results(i_d, :) = success_rates(i_d, :);
+    results(i_e, :) = success_rates(i_e, :);
 
 
     if show_plots
@@ -196,4 +196,6 @@ end
 results.delta = results.CL - results.OL;
 results
 Lambda = ReferenceModels.Lambda;
-plot_poles(Lambda, lambda_est, s_vals, {'Exact', 'Estimated', 's'});
+
+%% Plot poles
+plot_poles(Lambda, lambda_est, s_vals, {'Theoretical OL', 'Estimated OL', '$s$'});

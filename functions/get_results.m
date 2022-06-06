@@ -28,7 +28,7 @@ for damel = elements
 
     % load simulation results
     filename = sprintf('%02d_%03d_%03d', dam(1,1), dam(1,2)*100, round(nsr*100,0));
-    disp("Loading " + filename)
+    fprintf("Loading %s/%s\n",base_dir, filename)
     load(fullfile(base_dir, filename))
 
     % Compute all estimated transfer matrices
@@ -45,13 +45,14 @@ for damel = elements
     polenum = 1;
     for pole = poles
         
-        % load gainss
-        %     load('gaindesign/01_strain_cond/gains_5_0.120.mat')
-
-            load(sprintf("gaindesign/01_strain_cond/gains_%d_1.120.mat", pole))
-        %     load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
-        %     load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
-        %     load(sprintf("Ks_%03d_%03d_%03d_%s", err*100, dam_*100, nsr*100, sensor))
+        % load gains
+        if scheme == 1
+            load(sprintf("gaindesign/01_strain_cond/gains_%d_%0.3f.mat", pole, im_fac))
+        elseif scheme == 2
+            load(sprintf("gaindesign/02_sens/gain%d_%d_%0.3f.mat", damel, pole, im_fac))
+        elseif scheme == 3
+            load(sprintf("gaindesign/03_strain_norm/gain%d_%d_%0.3f.mat", damel, pole, im_fac))
+        end
         s_vals(polenum) = s;
         
         % account for output type
@@ -119,9 +120,9 @@ for damel = elements
             end
         end
     end
-    idx_s = (tot_runs/polenum)-tot_runs+1:tot_runs-1;
-    strains(:, idx_s, 1) = strains(:, idx_s,1) / max(strains(:, idx_s,1),[],'all');
-    strains(:, idx_s, 2) = strains(:, idx_s,2) / max(strains(:, idx_s,2),[],'all');
+%     idx_s = (tot_runs/polenum)-tot_runs+1:tot_runs-1;
+%     strains(:, idx_s, 1) = strains(:, idx_s,1) / max(strains(:, idx_s,1),[],'all');
+%     strains(:, idx_s, 2) = strains(:, idx_s,2) / max(strains(:, idx_s,2),[],'all');
 
     polenum = polenum + 1;
     %% Results post-processing

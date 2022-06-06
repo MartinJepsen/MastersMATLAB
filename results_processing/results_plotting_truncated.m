@@ -1,18 +1,20 @@
 clear; close all
 
 %% Set simulation variables
-scheme = 1;
-err = 0.00;
+scheme = 3;
+err = 0.02;
 sensor = "dis";
-poles = 1:2:13;
-nsr = 0.05;
-dam_ = 0.8;
+poles = 1;
+nsr = 0.02;
+dam_ = 0.4;
 pole_fac = 1.12;
-modes = [14:-2:2];
+modes = [11:-2:1];
+elements = 1:14;
+% modes = [5,3,1]
 for i = 1:numel(modes)
     mode = modes(i);
-    poles = 1:2:mode-3;
-    results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode);
+    poles = 1:2:max(mode-3,1);
+    results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode, elements);
     OL(:, i) = results.OL;
     CL(:, i) = results.CL;
     DEL(:, i) = results.CL - results.OL;
@@ -31,8 +33,11 @@ DEL_2(del_zero) = DEL_2(del_zero) + 0.01;
 %% Make figure
 close all
 fig = figure;
+fig.Position([3,4]) = [7.5, 6.5];
+
+
 x = [1:numel(modes)];
-y = 1:8;
+y = elements;
 z(:, :, 1) = OL_2;
 z(:, :, 2) = DEL_2;
 [y1,x1]=meshgrid(y,x);
@@ -46,7 +51,7 @@ for i1=1:ngroups
 end
 
 a = gca;
-a.DataAspectRatio = [1, 1, 35];
+a.DataAspectRatio = [1, 1, 11];
 n_patches = prod(size(OL));
 
 for ii = 1:floor(n_patches)
@@ -93,16 +98,17 @@ end
 axis tight
 xlabel('Model order','Interpreter','latex')
 xticks(x);
-xticklabels(string((modes)));
-a.XLabel.Rotation = -19;
+xticklabels(string((modes*2)));
+a.XLabel.Rotation = -18;
 a.XLabel.VerticalAlignment = 'bottom';
 a.XLabel.HorizontalAlignment = 'l';
-a.XLabel.Position = [2,0,-30];
+a.XLabel.Position = [-0.5,0,-23];
 
 ylabel('Damage pattern')
 yticks(y);
 a.YLabel.Rotation = 19;
 a.YLabel.VerticalAlignment = 'middle';
+a.YLabel.Position = [a.XLim(end),5,-20];
 
 zlim([0, 100])
 zticks([0:10:100])
@@ -118,7 +124,7 @@ view(45,20)
 box on
 
 
-l = legend(handles,labels,'Orientation','vertical');
-l.Position([1,2]) = [.07, .75];
+% l = legend(handles,labels,'Orientation','vertical');
+% l.Position([1,2]) = [.07, .75];
 
-% exportgraphics(fig, sprintf('D:/Programming/MastersLaTeX/figures/svals%d.pdf',scheme),'ContentType','image','Resolution',500)
+exportgraphics(fig, sprintf('D:/Programming/MastersLaTeX/figures/tr_trunc%d.png',scheme),'Resolution',1000)
