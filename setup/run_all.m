@@ -1,10 +1,10 @@
 clear
 
-    damages = [1:14]';
+    damages = [1]';
     rng(1)
     damages(:, 2) = 0.4;
     
-    nsr = 0.02;
+    nsr = 0.05;
     sensor = "dis";
     in_dof = [1:6];
     out_dof = in_dof;
@@ -19,7 +19,8 @@ clear
         t_start = tic;
         for foo = 1:size(damages, 1)
             damage = damages(foo, :);
-            estimate_models
+%             estimate_models
+            gaindesign_1
         end
         toc(t_start)
     end
