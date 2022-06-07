@@ -185,12 +185,16 @@ classdef StateSpaceModel < handle
             
             try
                 H = self.C*((eye(size(self.A))*s-self.A)\self.B)+self.D;
-                self.H = H;
-                self.s = s;
             catch
-                H = [];
-                disp('ERROR (transfer_matrix): Missing parameter (A,B,C,D,s).')
+                try
+                   H = self.C*((eye(size(self.A))*s-self.A)\self.B);
+                catch
+                    throw("Error (StateSpaceModel.transfer_matrix(): something went wrong")
+                end
             end
+            self.H = H;
+            self.s = s;
+
         end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function expand_coords(self, ord)
@@ -347,6 +351,19 @@ classdef StateSpaceModel < handle
             B_c = (A_c\A_d-inv(A_c))\B_d;
             self.A = A_c;
             self.B = B_c;
+        end
+
+        function expand(self)
+            in_dof = self.in_dof;
+            out_dof = self.out_dof;
+
+            [~,v1,v3] = intersect(out_dof,in_dof);
+            unsorted_dof = [out_dof, setdiff(in_dof,out_dof)];
+            [~,order] = sort(unsorted_dof);
+
+            [Bexp,Cexp]=ExpandBandC2(self.A,self.B,self.C,v1,v3,order);
+            self.B = Bexp;
+            self.C = Cexp;
         end
 
     end
