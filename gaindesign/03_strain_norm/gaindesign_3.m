@@ -15,7 +15,6 @@ out_dof = GeneralParameters(1).out_dof;
 in_dof = GeneralParameters(1).in_dof;
 
 Lambda = ReferenceModels(1).Lambda;
-im_fac = 1.01;
 
 % collect ga variables
 ga_vars.idx = GeneralParameters(1).idx;
@@ -35,7 +34,8 @@ ga_vars.Kg = Kg;
 ga_vars.Cg_d = Cg_d;
 ga_vars.Kg_d = Kg_d;
 
-poles = 1:2:15;
+poles = 1:2:21;
+im_fac = 1.12;
 
 parfor polenum = 1:numel(poles) 
 tic
@@ -46,6 +46,7 @@ H_ref = (Mg*s^2 + Cg*s + Kg)^-1;
 H = H_ref(out_dof, in_dof);
 
 H_d = (Mg*s^2 + Cg_d*s + Kg_d)^-1;
+H_d = H_d(out_dof, in_dof);
 
 DeltaH = H - H_d;
 [~, ~, V] = svd(DeltaH);
@@ -58,12 +59,12 @@ r = GeneralParameters(1).r;
 m = GeneralParameters(1).m;
 np = r*m;
 
-options = optimoptions('ga', 'Generations', 5000,...
-                        'PopulationSize', 200,...
-                        'FunctionTolerance',1e-5,...
+rng default
+options = optimoptions('ga', 'Generations', 100000,...
+                        'PopulationSize', 10,...
+                        'FunctionTolerance',1e-7,...
                         'CrossoverFraction',0.5,...
-                        'MaxStallGenerations', 500);%,...
-%                         'PlotFcn', @gaplotbestf);
+                        'MaxStallGenerations', 500);%,'PlotFcn', @gaplotbestf);
 
 [res, fval] = ga({@scheme3, ga_vars, s, V, H_ref, np}, np*2, [], [], [], [], [], [], [], options);
    
@@ -82,7 +83,6 @@ function [J] = scheme3(X, ga_vars, s, V, H_ref, np)
 
     r          = ga_vars.r;
     m          = ga_vars.m;
-%     s          = ga_vars.s;
     in_dof     = ga_vars.in_dof;
     out_dof    = ga_vars.out_dof;
     B2         = ga_vars.B2;
@@ -92,20 +92,16 @@ function [J] = scheme3(X, ga_vars, s, V, H_ref, np)
     Kg         = ga_vars.Kg;
     Cg_d       = ga_vars.Cg_d;
     Kg_d       = ga_vars.Kg_d;
-%     H_ref      = ga_vars.H_ref;
     idx        = ga_vars.idx;
     n_dof      = ga_vars.n_dof;
     free_dof   = ga_vars.free_dof;
     B          = ga_vars.B;
-%     V = ga_vars.V;
 
-%     np = ga_vars.np;
     re = reshape(X(1:np), r, m);
     im = reshape(X(np+1:end), r, m);
     K = complex(re, im);
     
     % DDLV
-
     d = H_ref * B2 * V(:, end);
     d_ = zeros(n_dof, 1);
     d_(idx) = d;

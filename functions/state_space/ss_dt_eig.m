@@ -27,6 +27,7 @@ for i = 1:size(Phi,1)
 %     if all(imag(Phi(i,:)) ~= 0) == 1
         if 0 < imag(Phi(i,1)) < 1e-10
             scale = complex( - real(Phi(i, :)) ./ imag(Phi(i, :)), 1);
+            break
         else
             scale = complex( - real(Phi(1, :)) ./ imag(Phi(1, :)), 1);
         end

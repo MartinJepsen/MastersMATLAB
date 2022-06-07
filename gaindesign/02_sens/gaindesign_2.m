@@ -14,6 +14,8 @@ Kg_d = DeltaKg - Kg;
 out_dof = GeneralParameters(1).out_dof;
 in_dof = GeneralParameters(1).in_dof;
 
+DeltaKg = DeltaKg(out_dof, in_dof);
+
 % collect ga variables
 ga_vars.idx = GeneralParameters(1).idx;
 ga_vars.n_dof = GeneralParameters(1).n_dof;
@@ -37,23 +39,23 @@ m = GeneralParameters(1).m;
 np = r*m;
 
 % ga options
-options = optimoptions('ga', 'Generations', 5000,...
-                        'PopulationSize', 200,...
-                        'FunctionTolerance',1e-5,...
+rng default
+options = optimoptions('ga', 'Generations', 100000,...
+                        'PopulationSize', 10,...
+                        'FunctionTolerance',1e-7,...
                         'CrossoverFraction',0.5,...
-                        'MaxStallGenerations', 500);%,...
-%                         'PlotFcn', @gaplotbestf);
-poles = 1:2:15;
+                        'MaxStallGenerations', 100);%,'PlotFcn', @gaplotbestf);
+poles = 1:2:21;
 Lambda = ReferenceModels(1).Lambda;
-im_fac = 1;
+im_fac = 1.12;
 
 parfor polenum = 1:numel(poles) 
+tic
 pole = poles(polenum);
-s = complex(0*real(Lambda(pole)), im_fac*imag(Lambda(pole)));
+s = complex(real(Lambda(pole)), im_fac*imag(Lambda(pole)));
 H_ref = (Mg*s^2 + Cg*s + Kg)^-1;
 H = H_ref(out_dof, in_dof);
 dH = -H * DeltaKg * H;
-
 %% Genetic algorithm
 [res, fval] = ga({@scheme2, ga_vars, s, H, dH, DeltaKg}, np*2, [], [], [], [], [], [], [], options);
    
@@ -62,6 +64,7 @@ im = reshape(res(np+1:end), r, m);
 K = complex(re, im);
 
 parsave(damage, pole, im_fac, K, s, fval)
+toc
 end
 
 function [J] = scheme2(X, ga_vars, s, H, dH, DeltaKg)
@@ -84,6 +87,7 @@ function [J] = scheme2(X, ga_vars, s, H, dH, DeltaKg)
     K = complex(re, im);
     
     % OL
+
 
     % CL
     H_CL = (Mg*s^2 + Cg*s + Kg + B2*K*cdis)^-1;

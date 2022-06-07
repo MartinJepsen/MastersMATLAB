@@ -11,13 +11,13 @@ Lambda_ex = reshape(Lambda_ex, [numel(Lambda_ex), 1]);
 
 f = figure;
 f.Units = 'centimeters';
-f.Position([3, 4]) = [15, 8];
+f.Position([3, 4]) = [7.5, 6.5];
 hold on; grid on
-plot(real(Lambda_ref), imag(Lambda_ref), 'k.', 'MarkerSize', 15)
+plot(real(Lambda_ref), imag(Lambda_ref), 'ko', 'MarkerSize', 8)
 plot(real(Lambda_ex), imag(Lambda_ex), 'r.', 'MarkerSize', 10)
 
 try
-    plot(real(s), imag(s), 'bx', 'MarkerSize', 15);
+    plot(real(s), imag(s), 'b*', 'MarkerSize', 5);
 catch
 end
    
@@ -40,6 +40,13 @@ a.YLabel.Rotation = 0;
 xline(0, 'k')
 yline(0, 'k')
 
+ylim([-1.2*max(imag(Lambda_ref)), 1.2*max(imag(Lambda_ref))])
 
-legend(legend_str, 'Location','southeast')
+
+l = legend(legend_str);
+l.Position = [0.0181    0.8971    0.9209    0.0650];
+a.Position(4) = 0.75;
+l.EdgeColor=[1,1,1];
+% l.Position(2) = 0.936;
+
 end
