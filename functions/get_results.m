@@ -72,15 +72,15 @@ for damel = elements
         for run_u = 1:n_sim
             H = s_fac * SS_est{run_u}.transfer_matrix(s);
             H_arr{run_u, 1} = H;
-            H_CL_arr{run_u, 1} = (eye(size(H)) + H * K)^-1 * H;
+            H_CL_arr{run_u, 1} = (eye(size(H,1)) + H * K)^-1 * H;
         end
         for run_d = 1:n_sim_d
             H_d = s_fac * SS_est_d{run_d}.transfer_matrix(s);
             H_d_arr{run_d, 1} = H_d;
-            H_CL_d_arr{run_d, 1} = (eye(size(H_d)) + H_d * K)^-1 * H_d;   % estimated CL transfer matrix, damaged
+            H_CL_d_arr{run_d, 1} = (eye(size(H_d,1)) + H_d * K)^-1 * H_d;   % estimated CL transfer matrix, damaged
         end
 
-        A_CL_ex = SS_exact.A + SS_exact.B * K * SS_exact.C;
+        A_CL_ex = SS_exact.A + SS_exact.B * B2 * K * cdis * SS_exact.C;
         Lambda_CL = eig(A_CL_ex);                       % exact CL poles
     
         % model transfer matrices
