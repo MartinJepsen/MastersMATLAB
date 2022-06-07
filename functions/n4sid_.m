@@ -94,7 +94,7 @@ ss=diag(S);
 % 
 % ns=input('Provide system order via command window. Press Ctrl+C to cancel.');
 % close
-% ns = 24;
+% ns = 20;
 %% Retrieve the system matrices
 U2 = U1(:,1:ns);
 S1 = S(1:ns,1:ns);
