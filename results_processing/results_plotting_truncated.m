@@ -127,4 +127,4 @@ box on
 % l = legend(handles,labels,'Orientation','vertical');
 % l.Position([1,2]) = [.07, .75];
 
-exportgraphics(fig, sprintf('D:/Programming/MastersLaTeX/figures/tr_trunc%d.png',scheme),'Resolution',1000)
+% exportgraphics(fig, sprintf('D:/Programming/MastersLaTeX/figures/tr_trunc%d.png',scheme),'Resolution',1000)
