@@ -46,6 +46,7 @@ H_ref = (Mg*s^2 + Cg*s + Kg)^-1;
 H = H_ref(out_dof, in_dof);
 
 H_d = (Mg*s^2 + Cg_d*s + Kg_d)^-1;
+H_d = H_d(out_dof, in_dof);
 
 DeltaH = H - H_d;
 [~, ~, V] = svd(DeltaH);

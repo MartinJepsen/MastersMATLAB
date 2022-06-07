@@ -138,6 +138,6 @@ box on
 % l = legend(handles,labels,'Orientation','vertical');
 % l.Position([1,2]) = [.07, .75];
 
-exportgraphics(fig, sprintf('D:/Programming/MastersLaTeX/figures/ch_svals%d.pdf',scheme),'ContentType','image','Resolution',500)
+exportgraphics(fig, sprintf('D:/Programming/MastersLaTeX/figures/ch_svals%d.png',scheme),'Resolution',500)
 
 end

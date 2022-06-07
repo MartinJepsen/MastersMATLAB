@@ -130,5 +130,5 @@ box on
 % l = legend(handles,labels,'Orientation','vertical','location','layout');
 % l.Position([1,2]) = [.1, .75];
 
-exportgraphics(fig, sprintf("D:/Programming/MastersLaTeX/figures/ch_damage_size%d.pdf", scheme),'Resolution',1000)
+exportgraphics(fig, sprintf("D:/Programming/MastersLaTeX/figures/ch_damage_size%d.png", scheme),'Resolution',1000)
 end

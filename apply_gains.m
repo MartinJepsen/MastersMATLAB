@@ -8,7 +8,7 @@ sensor = "dis";
 mode = 0;
 % poles = 1:2:(mode*2)-2;
 poles = 1;
-elements = 1:8;
+elements = 1
 
 show_plots = false;
 
@@ -59,10 +59,10 @@ for damel = elements
         
         % load gainss
 %             load('gaindesign/01_strain_cond/gains_5_0.120.mat')
-%             load(sprintf("gaindesign/01_strain_cond/gains_%d_1.120.mat", pole))
+            load(sprintf("gaindesign/01_strain_cond/gains_%d_1.120.mat", pole))
 %             load(sprintf("gaindesign/01_strain_cond/gains_%d_1.000.mat", pole))
 %             load("gaindesign/02_sens/gain1_1_1.120")
-            load("gaindesign/03_strain_norm/gain1_1_1.120")
+%             load("gaindesign/03_strain_norm/gain1_1_1.120")
         %     load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
         %     load(sprintf("Ks_%03d_%03d_%03d_%s", err*100, dam_*100, nsr*100, sensor))
         s_vals((pole+1)/2) = s;
@@ -192,4 +192,7 @@ end
 results.delta = results.CL - results.OL;
 results
 Lambda = ReferenceModels.Lambda;
+
+%%
 f = plot_poles(Lambda, lambda_est, s_vals, {'Theoretical OL', 'Estimated OL', '$s$'});
+% exportgraphics(f, 'D:/Programming/MastersLaTeX/figures/ch_ol_poles.png','Resolution',500)
