@@ -5,11 +5,11 @@ nsr = 0.05;
 err = 0.02;
 dam_ = 0.40;
 sensor = "dis";
-elements = 1:14;
+elements = 1;
 mode = 0;
 im_fac = 1.12;
 poles = 1:2:21;
-scheme = 3;
+scheme = 1;
 
 show_plots = false;
 
@@ -99,7 +99,7 @@ for i_e = elements
         A_CL_ex = SS_exact.A + SS_exact.B * B2 * K * cdis * SS_exact.C;
         Lambda_CL = eig(A_CL_ex);                       % exact CL poles
         Lambda = ReferenceModels.Lambda;
-        f = plot_poles(Lambda, Lambda_CL, s, {'Theoretical CL', 'Estimated CL', '$s$'});
+%         f = plot_poles(Lambda, Lambda_CL, s, {'Theoretical CL', 'Estimated CL', '$s$'});
     
         % model transfer matrices
         H_ref = (Mg*s^2 + Cg*s + Kg)^-1;                % reference OL transfer matrix
