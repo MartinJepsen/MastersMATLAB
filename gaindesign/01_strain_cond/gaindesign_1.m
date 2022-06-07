@@ -54,8 +54,7 @@ tic
 options = optimoptions('ga', 'Generations', 100000,...
                         'PopulationSize', 10,...
                         'CrossoverFraction', 0.5,...
-                        'FunctionTolerance',1e-6);%,...
-%                         'PlotFcn', @gaplotbestf);
+                        'FunctionTolerance',1e-6);%,'PlotFcn', @gaplotbestf);
 
 np = r*m; % No. of entries in gain matrix
 [res, fval] = ga({@scheme1, GeneralParameters, ReferenceModels}, np*2, [], [], [], [], [], [], [], options);
@@ -79,7 +78,7 @@ beep
 
 %% Store results
 K = gains{1,1};
-save(sprintf("gaindesign/01_strain_cond/gains_%d_%0.3f.mat", polenum, im_fac),"K", "gains", "s")
+save(sprintf("gaindesign/01_strain_cond/gains_%d_%0.3f.mat", polenum, im_fac),"K", "s", "fval")
 end
 
 function [J] = scheme1(X, GeneralParameters, ReferenceModels)
