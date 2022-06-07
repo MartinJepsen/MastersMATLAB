@@ -20,6 +20,19 @@ if  xx~=1
 else
 end
 [Phi,Lambda]=eig(Ac);
+
+for i = 1:size(Phi,1)
+%     if all(imag(Phi(i,:)) ~= 0) == 1
+    if ~any(imag(Phi(i,:))==0)
+        scale = complex( - real(Phi(i, :)) ./ imag(Phi(i, :)), 1);
+        break
+    else
+        scale = complex( - real(Phi(1, :)) ./ imag(Phi(1, :)), 1);
+    end
+end
+
+Phi = Phi * diag(scale);
+
 Lambda=diag(Lambda);
 [~,Y]=sort(abs(Lambda),'ascend');
 Lambda=Lambda(Y);
@@ -65,4 +78,7 @@ if xx~=1
     Cexp=Cexp(ord,:);
     Bexp=Bexp(:,ord);
 else
+
+Bexp = real(Bexp);
+Cexp = real(Cexp);
 end

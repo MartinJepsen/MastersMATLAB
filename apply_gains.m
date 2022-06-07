@@ -8,12 +8,13 @@ sensor = "dis";
 elements = 1:14;
 mode = 0;
 im_fac = 1.12;
-poles = 1:2:21;
+poles = [7];
 scheme = 1;
 
 show_plots = false;
+expand = true;
 
-%% Compute results
+%% Function start
 if mode ~= 0
     base_dir = sprintf("simulation/SYSID/t%d_model_error_%03d_%s", mode, err*100, sensor);
 elseif mode == 0
@@ -22,6 +23,15 @@ end
 
 load(sprintf("%s/00_000_%03d", base_dir, round(nsr*100,0)))
 load(fullfile(base_dir, "SetUp.mat"))
+
+
+if expand
+    for i_u = 1:numel(SS_est)
+        SS_est{i_u}.expand();
+    end
+    GeneralParameters = expand_coordinates(GeneralParameters);
+end
+
 
 Kg = ReferenceModels.Kg;
 Cg = ReferenceModels.Cg;
@@ -61,7 +71,11 @@ for i_e = elements
         
         % load gainss
         if scheme == 1
-            load(sprintf("gaindesign/01_strain_cond/gains_%d_%0.3f.mat", i_p, im_fac))
+            if expand
+                load(sprintf("gaindesign/01_strain_cond/exp_gains/gains_%d_%0.3f.mat", i_p, im_fac))
+            else
+                load(sprintf("gaindesign/01_strain_cond/gains_%d_%0.3f.mat", i_p, im_fac))
+            end     
         elseif scheme == 2
             load(sprintf("gaindesign/02_sens/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
         elseif scheme == 3
@@ -86,20 +100,22 @@ for i_e = elements
         for i_u = 1:n_sim
             H = s_fac * SS_est{i_u}.transfer_matrix(s);
             H_arr{i_u, 1} = H;
-            H_CL_arr{i_u, 1} = (eye(size(H)) + H * K)^-1 * H;
+            H_CL_arr{i_u, 1} = (eye(size(H,1)) + H * K)^-1 * H;
             A_CL_est = SS_est{i_u}.A +  SS_est{i_u}.B * K * SS_est{i_u}.C;
             Lambda_CL_est(:,i_u) = eig(A_CL_est);                       % exact CL poles
         end
         for i_d = 1:n_sim_d
-            H_d = s_fac * SS_est_d{i_d}.transfer_matrix(s);
+            SS_d = SS_est_d{i_d};
+            if expand
+                SS_d.expand();
+            end
+            H_d = s_fac * SS_d.transfer_matrix(s);
             H_d_arr{i_d, 1} = H_d;
-            H_CL_d_arr{i_d, 1} = (eye(size(H_d)) + H_d * K)^-1 * H_d;   % estimated CL transfer matrix, damaged
+            H_CL_d_arr{i_d, 1} = (eye(size(H_d,1)) + H_d * K)^-1 * H_d;   % estimated CL transfer matrix, damaged
         end
 
-        A_CL_ex = SS_exact.A + SS_exact.B * B2 * K * cdis * SS_exact.C;
-        Lambda_CL = eig(A_CL_ex);                       % exact CL poles
-        Lambda = ReferenceModels.Lambda;
-%         f = plot_poles(Lambda, Lambda_CL, s, {'Theoretical CL', 'Estimated CL', '$s$'});
+%         A_CL_ex = SS_exact.A + SS_exact.B * B2 * K * cdis * SS_exact.C;
+%         Lambda_CL = eig(A_CL_ex);                       % exact CL poles
     
         % model transfer matrices
         H_ref = (Mg*s^2 + Cg*s + Kg)^-1;                % reference OL transfer matrix
@@ -154,7 +170,7 @@ for i_e = elements
                     {'el', 'OL', 'CL'});
     results(i_e, :) = success_rates(i_e, :);
 
-
+%% Function end
     if show_plots
         m = mean(strains,2);            % mean of each characteristic strain
         s_norm = strains ./ max(m);     % normalise rows by largest mean value
@@ -204,7 +220,7 @@ results
 Lambda = ReferenceModels.Lambda;
 
 %% Plot OL poles
-% f = plot_poles(Lambda, lambda_est, s_vals, {'Theoretical OL', 'Estimated OL', '$s$'});
+f = plot_poles(Lambda, lambda_est, s_vals, {'Theoretical OL', 'Estimated OL', '$s$'});
 % exportgraphics(f, "D:\Programming\MastersLaTeX\figures\tr_ol_poles.png","Resolution",1000)
 
 %% Plot CL poles
