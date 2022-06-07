@@ -135,7 +135,7 @@ classdef StateSpaceModel < handle
             self.D = D;
         end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function [u_n, y_n] = time_response(self, u, t, nsr, store)
+        function [u, y] = time_response(self, u, t, nsr, store)
             A = self.A;
             B = self.B;
             C = self.C;
@@ -153,16 +153,19 @@ classdef StateSpaceModel < handle
                 y(:, k) = C*z(:, k) + D*u(:, k);
             end
             
-            y_n = noise(y, nsr);
-            u_n = noise(u, nsr);
+            if nsr ~= 0
+                y = noise(y, nsr);
+                u = noise(u, nsr);
+            end
+
             self.sysid.nsr = nsr;
             self.sysid.N_s = numel(t);
             
             % store time response
             try
                 if store
-                    self.sysid.y = y_n;
-                    self.sysid.u = u_n;
+                    self.sysid.y = y;
+                    self.sysid.u = u;
                 end
             catch
             end
