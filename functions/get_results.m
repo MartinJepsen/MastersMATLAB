@@ -28,7 +28,7 @@ for damel = elements
 
     % load simulation results
     filename = sprintf('%02d_%03d_%03d', dam(1,1), dam(1,2)*100, round(nsr*100,0));
-    fprintf("Loading %s/%s\n",base_dir, filename)
+%     fprintf("Loading %s/%s\n",base_dir, filename)
     load(fullfile(base_dir, filename))
 
     % Compute all estimated transfer matrices
