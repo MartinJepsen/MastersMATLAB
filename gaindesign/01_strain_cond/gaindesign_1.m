@@ -50,16 +50,15 @@ m = GeneralParameters.m;
 run = 0;
 good = 0;
 tic
-
-ObjectiveFunction = @main_gain_design;
-options = optimoptions('ga', 'Generations', 5000,...
-                        'PopulationSize', 100,...
+rng default
+options = optimoptions('ga', 'Generations', 100000,...
+                        'PopulationSize', 10,...
                         'CrossoverFraction', 0.5,...
-                        'FunctionTolerance',1e-6,...
-                        'PlotFcn', @gaplotbestf);
+                        'FunctionTolerance',1e-6);%,'PlotFcn', @gaplotbestf)
+                        
 
 np = r*m; % No. of entries in gain matrix
-[res, fval] = ga(ObjectiveFunction, np*2, [], [], [], [], [], [], [], options);
+[res, fval] = ga({@scheme1, GeneralParameters, ReferenceModels}, np*2, [], [], [], [], [], [], [], options);
 
 % Reshape result into complex-values r x m matrix
 re = reshape(res(1:np), r, m);
@@ -83,10 +82,8 @@ K = gains{1,1};
 save(sprintf("gaindesign/01_strain_cond/gains_%d_%0.3f.mat", polenum, im_fac),"K", "gains", "s")
 end
 
-function [J] = main_gain_design(X)
+function [J] = scheme1(X, GeneralParameters, ReferenceModels)
     % Load pre-defined variables from base workspace
-    GeneralParameters = evalin('base', 'GeneralParameters');
-    ReferenceModels = evalin('base', 'ReferenceModels');
 
     n_dof = GeneralParameters.n_dof;
     free_dof =  GeneralParameters.free_dof;

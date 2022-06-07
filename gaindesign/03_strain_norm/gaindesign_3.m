@@ -35,7 +35,7 @@ ga_vars.Cg_d = Cg_d;
 ga_vars.Kg_d = Kg_d;
 
 poles = 1:2:21;
-im_fac = 1.2;
+im_fac = 1.12;
 
 parfor polenum = 1:numel(poles) 
 tic
@@ -46,6 +46,7 @@ H_ref = (Mg*s^2 + Cg*s + Kg)^-1;
 H = H_ref(out_dof, in_dof);
 
 H_d = (Mg*s^2 + Cg_d*s + Kg_d)^-1;
+H_d = H(out_dof, in_dof);
 
 DeltaH = H - H_d;
 [~, ~, V] = svd(DeltaH);
@@ -58,12 +59,12 @@ r = GeneralParameters(1).r;
 m = GeneralParameters(1).m;
 np = r*m;
 
-options = optimoptions('ga', 'Generations', 25000,...
-                        'PopulationSize', 50,...
-                        'FunctionTolerance',1e-6,...
+rng default
+options = optimoptions('ga', 'Generations', 100000,...
+                        'PopulationSize', 10,...
+                        'FunctionTolerance',1e-7,...
                         'CrossoverFraction',0.5,...
-                        'MaxStallGenerations', 500);%,...
-%                         'PlotFcn', @gaplotbestf);
+                        'MaxStallGenerations', 500);%,'PlotFcn', @gaplotbestf);
 
 [res, fval] = ga({@scheme3, ga_vars, s, V, H_ref, np}, np*2, [], [], [], [], [], [], [], options);
    
