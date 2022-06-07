@@ -4,15 +4,15 @@ clear; close all
 scheme = 1;
 sensor = "dis";
 poles = 1:2:19;
-nsr = 0.05;
-dam_ = 0.8;
+nsr = 0.02;
+dam_ = 0.4;
 pole_fac = 1.12;
 mode = 0;
-
-errs = [0, 0.05, 0.1, 0.15, 0.20, 0.25, 0.30];
+elements = 1:14;
+errs = [0.1, 0.20, 0.25, 0.30];
 for i = 1:numel(errs)
     err = errs(i);
-    results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode);
+    results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode, elements);
     OL(:, i) = results.OL;
     CL(:, i) = results.CL;
     DEL(:, i) = results.CL - results.OL;
