@@ -1,13 +1,13 @@
 clear
 
-    damages = [1]';
+    damages = [1:14]';
     rng(1)
     damages(:, 2) = 0.4;
     
     nsr = 0.05;
     sensor = "dis";
-    in_dof = [1,2,7,8 ];
-    out_dof = in_dof;
+    in_dof = [2];
+    out_dof = [2:2:12];
     dt = 0.0001;                            % time increment size
     n_samples = 15000;
     blockrows = 48;
