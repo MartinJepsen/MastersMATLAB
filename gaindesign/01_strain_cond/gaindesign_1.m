@@ -1,5 +1,9 @@
 clear
 load("gaindesign/01_strain_cond/SetUp.mat")
+
+
+expand = true;
+
 for polenum = 1:2:21
 im_fac = 1.12;
 Lambda = ReferenceModels.Lambda;
@@ -43,6 +47,11 @@ ReferenceModels.H_ = H_;
 
 r = GeneralParameters.r;
 m = GeneralParameters.m;
+
+if expand
+    GeneralParameters = expand_coordinates(GeneralParameters);
+end
+
 %%
 
 
@@ -78,7 +87,7 @@ beep
 
 %% Store results
 K = gains{1,1};
-save(sprintf("gaindesign/01_strain_cond/gains_%d_%0.3f.mat", polenum, im_fac),"K", "s", "fval")
+save(sprintf("gaindesign/01_strain_cond/exp_gains/gains_%d_%0.3f.mat", polenum, im_fac),"K", "s", "fval")
 end
 
 function [J] = scheme1(X, GeneralParameters, ReferenceModels)
