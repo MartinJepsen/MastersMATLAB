@@ -39,7 +39,7 @@ ga_vars.Kg = Kg;
 ga_vars.Cg_d = Cg_d;
 ga_vars.Kg_d = Kg_d;
 
-poles = 1:2:21;
+poles = 1:2:5;
 im_fac = 1.12;
 
 parfor polenum = 1:numel(poles) 

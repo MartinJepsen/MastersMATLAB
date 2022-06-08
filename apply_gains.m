@@ -9,10 +9,10 @@ elements = 1:14;
 mode = 0;
 im_fac = 1.12;
 poles = [1:2:3];
-scheme = 1;
+scheme = 2;
 
 show_plots = false;
-expand = false;
+expand = true;
 
 %% Function start
 if mode ~= 0
@@ -77,7 +77,11 @@ for i_e = elements
                 load(sprintf("gaindesign/01/gains/gains_%d_%0.3f.mat", i_p, im_fac))
             end     
         elseif scheme == 2
-            load(sprintf("gaindesign/02/gains/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
+            if expand
+                load(sprintf("gaindesign/02/exp_gains/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
+            else
+                load(sprintf("gaindesign/02/gains/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
+            end                
         elseif scheme == 3
             load(sprintf("gaindesign/03/gains/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
         end

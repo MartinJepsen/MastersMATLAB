@@ -12,17 +12,17 @@ dt = 0.0001;                            % time increment size
 n_samples = 15000;
 blockrows = 48;
 n_runs = 50;
-truncated_mode = 0;
-err = [2]/100;
+truncated_mode = 4;
+err = [5]/100;
 set_up
 
 
 t_start = tic;
 for foo = 1:size(damages, 1)
     damage = damages(foo, :);
-    estimate_models
+%     estimate_models
 %             gaindesign_1
-%             gaindesign_2
+            gaindesign_2
 %             gaindesign_3
 end
 toc(t_start)
