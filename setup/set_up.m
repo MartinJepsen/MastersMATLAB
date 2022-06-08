@@ -36,10 +36,14 @@ GeneralParameters.n_runs = n_runs;
 
 t = GeneralParameters.t;
 fs = GeneralParameters.dt^-1;
+omega_hz = ReferenceModels.FE.modal_parameters.omega / (2*pi);
+f0 = 0.8*omega_hz(1);
+f1 = 1.2*omega_hz(truncated_mode);
+t1 = t(end);
 
 for in = 1:numel(in_dof)
     signal = zeros(1, numel(t));
-    signal(in+1) = in* 500;
+    signal(:) = 50*chirp(t,f0,t1,f1,'linear',(in-1)*90);
     u(in, :) = signal;
     base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
 end
