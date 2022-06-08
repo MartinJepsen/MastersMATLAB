@@ -1,7 +1,7 @@
 clear; close all
 
 %% Set simulation variables
-nsr = 0.05;
+nsr = 0.02;
 err = 0.02;
 dam_ = 0.40;
 sensor = "dis";
