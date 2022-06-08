@@ -1,18 +1,18 @@
 clear; close all
 
 %% Set simulation variables
-nsr = 0.02;
+nsr = 0.05;
 err = 0.02;
-dam_ = 0.40;
+dam_ = 0.80;
 sensor = "dis";
 elements = 1:14;
 mode = 0;
 im_fac = 1.12;
-poles = [1];
+poles = [1:2:3];
 scheme = 1;
 
 show_plots = false;
-expand = true;
+expand = false;
 
 %% Function start
 if mode ~= 0
@@ -106,7 +106,7 @@ for i_e = elements
         end
         for i_d = 1:n_sim_d
             SS_d = SS_est_d{i_d};
-            if expand
+            if expand && polenum==1
                 SS_d.expand();
             end
             H_d = s_fac * SS_d.transfer_matrix(s);
@@ -114,8 +114,8 @@ for i_e = elements
             H_CL_d_arr{i_d, 1} = (eye(size(H_d,1)) + H_d * K)^-1 * H_d;   % estimated CL transfer matrix, damaged
         end
 
-%         A_CL_ex = SS_exact.A + SS_exact.B * B2 * K * cdis * SS_exact.C;
-%         Lambda_CL = eig(A_CL_ex);                       % exact CL poles
+        A_CL_ex = SS_exact.A + SS_exact.B * B2 * K * cdis * SS_exact.C;
+        Lambda_CL = eig(A_CL_ex);                       % exact CL poles
     
         % model transfer matrices
         H_ref = (Mg*s^2 + Cg*s + Kg)^-1;                % reference OL transfer matrix
