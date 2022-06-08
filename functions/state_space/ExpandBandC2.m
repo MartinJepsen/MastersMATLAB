@@ -41,14 +41,17 @@ Phi=Phi(:,Y);
 Psi=Cc*Phi;
 Gam=inv(Phi)*Bc;
 % Select the collocated Gam
-TauC=Gam(:,v3);
+GamC=Gam(:,v3);
 % Select the collocated Psi
 PsiC=Psi(v1,:);
 % Compute the scaling constants (least squares if there is more than one
 % collocation)
 
-for j=1:mu
-    alpha(j)=PsiC(:,j).'*TauC(j,:)/((PsiC(:,j)).'*PsiC(:,j));
+for i=1:size(GamC,1)
+    for j = 1:size(GamC,2)
+%     alpha(j)=PsiC(:,j).'*GamC(j,:)/((PsiC(:,j)).'*PsiC(:,j));
+        alpha(i,j) = GamC(i,j)/GamC(j,i);
+    end
 end
 
 % Obtain entries in the latent vectors at non-collocated inputs
