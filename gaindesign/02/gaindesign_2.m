@@ -1,6 +1,10 @@
 % load('gaindesign/02_sens/SetUp.mat')
 [DamagedModels] = generate_damaged_models(ReferenceModels(1).FE, ReferenceModels(1).FE_e, damage);
 
+expand = false;
+if expand
+    GeneralParameters = expand_coordinates(GeneralParameters);
+end
 
 Mg = ReferenceModels(1).Mg;
 Cg = ReferenceModels(1).Cg;
@@ -61,7 +65,8 @@ re = reshape(res(1:np), r, m);
 im = reshape(res(np+1:end), r, m);
 K = complex(re, im);
 
-parsave(damage, pole, im_fac, K, s, fval)
+parsave(damage, pole, im_fac, K, s, fval, expand)
+toc
 end
 
 function [J] = scheme2(X, ga_vars, s, H, dH, DeltaKg)
@@ -99,7 +104,12 @@ function [J] = scheme2(X, ga_vars, s, H, dH, DeltaKg)
     J = norm(dH) / norm(dH_CL);
 end
 
-function parsave(damage, pole, im_fac, K, s, fval)
+function parsave(damage, pole, im_fac, K, s, fval, expand)
     fprintf("Saving gain%d_%d_%0.3f.mat\n", damage(1,1), pole, im_fac)
-    save(sprintf("gaindesign/02_sens/gain%d_%d_%0.3f.mat", damage(1,1), pole, im_fac),"K", "fval", "s")
+    if expand
+        save(sprintf("gaindesign/02/exp_gains/gain%d_%d_%0.3f.mat", damage(1,1), pole, im_fac),"K", "fval", "s")
+    else
+        save(sprintf("gaindesign/02/gains/gain%d_%d_%0.3f.mat", damage(1,1), pole, im_fac),"K", "fval", "s")
+    end
+    
 end

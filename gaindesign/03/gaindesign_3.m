@@ -1,6 +1,11 @@
 % load('gaindesign/02_sens/SetUp.mat')
 [DamagedModels] = generate_damaged_models(ReferenceModels(1).FE, ReferenceModels(1).FE_e, damage);
 
+expand = false;
+if expand
+    GeneralParameters = expand_coordinates(GeneralParameters);
+end
+
 
 Mg = ReferenceModels(1).Mg;
 Cg = ReferenceModels(1).Cg;
@@ -50,8 +55,7 @@ H_d = (Mg*s^2 + Cg_d*s + Kg_d)^-1;
 DeltaH = H - H_d;
 [~, ~, V] = svd(DeltaH);
 
-% ga_vars.V = V;
-% ga_vars.H_ref = H_ref;
+
 
 %% Genetic algorithm
 r = GeneralParameters(1).r;
@@ -71,9 +75,8 @@ re = reshape(res(1:np), r, m);
 im = reshape(res(np+1:end), r, m);
 K = complex(re, im);
 
-parsave(damage, pole, im_fac, K, s, fval)
+parsave(damage, pole, im_fac, K, s, fval, expand)
 
-% save(sprintf("gaindesign/03_strain_norm/gain%d_%d_%0.3f.mat", damage(1,1), polenum, im_fac),"K", "gains", "s")
 toc
 end
 
@@ -132,7 +135,11 @@ function [J] = scheme3(X, ga_vars, s, V, H_ref, np)
 
 end
 
-function parsave(damage, pole, im_fac, K, s, fval)
+function parsave(damage, pole, im_fac, K, s, fval, expand)
     fprintf("Saving gain%d_%d_%0.3f.mat", damage(1,1), pole, im_fac)
-    save(sprintf("gaindesign/03_strain_norm/gain%d_%d_%0.3f.mat", damage(1,1), pole, im_fac),"K", "fval", "s")
+    if expand
+        save(sprintf("gaindesign/03/exp_gains/gain%d_%d_%0.3f.mat", damage(1,1), pole, im_fac),"K", "fval", "s")
+    else
+        save(sprintf("gaindesign/03/gains/gain%d_%d_%0.3f.mat", damage(1,1), pole, im_fac),"K", "fval", "s")
+    end
 end
