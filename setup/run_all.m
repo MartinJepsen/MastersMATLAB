@@ -2,7 +2,7 @@ clear
 
 damages = [1:14]';
 rng(1)
-damages(:, 2) = 0.4;
+damages(:, 2) = 0.8;
 
 nsr = 0.02;
 sensor = "dis";
