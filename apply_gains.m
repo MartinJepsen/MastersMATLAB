@@ -8,11 +8,11 @@ sensor = "dis";
 elements = 1:14;
 mode = 0;
 im_fac = 1.12;
-poles = [1:2:3];
-scheme = 3;
+poles = [1];
+scheme = 1;
 
 show_plots = false;
-expand = false;
+expand = true;
 
 %% Function start
 if mode ~= 0
@@ -83,7 +83,11 @@ for i_e = elements
                 load(sprintf("gaindesign/02/gains/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
             end                
         elseif scheme == 3
-            load(sprintf("gaindesign/03/gains/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
+            if expand
+                load(sprintf("gaindesign/03/exp_gains/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
+            else
+                load(sprintf("gaindesign/03/gains/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
+            end
         end
         s_vals(polenum) = s;
         

@@ -54,13 +54,15 @@ poles = 1:2:5;
 Lambda = ReferenceModels(1).Lambda;
 im_fac = 1.12;
 
-parfor polenum = 1:numel(poles) 
+for polenum = 1:numel(poles) 
 tic
 pole = poles(polenum);
 s = complex(real(Lambda(pole)), im_fac*imag(Lambda(pole)));
 H_ref = (Mg*s^2 + Cg*s + Kg)^-1;
 H = H_ref(out_dof, in_dof);
-dH = -H *B2.'* DeltaKg * cdis.'* H;
+dH = -H_ref * DeltaKg * H_ref;
+dH = dH(out_dof, in_dof);
+
 %% Genetic algorithm
 [res, fval] = ga({@scheme2, ga_vars, s, H, dH, DeltaKg}, np*2, [], [], [], [], [], [], [], options);
 
@@ -100,11 +102,11 @@ function [J] = scheme2(X, ga_vars, s, H, dH, DeltaKg)
 
     % CL
     H_CL = (Mg*s^2 + Cg*s + Kg + B2*K*cdis)^-1;
-    H_CL = H_CL(out_dof, in_dof);
-    dH_CL = -H_CL * B2.' * DeltaKg * cdis.' * H_CL;                 % CL transfer matrix sensitivity towards unit stiffness perturbation
+    dH_CL = -H_CL * DeltaKg * H_CL;                 % CL transfer matrix sensitivity towards unit stiffness perturbation
+    dH_CL = dH_CL(out_dof, in_dof);
     
     % reject population member if it increases the transfer matrix condition number
-    if cond(H_CL) > cond(H)
+    if cond(H_CL(out_dof, in_dof)) > cond(H)
         J = 1;
         return
     end

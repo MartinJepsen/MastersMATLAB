@@ -22,8 +22,8 @@ for foo = 1:size(damages, 1)
     damage = damages(foo, :);
 %     estimate_models
 %             gaindesign_1
-%             gaindesign_2
-            gaindesign_3
+            gaindesign_2
+%             gaindesign_3
 end
 toc(t_start)
 
