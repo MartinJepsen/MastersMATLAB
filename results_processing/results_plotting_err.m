@@ -3,13 +3,13 @@ clear; close all
 %% Set simulation variables
 scheme = 1;
 sensor = "dis";
-poles = 1:2:19;
+poles = 1;
 nsr = 0.02;
-dam_ = 0.4;
+dam_ = 0.6;
 pole_fac = 1.12;
 mode = 0;
 elements = 1:14;
-errs = [0.1, 0.20, 0.25, 0.30];
+errs = [0.1, 0.20, 0.3, 0.40];
 for i = 1:numel(errs)
     err = errs(i);
     results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode, elements);
@@ -31,7 +31,7 @@ DEL_2(del_zero) = DEL_2(del_zero) + 0.01;
 close all
 fig = figure;
 x = [1:numel(errs)];
-y = 1:8;
+y = 1:numel(elements);
 z(:, :, 1) = OL_2;
 z(:, :, 2) = DEL_2;
 [y1,x1]=meshgrid(y,x);
