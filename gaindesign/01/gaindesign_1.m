@@ -1,8 +1,8 @@
 clear
-load("gaindesign/01_strain_cond/SetUp.mat")
+load("gaindesign/01/SetUp.mat")
 
 
-expand = false;
+expand = true;
 
 for polenum = 1:2:21
 im_fac = 1.12;

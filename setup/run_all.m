@@ -6,7 +6,7 @@ damages(:, 2) = 0.4;
 
 nsr = 0.02;
 sensor = "dis";
-in_dof = [4];
+in_dof = [2,6];
 out_dof = [1:12];
 dt = 0.0001;                            % time increment size
 n_samples = 15000;

@@ -39,7 +39,7 @@ fs = GeneralParameters.dt^-1;
 
 for in = 1:numel(in_dof)
     signal = zeros(1, numel(t));
-    signal(in+1) = 500;
+    signal(in+1) = in* 500;
     u(in, :) = signal;
     base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
 end
@@ -53,9 +53,9 @@ end
 
 filepath = fullfile(base_dir, "SetUp.mat");
 save(filepath, "GeneralParameters", "ReferenceModels")
-copyfile(filepath, "gaindesign/01_strain_cond/SetUp.mat")
-copyfile(filepath, "gaindesign/02_sens/SetUp.mat")
-copyfile(filepath, "gaindesign/03_strain_norm/SetUp.mat")
+copyfile(filepath, "gaindesign/01/SetUp.mat")
+copyfile(filepath, "gaindesign/02/SetUp.mat")
+copyfile(filepath, "gaindesign/03/SetUp.mat")
 
 function [ReferenceModels, GeneralParameters] = generate_state_space_models(ReferenceModels,...
                                                                             GeneralParameters);

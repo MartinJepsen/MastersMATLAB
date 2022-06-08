@@ -34,7 +34,7 @@ order = 22;
 
 lambda_est = zeros(order, n_runs);
 lambda_est_d = zeros(order, n_runs);
-parfor run = 1:n_runs
+for run = 1:n_runs
     t_0_run = tic;
     % check if simulations of undamaged config exist:
     if exist(fullfile(base_dir, filename_u), "file") == 0
