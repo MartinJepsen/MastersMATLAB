@@ -1,7 +1,7 @@
 % load('gaindesign/02_sens/SetUp.mat')
 [DamagedModels] = generate_damaged_models(ReferenceModels(1).FE, ReferenceModels(1).FE_e, damage);
 
-expand = false;
+expand = true;
 if expand
     GeneralParameters = expand_coordinates(GeneralParameters);
 end

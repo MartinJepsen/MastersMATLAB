@@ -9,10 +9,10 @@ elements = 1:14;
 mode = 0;
 im_fac = 1.12;
 poles = [1:2:3];
-scheme = 2;
+scheme = 3;
 
 show_plots = false;
-expand = true;
+expand = false;
 
 %% Function start
 if mode ~= 0
