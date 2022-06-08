@@ -47,12 +47,12 @@ PsiC=Psi(v1,:);
 % Compute the scaling constants (least squares if there is more than one
 % collocation)
 
-for i=1:size(GamC,1)
-    for j = 1:size(GamC,2)
-%     alpha(j)=PsiC(:,j).'*GamC(j,:)/((PsiC(:,j)).'*PsiC(:,j));
-        alpha(i,j) = GamC(i,j)/GamC(j,i);
+% for i=1:size(GamC,1)
+    for j = 1:mu
+    alpha(j)= GamC(j,:) * PsiC(:,j)/((PsiC(:,j)).'*PsiC(:,j));
+%         alpha(i,j) = GamC(i,j)/GamC(j,i);
     end
-end
+% end
 
 % Obtain entries in the latent vectors at non-collocated inputs
 tot=1:r;
