@@ -6,12 +6,12 @@ err = 0.02;
 dam_ = 0.40;
 sensor = "dis";
 elements = 1:14;
-mode = 0;
+mode = 1;
 im_fac = 1.12;
 % poles = 1:2:(2*mode-3);
 % poles = 1:2:21;
-% poles = 1:2:max(2*mode-3,1);
-scheme = 1;
+poles = 1:2:max(2*mode-3,1);
+scheme = 2;
 
 show_plots = false;
 
