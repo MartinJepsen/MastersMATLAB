@@ -15,7 +15,7 @@ in_dof = GeneralParameters.in_dof;
 out_dof = GeneralParameters.out_dof;
 dt = GeneralParameters.dt;
 u = GeneralParameters.u;
-u_c = u + 1 * randn(size(u)); % analytical signal plus exogeneous loading
+% u_c = u + 1 * randn(size(u)); % analytical signal plus exogeneous loading
 
 t = GeneralParameters.t;
 blockrows = GeneralParameters.blockrows;
@@ -30,7 +30,7 @@ else
     order = truncated_mode*2;
 end
 
-order = 22;
+order = 8;
 
 lambda_est = zeros(order, n_runs);
 lambda_est_d = zeros(order, n_runs);
@@ -41,8 +41,8 @@ for run = 1:n_runs
         SS = StateSpaceModel();
         SS.set_io(in_dof, out_dof);
         SS.dt_from_FE(Kg_e, Cg_e, Mg, dt, sensor);
-        [~, y] = SS.time_response(u_c, t, nsr, false);
-        SS.estimate(u, y, blockrows, order);
+        [u_n, y] = SS.time_response(u, t, nsr, false);
+        SS.estimate(u_n, y, blockrows, order);
         SS.get_modal_parameters();
         SS.to_ct();
         SS_est{run} = SS;
@@ -52,8 +52,8 @@ for run = 1:n_runs
     SS_d = StateSpaceModel();
     SS_d.set_io(in_dof, out_dof);
     SS_d.dt_from_FE(Kg_de, Cg_de, Mg, dt, sensor)
-    [~, y] = SS_d.time_response(u_c, t, nsr, false);
-    SS_d.estimate(u, y, blockrows, order);
+    [u_n, y] = SS_d.time_response(u, t, nsr, false);
+    SS_d.estimate(u_n, y, blockrows, order);
     SS_d.get_modal_parameters()
     SS_d.to_ct();
     SS_est_d{run} = SS_d;

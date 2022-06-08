@@ -1,18 +1,18 @@
 clear; close all
 
 %% Set simulation variables
-nsr = 0.05;
-err = 0.02;
+nsr = 0.02;
+err = 0.05;
 dam_ = 0.80;
 sensor = "dis";
 elements = 1:14;
 mode = 0;
 im_fac = 1.12;
-poles = [1:2:3];
+poles = [1];
 scheme = 1;
 
 show_plots = false;
-expand = false;
+expand = true;
 
 %% Function start
 if mode ~= 0

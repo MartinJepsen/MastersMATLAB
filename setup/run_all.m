@@ -2,7 +2,7 @@ clear
 
 damages = [1:14]';
 rng(1)
-damages(:, 2) = 0.4;
+damages(:, 2) = 0.8;
 
 nsr = 0.02;
 sensor = "dis";
@@ -13,7 +13,8 @@ n_samples = 15000;
 blockrows = 48;
 n_runs = 50;
 truncated_mode = 0;
-err = [2]/100;
+
+err = [5]/100;
 set_up
 
 
