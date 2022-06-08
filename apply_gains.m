@@ -5,12 +5,12 @@ nsr = 0.02;
 err = 0.02;
 dam_ = 0.40;
 sensor = "dis";
-elements = 1:14;
+elements = [5,13];
 mode = 7;
 % poles = 1:2:(2*mode-3);
-poles = 1:2:3;
+poles = 1;
 
-show_plots = false;
+show_plots = true;
 
 %% Compute results
 if mode ~= 0
@@ -62,6 +62,7 @@ for damel = elements
         %     load('gaindesign/01_strain_cond/gains_5_0.120.mat')
 
             load(sprintf("gaindesign/01_strain_cond/gains_%d_1.120.mat", pole))
+%             load(sprintf("gaindesign/01_strain_cond/b_gains_%d_1.120.mat", pole))
         %     load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
         %     load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
         %     load(sprintf("Ks_%03d_%03d_%03d_%s", err*100, dam_*100, nsr*100, sensor))
@@ -84,6 +85,7 @@ for damel = elements
         for run_u = 1:n_sim
             H = s_fac * SS_est{run_u}.transfer_matrix(s);
             H_arr{run_u, 1} = H;
+            Lambda_CL_est(:, run_u) = eig(SS_est{run_u}.A + SS_est{run_u}.B * K * SS_est{run_u}.C);
             H_CL_arr{run_u, 1} = (eye(size(H)) + H * K)^-1 * H;
         end
         for run_d = 1:n_sim_d
@@ -92,7 +94,7 @@ for damel = elements
             H_CL_d_arr{run_d, 1} = (eye(size(H_d)) + H_d * K)^-1 * H_d;   % estimated CL transfer matrix, damaged
         end
 
-        A_CL_ex = SS_exact.A + SS_exact.B * K * SS_exact.C;
+        A_CL_ex = SS_exact.A + SS_exact.B * B2 * K *cdis * SS_exact.C;
         Lambda_CL = eig(A_CL_ex);                       % exact CL poles
     
         % model transfer matrices
@@ -157,6 +159,7 @@ for damel = elements
 
         % Plot results
         f2 = figure;
+        f2.Position([3,4]) = [13, 6];
         hold on
 
         x = [1:n_el];  % positions of the bars
@@ -173,6 +176,7 @@ for damel = elements
         
         % legend
         l = legend('OL', 'CL', 'Coeff. of variation');
+        l.EdgeColor = [1,1,1];
 
         a2 = gca;
         a2.GridColor = 'k';
@@ -190,10 +194,15 @@ for damel = elements
         ylim([1e-3, 2.1])
         ylabel("Characteristic strain")
         yticks(logspace(-18, 0, 19))
+
+        exportgraphics(f2, sprintf("figures/strains_%d.pdf",damel),"Resolution",1000)
     end
 %         plot_poles(Lambda, lambda_est, s_vals, {'Exact', 'Estimated', 's'});
 end
 results.delta = results.CL - results.OL;
 results
 Lambda = ReferenceModels.Lambda;
-plot_poles(Lambda, lambda_est, s_vals, {'Exact', 'Estimated', 's'});
+
+%%
+f = plot_poles(Lambda, lambda_est, s_vals, {'Exact OL', 'Estimated OL', 's'});
+% f.Position([3,4]) = [8.5,6];

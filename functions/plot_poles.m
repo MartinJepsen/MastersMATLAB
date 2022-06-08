@@ -11,7 +11,7 @@ Lambda_ex = reshape(Lambda_ex, [numel(Lambda_ex), 1]);
 
 f = figure;
 f.Units = 'centimeters';
-f.Position([3, 4]) = [15, 8];
+f.Position([3, 4]) = [8.5, 6];
 hold on; grid on
 plot(real(Lambda_ref), imag(Lambda_ref), 'k.', 'MarkerSize', 15)
 plot(real(Lambda_ex), imag(Lambda_ex), 'r.', 'MarkerSize', 10)
@@ -43,8 +43,8 @@ yline(0, 'k')
 
 
 l = legend(legend_str);
-l.Position = [0.0181    0.8971    0.9209    0.0650];
-a.Position(4) = 0.75;
+% l.Position = [0.0181    0.8971    0.9209    0.0650];
+% a.Position(4) = 0.75;
 l.EdgeColor=[1,1,1];
 % l.Position(2) = 0.936;
 

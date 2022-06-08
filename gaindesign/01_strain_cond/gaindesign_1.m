@@ -1,6 +1,6 @@
 clear
 load("gaindesign/01_strain_cond/SetUp.mat")
-for polenum = 3:2:21
+for polenum = 1
 im_fac = 1.12;
 Lambda = ReferenceModels.Lambda;
 s = complex(real(Lambda(polenum)), im_fac*imag(Lambda(polenum)));
@@ -54,8 +54,7 @@ tic
 options = optimoptions('ga', 'Generations', 20000,...
                         'PopulationSize', 100,...
                         'CrossoverFraction', 0.5,...
-                        'FunctionTolerance',1e-6,...
-                        'PlotFcn', @gaplotbestf);
+                        'FunctionTolerance',1e-6);
 
 np = r*m; % No. of entries in gain matrix
 [res, fval] = ga({@scheme1, GeneralParameters, ReferenceModels}, np*2, [], [], [], [], [], [], [], options);
@@ -79,7 +78,8 @@ beep
 
 %% Store results
 K = gains{1,1};
-save(sprintf("gaindesign/01_strain_cond/gains_%d_%0.3f.mat", polenum, im_fac),"K", "gains", "s")
+% save(sprintf("gaindesign/01_strain_cond/gains_%d_%0.3f.mat", polenum, im_fac),"K", "gains", "s")
+save(sprintf("gaindesign/01_strain_cond/b_gains_%d_%0.3f.mat", polenum, im_fac),"K", "gains", "s")
 end
 
 function [J] = scheme1(X, GeneralParameters, ReferenceModels)
@@ -115,6 +115,6 @@ function [J] = scheme1(X, GeneralParameters, ReferenceModels)
     E_CL = B * H_CL_ * B2;
     
     % Cost function value
-    J = cond(E_CL) / cond(E);
+    J = abs(1.5 - cond(E_CL) / cond(E));
 
 end
