@@ -38,21 +38,10 @@ t = GeneralParameters.t;
 fs = GeneralParameters.dt^-1;
 
 for in = 1:numel(in_dof)
-    signal = randn(1, numel(t));
-    if truncated_mode ~= 0
-%         fc = mean([(ReferenceModels.FE.modal_parameters.omega(truncated_mode) / (2*pi)),...
-%             (ReferenceModels.FE.modal_parameters.omega(truncated_mode+1) / (2*pi))]);
-        fc = (ReferenceModels.FE.modal_parameters.omega(truncated_mode) / (2*pi))*1.2;
-        [z,p,k] = butter(6,fc/(fs/2));
-        [soslp,glp] = zp2sos(z,p,k);
-
-        signal_f = filtfilt(soslp,glp,signal);  
-        u(in, :) = signal_f;
-        base_dir = sprintf("simulation/SYSID/t%d_model_error_%03d_%s", truncated_mode, err*100, sensor);
-    else
-        u(in, :) = signal;
-        base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
-    end
+    signal = zeros(1, numel(t));
+    signal(in+1) = 500;
+    u(in, :) = signal;
+    base_dir = sprintf("simulation/SYSID/model_error_%03d_%s", err*100, sensor);
 end
 GeneralParameters.u = u;
 
