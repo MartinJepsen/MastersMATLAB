@@ -2,7 +2,7 @@ clear
 load("gaindesign/01_strain_cond/SetUp.mat")
 
 
-expand = true;
+expand = false;
 
 for polenum = 1:2:21
 im_fac = 1.12;
@@ -24,35 +24,12 @@ H_(GeneralParameters.idx, :) = H;
 ReferenceModels.H = H;
 ReferenceModels.H_ = H_;
 
-% H = (Mg*s^2 + Cg*s + Kg)^-1;
-% n_dof = GeneralParameters.n_dof;
-% free_dof =  GeneralParameters.free_dof;
-% idx  = GeneralParameters.idx;
-% H_ = zeros(n_dof, free_dof);
-% H_(idx, :) = H;
-
-% vars.n_dof = n_dof;
-% vars.free_dof =  free_dof;
-% vars.m = GeneralParameters.m;
-% vars.r = GeneralParameters.r;
-% vars.B2 = GeneralParameters.B2;
-% vars.B = GeneralParameters.B_strain;
-% vars.idx = idx;
-% vars.H_ = H_;
-% vars.cdis = GeneralParameters.cdis;
-% vars.s = s;
-% vars.Kg = Kg;
-% vars.Cg = Cg;
-% vars.Mg = Mg;
-
-r = GeneralParameters.r;
-m = GeneralParameters.m;
-
 if expand
     GeneralParameters = expand_coordinates(GeneralParameters);
 end
 
-%%
+r = GeneralParameters.r;
+m = GeneralParameters.m;
 
 
 %% Genetic algorithm
@@ -87,7 +64,13 @@ beep
 
 %% Store results
 K = gains{1,1};
-save(sprintf("gaindesign/01_strain_cond/exp_gains/gains_%d_%0.3f.mat", polenum, im_fac),"K", "s", "fval")
+
+if expand
+    save(sprintf("gaindesign/01/exp_gains/gains_%d_%0.3f.mat", polenum, im_fac),"K", "s", "fval")
+else
+    save(sprintf("gaindesign/01/gains/gains_%d_%0.3f.mat", polenum, im_fac),"K", "s", "fval")
+end
+
 end
 
 function [J] = scheme1(X, GeneralParameters, ReferenceModels)
