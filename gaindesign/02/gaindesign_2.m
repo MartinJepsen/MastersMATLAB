@@ -1,7 +1,7 @@
 % load('gaindesign/02_sens/SetUp.mat')
 [DamagedModels] = generate_damaged_models(ReferenceModels(1).FE, ReferenceModels(1).FE_e, damage);
 
-expand = false;
+expand = true;
 if expand
     GeneralParameters = expand_coordinates(GeneralParameters);
 end
@@ -14,11 +14,12 @@ Kg_d = DamagedModels(1).Kg_d;
 DeltaKg = Kg_d - Kg;
 DeltaKg(DeltaKg ~= 0) = DeltaKg(DeltaKg ~= 0) ./ abs(DeltaKg(DeltaKg ~= 0));
 Kg_d = DeltaKg - Kg;
+B2 = GeneralParameters.B2;
+cdis = GeneralParameters.cdis;
 
 out_dof = GeneralParameters(1).out_dof;
 in_dof = GeneralParameters(1).in_dof;
 
-DeltaKg = DeltaKg(out_dof, in_dof);
 
 % collect ga variables
 ga_vars.idx = GeneralParameters(1).idx;
@@ -49,7 +50,7 @@ options = optimoptions('ga', 'Generations', 100000,...
                         'FunctionTolerance',1e-7,...
                         'CrossoverFraction',0.5,...
                         'MaxStallGenerations', 100);%,'PlotFcn', @gaplotbestf);
-poles = 1:2:21;
+poles = 1:2:5;
 Lambda = ReferenceModels(1).Lambda;
 im_fac = 1.12;
 
@@ -59,13 +60,17 @@ pole = poles(polenum);
 s = complex(real(Lambda(pole)), im_fac*imag(Lambda(pole)));
 H_ref = (Mg*s^2 + Cg*s + Kg)^-1;
 H = H_ref(out_dof, in_dof);
-dH = -H * DeltaKg * H;
+dH = -H *B2.'* DeltaKg * cdis.'* H;
 %% Genetic algorithm
 [res, fval] = ga({@scheme2, ga_vars, s, H, dH, DeltaKg}, np*2, [], [], [], [], [], [], [], options);
-   
+
 re = reshape(res(1:np), r, m);
 im = reshape(res(np+1:end), r, m);
 K = complex(re, im);
+
+if (0.99999 < fval) && (fval < 1.00001)
+    K(:,:) = 0
+end
 
 parsave(damage, pole, im_fac, K, s, fval, expand)
 toc
@@ -96,7 +101,7 @@ function [J] = scheme2(X, ga_vars, s, H, dH, DeltaKg)
     % CL
     H_CL = (Mg*s^2 + Cg*s + Kg + B2*K*cdis)^-1;
     H_CL = H_CL(out_dof, in_dof);
-    dH_CL = -H_CL * DeltaKg * H_CL;                 % CL transfer matrix sensitivity towards unit stiffness perturbation
+    dH_CL = -H_CL * B2.' * DeltaKg * cdis.' * H_CL;                 % CL transfer matrix sensitivity towards unit stiffness perturbation
     
     % reject population member if it increases the transfer matrix condition number
     if cond(H_CL) > cond(H)
