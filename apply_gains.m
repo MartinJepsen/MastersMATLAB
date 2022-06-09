@@ -8,8 +8,8 @@ sensor = "dis";
 elements = 1:8;
 mode = 0;
 im_fac = 1.12;
-poles = [1];
-scheme = 2;
+poles = [13];
+scheme = 4;
 
 show_plots = false;
 expand = false;
@@ -88,6 +88,8 @@ for i_e = elements
             else
                 load(sprintf("gaindesign/03/gains/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
             end
+        elseif scheme == 4
+            load(sprintf("gaindesign/04/gains/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
         end
         s_vals(polenum) = s;
         
@@ -234,6 +236,6 @@ f = plot_poles(Lambda, lambda_est, s_vals, {'Theoretical OL', 'Estimated OL', '$
 
 %% Plot CL poles
 f = plot_poles(Lambda_CL, Lambda_CL_est, s_vals, {'Theoretical CL', 'Estimated CL', '$s$'});
-exportgraphics(f, "D:\Programming\MastersLaTeX\figures\tr_cl_poles2.png","Resolution",1000)
+% exportgraphics(f, "D:\Programming\MastersLaTeX\figures\tr_cl_poles2.png","Resolution",1000)
 % cfg4b3 = results;
 % save("testing/cfg4b3.mat","cfg4b3","Lambda", "Lambda_CL_est", "lambda_est", "Lambda_CL")
