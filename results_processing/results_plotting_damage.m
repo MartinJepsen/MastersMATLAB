@@ -7,15 +7,15 @@ i = 1;
 poles = 1:2:13;
 pole_fac = 1.12;
 nsr = 0.05;
-scheme = 3;
 mode = 0;
+elements = 1:8;
 damages = [0.5, 0.6, 0.75, 0.8, 0.9, 0.95, 0.99, 1];
-for scheme = 1:3
-    clearvars -except scheme err sensor poles nsrs damages mode pole_fac nsr
+for scheme = 2
+    clearvars -except scheme err sensor poles nsrs damages mode pole_fac nsr elements
 
 for i = 1:numel(damages)
     dam_ = damages(i);
-    results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode);
+    results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode, elements);
     OL(:, i) = results.OL;
     CL(:, i) = results.CL;
     DEL(:, i) = results.CL - results.OL;
@@ -130,5 +130,5 @@ box on
 % l = legend(handles,labels,'Orientation','vertical','location','layout');
 % l.Position([1,2]) = [.1, .75];
 
-exportgraphics(fig, sprintf("D:/Programming/MastersLaTeX/figures/ch_damage_size%d.png", scheme),'Resolution',1000)
+% exportgraphics(fig, sprintf("D:/Programming/MastersLaTeX/figures/ch_damage_size%d.png", scheme),'Resolution',1000)
 end

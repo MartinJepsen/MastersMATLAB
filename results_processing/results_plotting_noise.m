@@ -10,12 +10,13 @@ sensor = "dis";
 poles = 1:2:13;
 pole_fac = 1.12;
 nsrs = [0.01, 0.02, 0.05, 0.07, 0.1, 0.15];
+elements = 1:8;
 mode = 0;
-for scheme = 1:3
-    clearvars -except scheme err sensor poles nsrs dam_ mode pole_fac
+for scheme = 2
+    clearvars -except scheme err sensor poles nsrs dam_ mode pole_fac elements
 for i = 1:numel(nsrs)
     nsr = nsrs(i);
-    results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode)
+    results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode, elements)
     OL(:, i) = results.OL;
     CL(:, i) = results.CL;
     DEL(:, i) = results.CL - results.OL;
@@ -123,5 +124,5 @@ box on
 % l = legend(handles, labels, 'Orientation','vertical');
 % l.Position([1,2]) = [.07, .75];
 
-exportgraphics(fig, sprintf('D:/Programming/MastersLaTeX/figures/ch_nsr_levels%d.png',scheme),'Resolution',500)
+% exportgraphics(fig, sprintf('D:/Programming/MastersLaTeX/figures/ch_nsr_levels%d.png',scheme),'Resolution',500)
 end

@@ -1,20 +1,21 @@
 clear; close all
 
 %% Set simulation variables
-scheme = 1;
+
 sensor = "dis";
 poles = 1:2:13;
 nsr = 0.05;
 dam_ = 0.8;
 pole_fac = 1.12;
 mode = 0;
+elements = 1:8;
 
 errs = [0, 0.05, 0.1, 0.15, 0.20, 0.25, 0.30];
-for scheme = 1:3
-    clearvars -except scheme errs sensor poles nsrs damages mode pole_fac nsr dam_
+for scheme = 2
+    clearvars -except scheme errs sensor poles nsrs damages mode pole_fac nsr dam_ elements
 for i = 1:numel(errs)
     err = errs(i);
-    results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode);
+    results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode, elements);
     OL(:, i) = results.OL;
     CL(:, i) = results.CL;
     DEL(:, i) = results.CL - results.OL;
@@ -123,5 +124,5 @@ box on
 % l = legend(handles,labels,'Orientation','vertical');
 % l.Position([1,2]) = [.07, .75];
 
-exportgraphics(fig, sprintf("D:/Programming/MastersLaTeX/figures/ch_err_levels%d.png",scheme),'Resolution',1000)
+% exportgraphics(fig, sprintf("D:/Programming/MastersLaTeX/figures/ch_err_levels%d.png",scheme),'Resolution',1000)
 end

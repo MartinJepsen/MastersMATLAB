@@ -8,16 +8,17 @@ poles = 1:2:13;
 nsr = 0.05;
 dam_ = 0.8;
 mode = 0;
+elements = 1:8;
 
-for scheme = 1:3
-    clearvars -except scheme err sensor poles nsr dam_ mode
+for scheme = 2
+    clearvars -except scheme err sensor poles nsr dam_ mode elements
 
 % pole_facs = sort([0, 1, 1.01, 1.02, 1.04, 1.12, 1.2],'descend');
 pole_facs = [1.12, 1.04, 1.01, 1, 0];
 
 for i = 1:numel(pole_facs)
     pole_fac = pole_facs(i);
-    results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode);
+    results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode, elements);
     OL(:, i) = results.OL;
     CL(:, i) = results.CL;
     DEL(:, i) = results.CL - results.OL;
@@ -138,6 +139,6 @@ box on
 % l = legend(handles,labels,'Orientation','vertical');
 % l.Position([1,2]) = [.07, .75];
 
-exportgraphics(fig, sprintf('D:/Programming/MastersLaTeX/figures/ch_svals%d.png',scheme),'Resolution',500)
+% exportgraphics(fig, sprintf('D:/Programming/MastersLaTeX/figures/ch_svals%d.png',scheme),'Resolution',500)
 
 end

@@ -18,8 +18,8 @@ for truncated_mode = [0]
     tic
     for foo = 1:size(damages, 1)
         damage = damages(foo, :);
-        estimate_models
-    %     gaindesign_2;
+%         estimate_models
+        gaindesign_2;
     %     gaindesign_3;
     end
     toc
