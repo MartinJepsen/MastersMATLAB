@@ -64,7 +64,7 @@ end
 
 filepath = fullfile(base_dir, "SetUp.mat");
 save(filepath, "GeneralParameters", "ReferenceModels")
-copyfile(filepath, "gaindesign/01_strain_cond/SetUp.mat")
+copyfile(filepath, "gaindesign/01/SetUp.mat")
 copyfile(filepath, "gaindesign/02/SetUp.mat")
 copyfile(filepath, "gaindesign/03/SetUp.mat")
 

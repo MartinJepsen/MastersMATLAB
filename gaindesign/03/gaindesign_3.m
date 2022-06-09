@@ -1,7 +1,7 @@
 % load('gaindesign/02_sens/SetUp.mat')
 [DamagedModels] = generate_damaged_models(ReferenceModels(1).FE, ReferenceModels(1).FE_e, damage);
 
-expand = true;
+expand = false;
 if expand
     GeneralParameters = expand_coordinates(GeneralParameters);
 end
@@ -39,7 +39,7 @@ ga_vars.Kg = Kg;
 ga_vars.Cg_d = Cg_d;
 ga_vars.Kg_d = Kg_d;
 
-poles = 1:2:5;
+poles = 1;
 im_fac = 1.12;
 
 parfor polenum = 1:numel(poles) 

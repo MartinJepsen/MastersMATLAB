@@ -5,14 +5,16 @@ nsr = 0.02;
 err = 0.02;
 dam_ = 0.40;
 sensor = "dis";
-elements = [5,13];
+elements = 1:14;
 mode = 7;
-% poles = 1:2:(2*mode-3);
-poles = 1;
+im_fac = 1.12;
+poles = [1];
+scheme = 3;
 
-show_plots = true;
+show_plots = false;
+expand = false;
 
-%% Compute results
+%% Function start
 if mode ~= 0
     base_dir = sprintf("simulation/SYSID/t%d_model_error_%03d_%s", mode, err*100, sensor);
 elseif mode == 0
@@ -21,6 +23,15 @@ end
 
 load(sprintf("%s/00_000_%03d", base_dir, round(nsr*100,0)))
 load(fullfile(base_dir, "SetUp.mat"))
+
+
+if expand
+    for i_u = 1:numel(SS_est)
+        SS_est{i_u}.expand();
+    end
+    GeneralParameters = expand_coordinates(GeneralParameters);
+end
+
 
 Kg = ReferenceModels.Kg;
 Cg = ReferenceModels.Cg;
@@ -34,10 +45,10 @@ SS_exact = ReferenceModels.SS_exact;
 
 s_vals = [];
 
-for damel = elements
+for i_e = elements
     tot_runs = 1;
 
-    dam = [damel, dam_];
+    dam = [i_e, dam_];
 
     % load simulation results
     filename = sprintf('%02d_%03d_%03d', dam(1,1), dam(1,2)*100, round(nsr*100,0));
@@ -56,16 +67,28 @@ for damel = elements
     min_strain_CL = zeros(n_runs, 1);
     
     polenum = 1;
-    for pole = poles
+    for i_p = poles
         
         % load gainss
-        %     load('gaindesign/01_strain_cond/gains_5_0.120.mat')
-
-            load(sprintf("gaindesign/01_strain_cond/gains_%d_1.120.mat", pole))
-%             load(sprintf("gaindesign/01_strain_cond/b_gains_%d_1.120.mat", pole))
-        %     load(sprintf("gaindesign/02_sens/constrained/gains_%02d", damel))
-        %     load(sprintf("gaindesign/03_strain_norm/gains_%02d", damel))
-        %     load(sprintf("Ks_%03d_%03d_%03d_%s", err*100, dam_*100, nsr*100, sensor))
+        if scheme == 1
+            if expand
+                load(sprintf("gaindesign/01/exp_gains/gains_%d_%0.3f.mat", i_p, im_fac))
+            else
+                load(sprintf("gaindesign/01/gains/gains_%d_%0.3f.mat", i_p, im_fac))
+            end     
+        elseif scheme == 2
+            if expand
+                load(sprintf("gaindesign/02/exp_gains/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
+            else
+                load(sprintf("gaindesign/02/gains/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
+            end                
+        elseif scheme == 3
+            if expand
+                load(sprintf("gaindesign/03/exp_gains/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
+            else
+                load(sprintf("gaindesign/03/gains/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
+            end
+        end
         s_vals(polenum) = s;
         
         % account for output type
@@ -82,32 +105,38 @@ for damel = elements
         H_CL_arr = cell(n_sim, 1);
         H_d_arr = cell(n_sim_d, 1);
         H_CL_d_arr = cell(n_sim_d, 1);
-        for run_u = 1:n_sim
-            H = s_fac * SS_est{run_u}.transfer_matrix(s);
-            H_arr{run_u, 1} = H;
-            Lambda_CL_est(:, run_u) = eig(SS_est{run_u}.A + SS_est{run_u}.B * K * SS_est{run_u}.C);
-            H_CL_arr{run_u, 1} = (eye(size(H)) + H * K)^-1 * H;
+        for i_u = 1:n_sim
+            H = s_fac * SS_est{i_u}.transfer_matrix(s);
+            H_arr{i_u, 1} = H;
+            H_CL_arr{i_u, 1} = (eye(size(H,1)) + H * K)^-1 * H;
+            A_CL_est = SS_est{i_u}.A +  SS_est{i_u}.B * K * SS_est{i_u}.C;
+            Lambda_CL_est(:,i_u) = eig(A_CL_est);                       % exact CL poles
         end
-        for run_d = 1:n_sim_d
-            H_d = s_fac * SS_est_d{run_d}.transfer_matrix(s);
-            H_d_arr{run_d, 1} = H_d;
-            H_CL_d_arr{run_d, 1} = (eye(size(H_d)) + H_d * K)^-1 * H_d;   % estimated CL transfer matrix, damaged
+        for i_d = 1:n_sim_d
+            SS_d = SS_est_d{i_d};
+            if expand && polenum==1
+                SS_d.expand();
+            end
+            H_d = s_fac * SS_d.transfer_matrix(s);
+            H_d_arr{i_d, 1} = H_d;
+            H_CL_d_arr{i_d, 1} = (eye(size(H_d,1)) + H_d * K)^-1 * H_d;   % estimated CL transfer matrix, damaged
         end
 
-        A_CL_ex = SS_exact.A + SS_exact.B * B2 * K *cdis * SS_exact.C;
+        A_CL_ex = SS_exact.A + SS_exact.B * B2 * K * cdis * SS_exact.C;
+%         A_CL_ex = SS_exact.A + SS_exact.B * K * SS_exact.C;
         Lambda_CL = eig(A_CL_ex);                       % exact CL poles
     
         % model transfer matrices
         H_ref = (Mg*s^2 + Cg*s + Kg)^-1;                % reference OL transfer matrix
         H_CL_ref = (Mg*s^2 + Cg*s + Kg + B2*K*cdis)^-1; % reference CL transfer matrix
 
-        for run_u = 1:n_sim
-            H = H_arr{run_u};
-            H_CL = H_CL_arr{run_u};
+        for i_u = 1:n_sim
+            H = H_arr{i_u};
+            H_CL = H_CL_arr{i_u};
             
-            for run_d = 1:n_sim_d
-                H_d = H_d_arr{run_d};
-                H_CL_d = H_CL_d_arr{run_d};
+            for i_d = 1:n_sim_d
+                H_d = H_d_arr{i_d};
+                H_CL_d = H_CL_d_arr{i_d};
     
                 DeltaH = H_d - H;                               % damage-induced transfer matrix shift (estimated)
                 [~, ~, V] = svd(DeltaH);                        % DDLVs
@@ -133,9 +162,9 @@ for damel = elements
                 tot_runs = tot_runs + 1;
             end
         end
-        idx_s = ((polenum-1)*n_sim*n_sim_d+1):(tot_runs-1);
-        strains(:, idx_s, 1) = strains(:, idx_s,1) / max(strains(:, idx_s,1),[],'all');
-        strains(:, idx_s, 2) = strains(:, idx_s,2) / max(strains(:, idx_s,2),[],'all');
+%         idx_s = ((polenum-1)*n_sim*n_sim_d+1):(tot_runs-1);
+%         strains(:, idx_s, 1) = strains(:, idx_s,1) / max(strains(:, idx_s,1),[],'all');
+%         strains(:, idx_s, 2) = strains(:, idx_s,2) / max(strains(:, idx_s,2),[],'all');
         polenum = polenum + 1;
     end
 
@@ -148,9 +177,9 @@ for damel = elements
     end
     success_rates = array2table([[1:n_el]', round(success_rates/size(min_strain_OL, 1)*100)], 'VariableNames',...
                     {'el', 'OL', 'CL'});
-    results(damel, :) = success_rates(damel, :);
+    results(i_e, :) = success_rates(i_e, :);
 
-
+%% Function end
     if show_plots
         m = mean(strains,2);            % mean of each characteristic strain
         s_norm = strains ./ max(m);     % normalise rows by largest mean value
@@ -159,7 +188,6 @@ for damel = elements
 
         % Plot results
         f2 = figure;
-        f2.Position([3,4]) = [13, 6];
         hold on
 
         x = [1:n_el];  % positions of the bars
@@ -176,7 +204,6 @@ for damel = elements
         
         % legend
         l = legend('OL', 'CL', 'Coeff. of variation');
-        l.EdgeColor = [1,1,1];
 
         a2 = gca;
         a2.GridColor = 'k';
@@ -194,8 +221,6 @@ for damel = elements
         ylim([1e-3, 2.1])
         ylabel("Characteristic strain")
         yticks(logspace(-18, 0, 19))
-
-        exportgraphics(f2, sprintf("figures/strains_%d.pdf",damel),"Resolution",1000)
     end
 %         plot_poles(Lambda, lambda_est, s_vals, {'Exact', 'Estimated', 's'});
 end
@@ -203,6 +228,12 @@ results.delta = results.CL - results.OL;
 results
 Lambda = ReferenceModels.Lambda;
 
-%%
-f = plot_poles(Lambda, lambda_est, s_vals, {'Exact OL', 'Estimated OL', 's'});
-% f.Position([3,4]) = [8.5,6];
+%% Plot OL poles
+f = plot_poles(Lambda, lambda_est, s_vals, {'Theoretical OL', 'Estimated OL', '$s$'});
+% exportgraphics(f, "D:\Programming\MastersLaTeX\figures\tr_ol_poles.png","Resolution",1000)
+
+%% Plot CL poles
+% f = plot_poles(Lambda_CL, Lambda_CL_est, s_vals, {'Theoretical CL', 'Estimated CL', '$s$'});
+% exportgraphics(f, "D:\Programming\MastersLaTeX\figures\tr_cl_poles3.png","Resolution",1000)
+res_art3 = results;
+save("testing/res_art3.mat","res_art3","Lambda", "Lambda_CL_est", "lambda_est", "Lambda_CL")
