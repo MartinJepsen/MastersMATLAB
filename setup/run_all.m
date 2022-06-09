@@ -20,8 +20,8 @@ clear
         t_start = tic;
         for foo = 1:size(damages, 1)
             damage = damages(foo, :);
-            estimate_models
-%             gaindesign_2
+%             estimate_models
+            gaindesign_2
         end
         toc(t_start)
     end

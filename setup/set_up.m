@@ -65,8 +65,8 @@ end
 filepath = fullfile(base_dir, "SetUp.mat");
 save(filepath, "GeneralParameters", "ReferenceModels")
 copyfile(filepath, "gaindesign/01_strain_cond/SetUp.mat")
-copyfile(filepath, "gaindesign/02_sens/SetUp.mat")
-copyfile(filepath, "gaindesign/03_strain_norm/SetUp.mat")
+copyfile(filepath, "gaindesign/02/SetUp.mat")
+copyfile(filepath, "gaindesign/03/SetUp.mat")
 
 function [ReferenceModels, GeneralParameters] = generate_state_space_models(ReferenceModels,...
                                                                             GeneralParameters);
