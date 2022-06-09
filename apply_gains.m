@@ -8,8 +8,8 @@ sensor = "dis";
 elements = 1:14;
 mode = 0;
 im_fac = 1.12;
-poles = [7];
-scheme = 1;
+poles = [1];
+scheme = 3;
 
 show_plots = false;
 expand = true;
@@ -72,14 +72,22 @@ for i_e = elements
         % load gainss
         if scheme == 1
             if expand
-                load(sprintf("gaindesign/01_strain_cond/exp_gains/gains_%d_%0.3f.mat", i_p, im_fac))
+                load(sprintf("gaindesign/01/exp_gains/gains_%d_%0.3f.mat", i_p, im_fac))
             else
-                load(sprintf("gaindesign/01_strain_cond/gains_%d_%0.3f.mat", i_p, im_fac))
+                load(sprintf("gaindesign/01/gains/gains_%d_%0.3f.mat", i_p, im_fac))
             end     
         elseif scheme == 2
-            load(sprintf("gaindesign/02_sens/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
+            if expand
+                load(sprintf("gaindesign/02/exp_gains/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
+            else
+                load(sprintf("gaindesign/02/gains/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
+            end                
         elseif scheme == 3
-            load(sprintf("gaindesign/03_strain_norm/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
+            if expand
+                load(sprintf("gaindesign/03/exp_gains/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
+            else
+                load(sprintf("gaindesign/03/gains/gain%d_%d_%0.3f.mat", i_e, i_p, im_fac))
+            end
         end
         s_vals(polenum) = s;
         
@@ -106,7 +114,7 @@ for i_e = elements
         end
         for i_d = 1:n_sim_d
             SS_d = SS_est_d{i_d};
-            if expand
+            if expand && polenum==1
                 SS_d.expand();
             end
             H_d = s_fac * SS_d.transfer_matrix(s);
@@ -114,8 +122,9 @@ for i_e = elements
             H_CL_d_arr{i_d, 1} = (eye(size(H_d,1)) + H_d * K)^-1 * H_d;   % estimated CL transfer matrix, damaged
         end
 
-%         A_CL_ex = SS_exact.A + SS_exact.B * B2 * K * cdis * SS_exact.C;
-%         Lambda_CL = eig(A_CL_ex);                       % exact CL poles
+        A_CL_ex = SS_exact.A + SS_exact.B * B2 * K * cdis * SS_exact.C;
+%         A_CL_ex = SS_exact.A + SS_exact.B * K * SS_exact.C;
+        Lambda_CL = eig(A_CL_ex);                       % exact CL poles
     
         % model transfer matrices
         H_ref = (Mg*s^2 + Cg*s + Kg)^-1;                % reference OL transfer matrix
@@ -220,9 +229,11 @@ results
 Lambda = ReferenceModels.Lambda;
 
 %% Plot OL poles
-f = plot_poles(Lambda, lambda_est, s_vals, {'Theoretical OL', 'Estimated OL', '$s$'});
+% f = plot_poles(Lambda, lambda_est, s_vals, {'Theoretical OL', 'Estimated OL', '$s$'});
 % exportgraphics(f, "D:\Programming\MastersLaTeX\figures\tr_ol_poles.png","Resolution",1000)
 
 %% Plot CL poles
 % f = plot_poles(Lambda_CL, Lambda_CL_est, s_vals, {'Theoretical CL', 'Estimated CL', '$s$'});
 % exportgraphics(f, "D:\Programming\MastersLaTeX\figures\tr_cl_poles3.png","Resolution",1000)
+res_cfg3b3 = results;
+save("testing/res_cfg3b3.mat","res_cfg3b3","Lambda", "Lambda_CL_est", "lambda_est", "Lambda_CL")
