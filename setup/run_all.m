@@ -1,6 +1,6 @@
 clear
 
-    damages = [1]';
+    damages = [2:14]';
     rng(1)
     damages(:, 2) = 0.4;
     
@@ -19,9 +19,9 @@ clear
         t_start = tic;
         for foo = 1:size(damages, 1)
             damage = damages(foo, :);
-            estimate_models
+%             estimate_models
 %             gaindesign_1
-%             gaindesign_2
+            gaindesign_2
 %             gaindesign_3
         end
         toc(t_start)
