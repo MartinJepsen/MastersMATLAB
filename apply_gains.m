@@ -8,8 +8,8 @@ sensor = "dis";
 elements = 1:14;
 mode = 0;
 im_fac = 1.12;
-poles = [1];
-scheme = 1;
+poles = [1:2:5];
+scheme = 3;
 
 show_plots = false;
 expand = true;
@@ -123,6 +123,7 @@ for i_e = elements
         end
 
         A_CL_ex = SS_exact.A + SS_exact.B * B2 * K * cdis * SS_exact.C;
+%         A_CL_ex = SS_exact.A + SS_exact.B * K * SS_exact.C;
         Lambda_CL = eig(A_CL_ex);                       % exact CL poles
     
         % model transfer matrices
@@ -228,9 +229,11 @@ results
 Lambda = ReferenceModels.Lambda;
 
 %% Plot OL poles
-f = plot_poles(Lambda, lambda_est, s_vals, {'Theoretical OL', 'Estimated OL', '$s$'});
+% f = plot_poles(Lambda, lambda_est, s_vals, {'Theoretical OL', 'Estimated OL', '$s$'});
 % exportgraphics(f, "D:\Programming\MastersLaTeX\figures\tr_ol_poles.png","Resolution",1000)
 
 %% Plot CL poles
 % f = plot_poles(Lambda_CL, Lambda_CL_est, s_vals, {'Theoretical CL', 'Estimated CL', '$s$'});
 % exportgraphics(f, "D:\Programming\MastersLaTeX\figures\tr_cl_poles3.png","Resolution",1000)
+res_chirp3 = results;
+save("testing/res_chirp3.mat","res_chirp3","Lambda", "Lambda_CL_est", "lambda_est", "Lambda_CL")
