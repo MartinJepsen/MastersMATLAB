@@ -235,5 +235,5 @@ f = plot_poles(Lambda, lambda_est, s_vals, {'Theoretical OL', 'Estimated OL', '$
 %% Plot CL poles
 % f = plot_poles(Lambda_CL, Lambda_CL_est, s_vals, {'Theoretical CL', 'Estimated CL', '$s$'});
 % exportgraphics(f, "D:\Programming\MastersLaTeX\figures\tr_cl_poles3.png","Resolution",1000)
-res_art3 = results;
-save("testing/res_art3.mat","res_art3","Lambda", "Lambda_CL_est", "lambda_est", "Lambda_CL")
+cfg1a3 = results;
+save("testing/cfg1a3.mat","cfg1a3","Lambda", "Lambda_CL_est", "lambda_est", "Lambda_CL")
