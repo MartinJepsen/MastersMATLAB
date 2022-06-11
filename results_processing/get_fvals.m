@@ -1,14 +1,14 @@
             
 clear
 
-poles = [1:2:15];
+poles = [1:2:13];
 im_fac = 1.12;
-elements = 1:8;
-schemes = 1:3;
+elements = 1;
+schemes = 1;
 
-fileID = fopen('fvals_chain2.txt', 'w');
+fileID = fopen('fvals_chain11.txt', 'w');
 
-im_facs = [1.2, 1.12, 1.04, 1.01, 1, 0];
+im_facs = [1.12, 1.04, 1.01, 1, 0];
 
 blockrow = [];
 for a = elements
@@ -21,9 +21,9 @@ for a = elements
             p = (pole+1)/2;
 
             clearvars fval gains
-%                     load(sprintf("gaindesign/01_strain_cond/gains_%d_%0.3f.mat", pole, im_fac))
-                    load(sprintf("gaindesign/02_sens/gain%d_%d_%0.3f.mat", a, pole, im_fac))
-%                     load(sprintf("gaindesign/03_strain_norm/gain%d_%d_%0.3f.mat", a, pole, im_fac))
+                    load(sprintf("gaindesign/01/gains/gains_%d_%0.3f.mat", pole, im_fac))
+%                     load(sprintf("gaindesign/02/gains/gain%d_%d_%0.3f.mat", a, pole, im_fac))
+%                     load(sprintf("gaindesign/03/gains/gain%d_%d_%0.3f.mat", a, pole, im_fac))
                 if exist('gains', 'var')
                     f1 = gains{1,2};
                 elseif exist('fval', 'var')
@@ -40,7 +40,7 @@ for a = elements
                     
                 end
 
-                if p == 8
+                if p == 7
                     col3 = sprintf("%s", sprintf("$%0.2f \\cdot 10^{%d}$ ", 10^mod(log10(f1),1), floor(log10(f1))));
                 else
                     col3 = sprintf("%s", sprintf("$%0.2f \\cdot 10^{%d}$ ", 10^mod(log10(f1),1), floor(log10(f1))));
@@ -66,7 +66,7 @@ for a = elements
 
         blockrow = [blockrow, cell];
 
-        if size(blockrow,2) == 3
+        if size(blockrow,2) == 5
             
             for row = 1:size(blockrow,1)
                 printline = sprintf("%d & %s \\\\\\\\", a, strrep(strjoin(blockrow(row,:), '&'), "\", "\\"));
