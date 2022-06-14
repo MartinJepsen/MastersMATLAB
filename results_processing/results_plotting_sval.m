@@ -1,26 +1,33 @@
 clear; close all
 
 %% Set simulation variables
-scheme = 2;
-err = 0.00;
+expand = false;
+scheme = 1;
+err = 0.02;
 sensor = "dis";
-poles = 1:2:13;
-nsr = 0.05;
-dam_ = 0.8;
-mode = 0;
+poles = 1:2:11;
+nsr = 0.02;
+dam_ = 0.4;
+mode = 7;
+elements = 1:14;
+pole_fac = 0.12;
 
 % pole_facs = sort([0, 1, 1.01, 1.02, 1.04, 1.12, 1.2],'descend');
-pole_facs = [1.12, 1.04, 1.01, 1, 0];
+% degs = [0,45,90,135,180];
 
-for i = 1:numel(pole_facs)
-    pole_fac = pole_facs(i);
-    results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode);
+deg = 90;
+
+for i = 1:6
+    poles = 2*i-1
+%     deg = degs(i);
+    results = get_results(nsr, err, dam_, sensor, poles, pole_fac, scheme, mode, elements, expand, deg);
     OL(:, i) = results.OL;
     CL(:, i) = results.CL;
     DEL(:, i) = results.CL - results.OL;
 end
 
 %% Process data
+CL = CL';
 DEL = DEL';
 OL = OL';
 del_neg = find(DEL<0);
@@ -32,8 +39,8 @@ DEL_2(del_zero) = DEL_2(del_zero) + 0.01;
 %% Make figure
 close all
 fig = figure;
-x = [1:numel(pole_facs)];
-y = 1:8;
+x = [1:6];
+y = 1:numel(elements);
 z(:, :, 1) = OL_2;
 z(:, :, 2) = DEL_2;
 [y1,x1]=meshgrid(y,x);
@@ -94,7 +101,7 @@ end
 axis tight
 xlabel('$b$','Interpreter','latex')
 xticks(x);
-xticklabels(string((pole_facs)));
+xticklabels(string((1:6)));
 a.XLabel.Rotation = -19;
 a.XLabel.VerticalAlignment = 'bottom';
 a.XLabel.HorizontalAlignment = 'l';

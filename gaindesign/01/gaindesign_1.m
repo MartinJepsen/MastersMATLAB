@@ -1,9 +1,20 @@
 clear
-load("gaindesign/01_strain_cond/SetUp.mat")
-for polenum = 1
-im_fac = 1.12;
+load("gaindesign/01/SetUp.mat")
 Lambda = ReferenceModels.Lambda;
-s = complex(real(Lambda(polenum)), im_fac*imag(Lambda(polenum)));
+
+
+
+
+for polenum = 1:2:11
+ll = Lambda(polenum);
+deg = 180;
+rad = 0.12;
+[x,y] = pol2cart(deg2rad(deg),rad*imag(ll));
+x = x + real(ll);
+y = y + imag(ll);
+
+
+s = complex(x, y);
 
 GeneralParameters.s = s;
 
@@ -51,8 +62,8 @@ run = 0;
 good = 0;
 tic
 
-options = optimoptions('ga', 'Generations', 20000,...
-                        'PopulationSize', 100,...
+options = optimoptions('ga', 'Generations', 100000,...
+                        'PopulationSize', 10,...
                         'CrossoverFraction', 0.5,...
                         'FunctionTolerance',1e-6);
 
@@ -78,8 +89,9 @@ beep
 
 %% Store results
 K = gains{1,1};
-% save(sprintf("gaindesign/01_strain_cond/gains_%d_%0.3f.mat", polenum, im_fac),"K", "gains", "s")
-save(sprintf("gaindesign/01_strain_cond/b_gains_%d_%0.3f.mat", polenum, im_fac),"K", "gains", "s")
+fval
+save(sprintf("gaindesign/01/gains/K_%d_%d_%0.2f.mat", polenum, deg, rad),"K", "fval", "s")
+% save(sprintf("gaindesign/01_strain_cond/b_gains_%d_%0.3f.mat", polenum, im_fac),"K", "gains", "s")
 end
 
 function [J] = scheme1(X, GeneralParameters, ReferenceModels)
@@ -115,6 +127,6 @@ function [J] = scheme1(X, GeneralParameters, ReferenceModels)
     E_CL = B * H_CL_ * B2;
     
     % Cost function value
-    J = abs(1.5 - cond(E_CL) / cond(E));
+    J = cond(E_CL) / cond(E);
 
 end

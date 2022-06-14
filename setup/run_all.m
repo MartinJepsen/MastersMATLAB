@@ -13,7 +13,7 @@ clear
     n_samples = 20000;
     blockrows = 48;
     n_runs = 100;
-    truncated_mode = 7;
+    truncated_mode = 0;
 
     for err = [2]/100
         set_up
@@ -21,6 +21,7 @@ clear
         for foo = 1:size(damages, 1)
             damage = damages(foo, :);
 %             estimate_models
+%             gaindesign_2
             gaindesign_3
         end
         toc(t_start)

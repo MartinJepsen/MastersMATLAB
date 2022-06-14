@@ -50,14 +50,14 @@ options = optimoptions('ga', 'Generations', 100000,...
                         'FunctionTolerance',1e-7,...
                         'CrossoverFraction',0.5,...
                         'MaxStallGenerations', 100);%,'PlotFcn', @gaplotbestf);
-poles = 1:2:11;
+poles = 1:2:21;
 Lambda = ReferenceModels(1).Lambda;
-im_fac = 1.12;
+im_fac = 1;
 
 for polenum = 1:numel(poles) 
 tic
 pole = poles(polenum);
-s = complex(real(Lambda(pole)), im_fac*imag(Lambda(pole)));
+s = complex(0*real(Lambda(pole)), im_fac*imag(Lambda(pole)));
 H_ref = (Mg*s^2 + Cg*s + Kg)^-1;
 H = H_ref(out_dof, in_dof);
 dH = -H_ref * DeltaKg * H_ref;
